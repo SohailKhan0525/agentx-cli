@@ -25,7 +25,7 @@ async function prepareReleaseFiles() {
   }
 
   await $`bun install`
-  await $`./packages/sdk/js/script/build.ts`
+  await $`bun run ./packages/sdk/js/script/build.ts`
 }
 
 if (Script.release && !Script.preview) {

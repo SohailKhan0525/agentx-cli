@@ -2,7 +2,7 @@
   "name": "agentx",
   "displayName": "agentx",
   "description": "agentx for VS Code",
-  "version": "1.17.8",
+  "version": "0.0.0-release-202606191845",
   "publisher": "sst-dev",
   "repository": {
     "type": "git",

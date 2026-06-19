@@ -1,10 +1,9 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "version": "1.17.8",
-    "name": "agentx-cli",
+    "version": "0.0.0-release-202606191845",
+    "name": "@qofeno/agentx-cli",
     "type": "module",
     "license": "MIT",
-    "private": true,
     "scripts": {
         "typecheck": "tsgo --noEmit",
         "test": "bun test --timeout 30000 --only-failures",
