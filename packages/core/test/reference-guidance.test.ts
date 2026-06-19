@@ -1,10 +1,10 @@
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { AbsolutePath } from "@opencode-ai/core/schema"
-import { PluginBoot } from "@opencode-ai/core/plugin/boot"
-import { Reference } from "@opencode-ai/core/reference"
-import { ReferenceGuidance } from "@opencode-ai/core/reference/guidance"
-import { SystemContext } from "@opencode-ai/core/system-context/index"
+import { AbsolutePath } from "@agentx-cli/core/schema"
+import { PluginBoot } from "@agentx-cli/core/plugin/boot"
+import { Reference } from "@agentx-cli/core/reference"
+import { ReferenceGuidance } from "@agentx-cli/core/reference/guidance"
+import { SystemContext } from "@agentx-cli/core/system-context/index"
 import { it } from "./lib/effect"
 
 describe("ReferenceGuidance", () => {

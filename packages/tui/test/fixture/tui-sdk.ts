@@ -1,7 +1,7 @@
-import type { GlobalEvent } from "@opencode-ai/sdk/v2"
+import type { GlobalEvent } from "@agentx-cli/sdk/v2"
 import type { EventSource } from "../../src/context/sdk"
 
-export const worktree = "/tmp/opencode"
+export const worktree = "/tmp/agentx"
 export const directory = `${worktree}/packages/tui`
 
 export function json(data: unknown, init?: ResponseInit) {

@@ -1,6 +1,6 @@
-import { Location } from "@opencode-ai/core/location"
-import { Project } from "@opencode-ai/core/project"
-import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Location } from "@agentx-cli/core/location"
+import { Project } from "@agentx-cli/core/project"
+import { AbsolutePath } from "@agentx-cli/core/schema"
 
 export function location(ref: Location.Ref, input: { projectDirectory?: AbsolutePath; vcs?: Project.Vcs } = {}) {
   return {

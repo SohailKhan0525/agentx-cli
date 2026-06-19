@@ -1,5 +1,5 @@
-import { Integration } from "@opencode-ai/core/integration"
-import { Location } from "@opencode-ai/core/location"
+import { Integration } from "@agentx-cli/core/integration"
+import { Location } from "@agentx-cli/core/location"
 import { Schema } from "effect"
 import { HttpApiEndpoint, HttpApiGroup, HttpApiSchema, OpenApi } from "effect/unstable/httpapi"
 import { InvalidRequestError } from "../errors"

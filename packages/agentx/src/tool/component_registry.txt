@@ -1,0 +1,2 @@
+Search and retrieve premium UI components from the local component registry.
+Use this tool to find and retrieve components when building websites. You can search for components by category or query, and retrieve the full raw code and dependencies for a component.

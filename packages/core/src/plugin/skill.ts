@@ -6,9 +6,9 @@ import { Effect } from "effect"
 import { PluginV2 } from "../plugin"
 import { AbsolutePath } from "../schema"
 import { SkillV2 } from "../skill"
-import customizeOpencodeContent from "./skill/customize-opencode.md" with { type: "text" }
+import customizeAgentXContent from "./skill/customize-agentx.md" with { type: "text" }
 
-export const CustomizeOpencodeContent = customizeOpencodeContent
+export const CustomizeAgentXContent = customizeAgentXContent
 
 export const Plugin = PluginV2.define({
   id: PluginV2.ID.make("skill"),
@@ -21,11 +21,11 @@ export const Plugin = PluginV2.define({
         new SkillV2.EmbeddedSource({
           type: "embedded",
           skill: new SkillV2.Info({
-            name: "customize-opencode",
+            name: "customize-agentx",
             description:
-              "Use ONLY when the user is editing or creating opencode's own configuration: opencode.json, opencode.jsonc, files under .opencode/, or files under ~/.config/opencode/. Also use when creating or fixing opencode agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring opencode itself.",
-            location: AbsolutePath.make("/builtin/customize-opencode.md"),
-            content: CustomizeOpencodeContent,
+              "Use ONLY when the user is editing or creating agentx's own configuration: agentx.json, agentx.jsonc, files under .agentx/, or files under ~/.config/agentx/. Also use when creating or fixing agentx agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring agentx itself.",
+            location: AbsolutePath.make("/builtin/customize-agentx.md"),
+            content: CustomizeAgentXContent,
           }),
         }),
       )

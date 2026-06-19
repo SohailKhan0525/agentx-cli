@@ -1,8 +1,8 @@
-import { Location } from "@opencode-ai/core/location"
-import { LocationServiceMap } from "@opencode-ai/core/location-layer"
-import { FileSystem } from "@opencode-ai/core/filesystem"
-import { AbsolutePath } from "@opencode-ai/core/schema"
-import { WorkspaceV2 } from "@opencode-ai/core/workspace"
+import { Location } from "@agentx-cli/core/location"
+import { LocationServiceMap } from "@agentx-cli/core/location-layer"
+import { FileSystem } from "@agentx-cli/core/filesystem"
+import { AbsolutePath } from "@agentx-cli/core/schema"
+import { WorkspaceV2 } from "@agentx-cli/core/workspace"
 import { Effect, Layer, Schema } from "effect"
 import { HttpServerRequest } from "effect/unstable/http"
 import { HttpApiEndpoint, HttpApiGroup, HttpApiMiddleware, OpenApi } from "effect/unstable/httpapi"
@@ -52,7 +52,7 @@ export class LocationMiddleware extends HttpApiMiddleware.Service<
   {
     provides: LocationServices
   }
->()("@opencode/HttpApiLocation") {}
+>()("@agentx/HttpApiLocation") {}
 
 export const LocationGroup = HttpApiGroup.make("server.location")
   .add(
@@ -73,10 +73,10 @@ export const LocationGroup = HttpApiGroup.make("server.location")
 
 function ref(request: HttpServerRequest.HttpServerRequest): Location.Ref {
   const query = new URL(request.url, "http://localhost").searchParams
-  const workspaceID = query.get("location[workspace]") || request.headers["x-opencode-workspace"]
+  const workspaceID = query.get("location[workspace]") || request.headers["x-agentx-workspace"]
   const directory =
     query.get("location[directory]") ||
-    (request.headers["x-opencode-directory"] ? decode(request.headers["x-opencode-directory"]) : process.cwd())
+    (request.headers["x-agentx-directory"] ? decode(request.headers["x-agentx-directory"]) : process.cwd())
   return Location.Ref.make({
     directory: AbsolutePath.make(directory),
     workspaceID: workspaceID ? WorkspaceV2.ID.make(workspaceID) : undefined,

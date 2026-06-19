@@ -1,6 +1,6 @@
-import { Database } from "@opencode-ai/core/database/database"
-import { EventV2 } from "@opencode-ai/core/event"
-import { LocationServiceMap } from "@opencode-ai/core/location-layer"
+import { Database } from "@agentx-cli/core/database/database"
+import { EventV2 } from "@agentx-cli/core/event"
+import { LocationServiceMap } from "@agentx-cli/core/location-layer"
 import { FetchHttpClient, HttpRouter, HttpServer } from "effect/unstable/http"
 import { HttpApiBuilder } from "effect/unstable/httpapi"
 import { Layer, Option } from "effect"
@@ -19,7 +19,7 @@ export function createRoutes(password?: string) {
     Layer.provide(schemaErrorLayer),
     Layer.provide(
       password
-        ? ServerAuth.Config.layer({ username: "opencode", password: Option.some(password) })
+        ? ServerAuth.Config.layer({ username: "agentx", password: Option.some(password) })
         : ServerAuth.Config.defaultLayer,
     ),
     Layer.provide(LocationServiceMap.layer),

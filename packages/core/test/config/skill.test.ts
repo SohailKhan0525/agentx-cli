@@ -1,12 +1,12 @@
 import path from "path"
 import { describe, expect } from "bun:test"
 import { Effect, Layer, Schema } from "effect"
-import { Config } from "@opencode-ai/core/config"
-import { ConfigSkillPlugin } from "@opencode-ai/core/config/plugin/skill"
-import { Global } from "@opencode-ai/core/global"
-import { Location } from "@opencode-ai/core/location"
-import { AbsolutePath } from "@opencode-ai/core/schema"
-import { SkillV2 } from "@opencode-ai/core/skill"
+import { Config } from "@agentx-cli/core/config"
+import { ConfigSkillPlugin } from "@agentx-cli/core/config/plugin/skill"
+import { Global } from "@agentx-cli/core/global"
+import { Location } from "@agentx-cli/core/location"
+import { AbsolutePath } from "@agentx-cli/core/schema"
+import { SkillV2 } from "@agentx-cli/core/skill"
 import { location } from "../fixture/location"
 import { testEffect } from "../lib/effect"
 
@@ -33,7 +33,7 @@ describe("ConfigSkillPlugin.Plugin", () => {
           Config.Service.of({
             entries: () =>
               Effect.succeed([
-                new Config.Directory({ type: "directory", path: AbsolutePath.make("/repo/.opencode") }),
+                new Config.Directory({ type: "directory", path: AbsolutePath.make("/repo/.agentx") }),
                 new Config.Document({
                   type: "document",
                   info: decode({
@@ -58,11 +58,11 @@ describe("ConfigSkillPlugin.Plugin", () => {
       expect(sources).toEqual([
         new SkillV2.DirectorySource({
           type: "directory",
-          path: AbsolutePath.make(path.join("/repo/.opencode", "skill")),
+          path: AbsolutePath.make(path.join("/repo/.agentx", "skill")),
         }),
         new SkillV2.DirectorySource({
           type: "directory",
-          path: AbsolutePath.make(path.join("/repo/.opencode", "skills")),
+          path: AbsolutePath.make(path.join("/repo/.agentx", "skills")),
         }),
         new SkillV2.DirectorySource({ type: "directory", path: AbsolutePath.make(path.join(directory, "skills")) }),
         new SkillV2.DirectorySource({

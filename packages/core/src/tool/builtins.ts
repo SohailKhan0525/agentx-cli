@@ -14,6 +14,7 @@ import { TodoWriteTool } from "./todowrite"
 import { WebFetchTool } from "./webfetch"
 import { WebSearchTool } from "./websearch"
 import { WriteTool } from "./write"
+import { ComponentRegistryTool } from "./component-registry"
 
 /**
  * Composes only the shipped Location-scoped built-in tool transforms.
@@ -31,6 +32,7 @@ import { WriteTool } from "./write"
 export const locationLayer = Layer.mergeAll(
   ApplyPatchTool.layer,
   BashTool.layer,
+  ComponentRegistryTool.layer,
   EditTool.layer,
   GlobTool.layer,
   GrepTool.layer,
