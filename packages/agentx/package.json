@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "version": "0.0.0-main-202606200925",
+    "version": "1.2.1",
     "name": "@agent-qofeno/agentx-cli",
     "type": "module",
     "license": "MIT",
