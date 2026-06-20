@@ -14,6 +14,7 @@ const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, "package.jso
 const platformMap = {
   darwin: "darwin",
   linux: "linux",
+  android: "linux",
   win32: "windows",
 }
 const archMap = {
@@ -77,6 +78,7 @@ function supportsAvx2() {
 }
 
 function isMusl() {
+  if (os.platform() === "android") return true
   if (platform !== "linux") return false
 
   try {

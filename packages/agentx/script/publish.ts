@@ -43,6 +43,7 @@ await Bun.file(`./dist/${pkg.name}/README.md`).write(await Bun.file("../../READM
 await Bun.file(`./dist/${pkg.name}/qofeno.png`).write(await Bun.file("../../qofeno.png").arrayBuffer())
 await Bun.file(`./dist/${pkg.name}/bin/agentx.exe`).write(
   [
+    `#!/bin/sh`,
     `echo "Error: ${pkg.name}'s postinstall script was not run." >&2`,
     'echo "" >&2',
     'echo "This occurs when using --ignore-scripts during installation, or when using a" >&2',
@@ -80,6 +81,8 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
 
 for (const [name, version] of Object.entries(binaries)) {
   await publish(`./dist/${name}`, name, version)
+  // Wait 10 seconds between publishes to avoid NPM 409 packument processing conflicts
+  await new Promise(resolve => setTimeout(resolve, 10000))
 }
 await publish(`./dist/${pkg.name}`, pkg.name, version)
 

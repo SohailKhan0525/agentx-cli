@@ -1,13 +1,9 @@
 import type { JsonSchema, LLMRequest, ProviderMetadata } from "@agentx-cli/llm"
 import { LLM, Message, SystemPart, ToolCallPart, ToolDefinition, ToolResultPart } from "@agentx-cli/llm"
 import {
-  AmazonBedrock,
   Anthropic,
-  Azure,
   Google,
   OpenAI,
-  OpenAICompatible,
-  OpenRouter,
 } from "@agentx-cli/llm/providers"
 import type { ModelMessage } from "ai"
 import type { Provider } from "@/provider/provider"
@@ -163,18 +159,8 @@ export const model = (input: Provider.Model | RequestInput, headers?: Record<str
     },
   }
   if (model.api.npm === "@ai-sdk/openai") return OpenAI.configure(options).responses(model.api.id)
-  if (model.api.npm === "@ai-sdk/azure")
-    return Azure.configure({ ...options, baseURL: requireBaseURL(model, url) }).responses(model.api.id)
   if (model.api.npm === "@ai-sdk/anthropic") return Anthropic.configure(options).model(model.api.id)
   if (model.api.npm === "@ai-sdk/google") return Google.configure(options).model(model.api.id)
-  if (model.api.npm === "@ai-sdk/amazon-bedrock") return AmazonBedrock.configure(options).model(model.api.id)
-  if (model.api.npm === "@ai-sdk/openai-compatible")
-    return OpenAICompatible.configure({
-      ...options,
-      provider: String(model.providerID),
-      baseURL: requireBaseURL(model, url),
-    }).model(model.api.id)
-  if (model.api.npm === "@openrouter/ai-sdk-provider") return OpenRouter.configure(options).model(model.api.id)
   throw new Error(`Native LLM request adapter does not support provider package ${model.api.npm}`)
 }
 
