@@ -78,11 +78,9 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
   ),
 )
 
-const tasks = Object.entries(binaries).map(async ([name]) => {
-  // name is the scoped name, e.g. @qofeno/agentx-cli-windows-x64
-  await publish(`./dist/${name}`, name, binaries[name])
-})
-await Promise.all(tasks)
+for (const [name, version] of Object.entries(binaries)) {
+  await publish(`./dist/${name}`, name, version)
+}
 await publish(`./dist/${pkg.name}`, pkg.name, version)
 
 const image = "ghcr.io/anomalyco/agentx"
