@@ -77,7 +77,7 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
 )
 
 const tasks = Object.entries(binaries).map(async ([name]) => {
-  // name is the scoped name, e.g. @qofeno/agentx-cli-windows-x64
+  // name is the scoped name, e.g. @agent-qofeno/agentx-cli-windows-x64
   await publish(`./dist/${name}`, name, binaries[name])
 })
 await Promise.all(tasks)

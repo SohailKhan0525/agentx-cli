@@ -3,7 +3,7 @@
   <h1>AgentX CLI</h1>
   <p><strong>A powerful, CLI-based AI Coding Assistant that runs locally on your machine.</strong></p>
 
-  [![npm version](https://img.shields.io/npm/v/@qofeno/agentx-cli.svg)](https://www.npmjs.com/package/@qofeno/agentx-cli)
+  [![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli.svg)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
   [![License](https://img.shields.io/github/license/SohailKhan0525/agentx-cli)](https://github.com/SohailKhan0525/agentx-cli/blob/dev/LICENSE)
   [![GitHub stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli.svg?style=social&label=Star)](https://github.com/SohailKhan0525/agentx-cli)
 </div>
@@ -33,7 +33,7 @@ We support the best modern AI providers:
 AgentX is distributed as an npm package. You can install it globally on your machine:
 
 ```bash
-npm install -g @qofeno/agentx-cli
+npm install -g @agent-qofeno/agentx-cli
 ```
 
 ### Usage
@@ -51,7 +51,7 @@ The CLI will launch with a beautiful neon-green interactive TUI (Terminal User I
 - **[Report a Bug / Open an Issue](https://github.com/SohailKhan0525/agentx-cli/issues)** - Found a problem? Let us know!
 - **[Request a Feature](https://github.com/SohailKhan0525/agentx-cli/issues)** - Have a great idea? We'd love to hear it.
 - **[GitHub Repository](https://github.com/SohailKhan0525/agentx-cli)** - Explore the source code.
-- **[NPM Package](https://www.npmjs.com/package/@qofeno/agentx-cli)** - View our release history and package details.
+- **[NPM Package](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)** - View our release history and package details.
 
 ## ☕ Support the Project
 
