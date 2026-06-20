@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/packages/ui/src/assets/favicon/android-chrome-512x512.png" alt="AgentX Logo" width="120" />
+  <img src="qofeno.png" alt="AgentX Logo" width="120" />
   <h1>AgentX CLI</h1>
   <p><strong>The ultimate CLI-based AI Coding Assistant that runs locally on your machine.</strong></p>
 
@@ -83,7 +83,7 @@ Developing and maintaining an open-source AI agent takes a lot of time and effor
 
 Your support helps cover API costs, hosting, and dedicated development time to make AgentX even better.
 
-👉 **[Support AgentX via PayPal](https://paypal.me/YOUR_PAYPAL_LINK_HERE)**
+👉 **[Support AgentX via PayPal](https://www.paypal.com/ncp/payment/2S4RFSM7YYXSJ)**
 
 *And don't forget to **[Star us on GitHub](https://github.com/SohailKhan0525/agentx-cli)** to help others find this project!*
 
