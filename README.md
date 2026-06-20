@@ -76,9 +76,7 @@ Developing and maintaining an open-source AI agent takes a lot of time and effor
 
 Your support helps cover API costs, hosting, and dedicated development time to make AgentX even better.
 
-👉 **[Click Here to Donate via PayPal](https://sohailkhan0525.github.io/agentx-cli/donate.html)**
-
-*(Alternatively, if you cloned the repo locally, you can open the `donate.html` file in your browser!)*
+👉 **[Support AgentX via PayPal](https://paypal.me/YOUR_PAYPAL_LINK_HERE)**
 
 *And don't forget to **[Star us on GitHub](https://github.com/SohailKhan0525/agentx-cli)** to help others find this project!*
 
