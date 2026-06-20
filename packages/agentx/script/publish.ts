@@ -51,9 +51,7 @@ await Bun.file(`./dist/${pkg.name}/package.json`).write(
         ["agentx"]: `./bin/agentx.exe`,
       },
       version: version,
-      license: pkg.license,
-      os: ["win32"],
-      cpu: ["x64"],
+      license: pkg.license
     },
     null,
     2,
