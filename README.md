@@ -14,6 +14,13 @@
 
 ---
 
+## 🆕 What's New
+- **Unified Windows Package**: We completely overhauled the build system to remove architecture-specific sub-packages. AgentX is now distributed as a single, lightweight NPM package!
+- **Sleek Architecture**: Unnecessary folders and files have been completely stripped, resulting in a cleaner and faster CLI experience.
+- **Support Links**: We switched to PayPal for donations to support continuous development.
+
+---
+
 ## 🌟 What is AgentX?
 
 AgentX is an intelligent, pure CLI-based coding assistant built to superpower your development workflow. It lives entirely in your terminal, meaning you don't need to switch contexts or leave your IDE's integrated terminal to get AI-powered coding help.
