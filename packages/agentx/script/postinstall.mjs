@@ -27,7 +27,7 @@ const platform = platformMap[os.platform()] ?? os.platform()
 const arch = archMap[os.arch()] ?? os.arch()
 const base = `${packageJson.name}-${platform}-${arch}`
 const sourceBinary = platform === "windows" ? "agentx.exe" : "agentx"
-const targetBinary = path.join(__dirname, "bin", "agentx.exe")
+const targetBinary = path.join(__dirname, ".agentx")
 
 function supportsAvx2() {
   if (arch !== "x64") return false
