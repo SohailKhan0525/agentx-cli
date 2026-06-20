@@ -39,6 +39,8 @@ await $`mkdir -p ./dist/${pkg.name}`
 await $`mkdir -p ./dist/${pkg.name}/bin`
 await $`cp ./dist/${pkg.name}-windows-x64/bin/agentx.exe ./dist/${pkg.name}/bin/agentx.exe`
 await Bun.file(`./dist/${pkg.name}/LICENSE`).write(await Bun.file("../../LICENSE").text())
+await Bun.file(`./dist/${pkg.name}/README.md`).write(await Bun.file("../../README.md").text())
+await Bun.file(`./dist/${pkg.name}/qofeno.png`).write(await Bun.file("../../qofeno.png").arrayBuffer())
 // We no longer need the postinstall script stub since the real binary is bundled.
 
 await Bun.file(`./dist/${pkg.name}/package.json`).write(
