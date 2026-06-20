@@ -1,6 +1,6 @@
 {
   "name": "@agentx-cli/function",
-  "version": "0.0.0-release-202606191845",
+  "version": "0.0.0-release-202606191916",
   "$schema": "https://json.schemastore.org/package.json",
   "private": true,
   "type": "module",
