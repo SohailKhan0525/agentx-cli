@@ -52,22 +52,17 @@ await Bun.build({
   },
 })
 
-// Rename index.js to agentx.js
-if (fs.existsSync("dist/index.js")) {
-  fs.renameSync("dist/index.js", "dist/agentx.js")
-}
-
-// Patch agentx.js to use absolute paths for native modules
-const agentxJsPath = "dist/agentx.js"
-if (fs.existsSync(agentxJsPath)) {
-  let code = fs.readFileSync(agentxJsPath, "utf8")
+// Patch the bundle to use absolute paths for native modules
+const bundlePath = "dist/src/index.js"
+if (fs.existsSync(bundlePath)) {
+  let code = fs.readFileSync(bundlePath, "utf8")
   // Replace: fv1.exports="../opentui-c5en9p2g.dll"
-  // With:    fv1.exports=require("path").join(import.meta.dir, "opentui-c5en9p2g.dll")
+  // With:    fv1.exports=import.meta.dir + "/../opentui-c5en9p2g.dll"
   code = code.replace(
     /([a-zA-Z0-9_]+)\.exports="\.\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
-    `$1.exports=require("path").join(import.meta.dir, "$2")`
+    `$1.exports=import.meta.dir + "/../$2"`
   )
-  fs.writeFileSync(agentxJsPath, code)
+  fs.writeFileSync(bundlePath, code)
 }
 
 console.log("build completed successfully!")
