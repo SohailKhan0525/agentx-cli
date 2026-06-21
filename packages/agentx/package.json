@@ -16,7 +16,7 @@
         "postinstall": "node script/postinstall.cjs"
     },
     "bin": {
-        "agentx": "./bin/agentx"
+        "agentx": "./bin/agentx.js"
     },
     "files": [
         "dist",
