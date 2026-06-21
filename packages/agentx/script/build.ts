@@ -57,11 +57,11 @@ fs.copyFileSync(parserWorker, "dist/parser.worker.js")
 const bundlePath = "dist/index.js"
 if (fs.existsSync(bundlePath)) {
   let code = fs.readFileSync(bundlePath, "utf8")
-  // Replace: fv1.exports="../opentui-c5en9p2g.dll"
-  // With:    fv1.exports=import.meta.dir + "/../opentui-c5en9p2g.dll"
+  // Replace: fv1.exports="./opentui-c5en9p2g.dll"
+  // With:    fv1.exports=import.meta.dir + "/opentui-c5en9p2g.dll"
   code = code.replace(
-    /([a-zA-Z0-9_]+)\.exports="\.\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
-    `$1.exports=import.meta.dir + "/../$2"`
+    /([a-zA-Z0-9_]+)\.exports="\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
+    `$1.exports=import.meta.dir + "/$2"`
   )
   fs.writeFileSync(bundlePath, code)
 }
