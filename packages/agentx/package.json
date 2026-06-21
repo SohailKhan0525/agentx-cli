@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "version": "1.20.4",
+    "version": "1.20.7",
     "name": "@agent-qofeno/agentx-cli",
     "type": "module",
     "license": "MIT",
@@ -13,7 +13,7 @@
         "build": "bun run script/build.ts",
         "dev": "bun run --conditions=browser ./src/index.ts",
         "dev:temporary": "bun run --conditions=browser ./src/temporary.ts",
-        "postinstall": "node script/postinstall.js"
+        "postinstall": "node script/postinstall.cjs"
     },
     "bin": {
         "agentx": "./bin/agentx"
@@ -22,7 +22,8 @@
         "dist",
         "bin",
         "README.md",
-        "package.json"
+        "package.json",
+        "script"
     ],
     "exports": {
         "./*": "./src/*.ts"
