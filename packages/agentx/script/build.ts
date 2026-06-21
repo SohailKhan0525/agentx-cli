@@ -15,210 +15,47 @@ process.chdir(dir)
 const generated = await import("./generate.ts")
 
 import { Script } from "@agentx-cli/script"
-import pkg from "../package.json"
 
-const singleFlag = process.argv.includes("--single")
-const baselineFlag = process.argv.includes("--baseline")
-const skipInstall = process.argv.includes("--skip-install")
 const sourcemapsFlag = process.argv.includes("--sourcemaps")
 const plugin = createSolidTransformPlugin()
-const skipEmbedWebUi = process.argv.includes("--skip-embed-web-ui")
-
-const embeddedFileMap = null;
-
-const allTargets: {
-  os: string
-  arch: "arm64" | "x64"
-  abi?: "musl"
-  avx2?: false
-}[] = [
-  {
-    os: "linux",
-    arch: "arm64",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    avx2: false,
-  },
-  {
-    os: "linux",
-    arch: "arm64",
-    abi: "musl",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    abi: "musl",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    abi: "musl",
-    avx2: false,
-  },
-  {
-    os: "darwin",
-    arch: "arm64",
-  },
-  {
-    os: "darwin",
-    arch: "x64",
-  },
-  {
-    os: "darwin",
-    arch: "x64",
-    avx2: false,
-  },
-  {
-    os: "win32",
-    arch: "arm64",
-  },
-  {
-    os: "win32",
-    arch: "x64",
-  },
-  {
-    os: "win32",
-    arch: "x64",
-    avx2: false,
-  },
-]
-
-const targets = singleFlag
-  ? allTargets.filter((item) => {
-      if (item.os !== process.platform || item.arch !== process.arch) {
-        return false
-      }
-
-      // When building for the current platform, prefer a single native binary by default.
-      // Baseline binaries require additional Bun artifacts and can be flaky to download.
-      if (item.avx2 === false) {
-        return baselineFlag
-      }
-
-      // also skip abi-specific builds for the same reason
-      if (item.abi !== undefined) {
-        return false
-      }
-
-      return true
-    })
-  : allTargets
 
 await $`rm -rf dist`
+await $`mkdir -p dist`
 
-const binaries: Record<string, string> = {}
-if (!skipInstall) {
-  await $`bun install --os="*" --cpu="*" @opentui/core@${pkg.dependencies["@opentui/core"]}`
-  await $`bun install --os="*" --cpu="*" @parcel/watcher@${pkg.dependencies["@parcel/watcher"]}`
-  await $`bun install --os="*" --cpu="*" @ff-labs/fff-bun@${pkg.dependencies["@ff-labs/fff-bun"]}`
-}
-for (const item of targets) {
-  const name = [
-    pkg.name,
-    // changing to win32 flags npm for some reason
-    item.os === "win32" ? "windows" : item.os,
-    item.arch,
-    item.avx2 === false ? "baseline" : undefined,
-    item.abi === undefined ? undefined : item.abi,
-  ]
-    .filter(Boolean)
-    .join("-")
-  console.log(`building ${name}`)
-  await $`mkdir -p dist/${name}/bin`
+console.log("building cross-platform js bundle")
 
-  const localPath = path.resolve(dir, "node_modules/@opentui/core/parser.worker.js")
-  const rootPath = path.resolve(dir, "../../node_modules/@opentui/core/parser.worker.js")
-  const parserWorker = fs.realpathSync(fs.existsSync(localPath) ? localPath : rootPath)
-  const workerPath = "./src/cli/tui/worker.ts"
+const localPath = path.resolve(dir, "node_modules/@opentui/core/parser.worker.js")
+const rootPath = path.resolve(dir, "../../node_modules/@opentui/core/parser.worker.js")
+const parserWorker = fs.realpathSync(fs.existsSync(localPath) ? localPath : rootPath)
+const workerPath = "./src/cli/tui/worker.ts"
 
-  // Use platform-specific bunfs root path based on target OS
-  const bunfsRoot = item.os === "win32" ? "B:/~BUN/root/" : "/$bunfs/root/"
-  const workerRelativePath = path.relative(dir, parserWorker).replaceAll("\\", "/")
+// Use a generic bunfs root for worker
+const bunfsRoot = "/$bunfs/root/"
+const workerRelativePath = path.relative(dir, parserWorker).replaceAll("\\", "/")
 
-  await Bun.build({
-    conditions: ["bun", "node"],
-    tsconfig: "./tsconfig.json",
-    plugins: [plugin],
-    external: ["node-gyp"],
-    format: "esm",
-    minify: true,
-    sourcemap: sourcemapsFlag ? "linked" : "none",
-    splitting: true,
-    compile: {
-      autoloadBunfig: false,
-      autoloadDotenv: false,
-      autoloadTsconfig: true,
-      autoloadPackageJson: true,
-      target: name.replace(pkg.name, "bun") as any,
-      outfile: `dist/${name}/bin/agentx`,
-      execArgv: [`--user-agent=agentx/${Script.version}`, "--use-system-ca", "--"],
-      windows: {},
-    },
-    files: embeddedFileMap ? { "agentx-web-ui.gen.ts": embeddedFileMap } : {},
-    entrypoints: ["./src/index.ts", parserWorker, workerPath, ...(embeddedFileMap ? ["agentx-web-ui.gen.ts"] : [])],
-    define: {
-      FFF_LIBC: JSON.stringify(item.abi === "musl" ? "musl" : "gnu"),
-      AGENTX_VERSION: `'${Script.version}'`,
-      AGENTX_MODELS_DEV: generated.modelsData,
-      OTUI_TREE_SITTER_WORKER_PATH: bunfsRoot + workerRelativePath,
-      AGENTX_WORKER_PATH: workerPath,
-      AGENTX_CHANNEL: `'${Script.channel}'`,
-      AGENTX_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
-      ...(item.os === "linux" ? { "process.env.OPENTUI_LIBC": JSON.stringify(item.abi ?? "glibc") } : {}),
-    },
-  })
+await Bun.build({
+  target: "bun",
+  tsconfig: "./tsconfig.json",
+  plugins: [plugin],
+  external: ["node-gyp"],
+  format: "esm",
+  minify: true,
+  sourcemap: sourcemapsFlag ? "linked" : "none",
+  outdir: "dist",
+  entrypoints: ["./src/index.ts", parserWorker, workerPath],
+  define: {
+    AGENTX_VERSION: `'${Script.version}'`,
+    AGENTX_MODELS_DEV: generated.modelsData,
+    OTUI_TREE_SITTER_WORKER_PATH: JSON.stringify(bunfsRoot + workerRelativePath),
+    AGENTX_WORKER_PATH: JSON.stringify(workerPath),
+    AGENTX_CHANNEL: `'${Script.channel}'`,
+  },
+})
 
-  // Smoke test: only run if binary is for current platform
-  if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = `dist/${name}/bin/agentx`
-    console.log(`Running smoke test: ${binaryPath} --version`)
-    try {
-      const versionOutput = await $`${binaryPath} --version`.text()
-      console.log(`Smoke test passed: ${versionOutput.trim()}`)
-    } catch (e) {
-      console.error(`Smoke test failed for ${name}:`, e)
-      process.exit(1)
-    }
-  }
-
-  await $`rm -rf ./dist/${name}/bin/tui`
-  await Bun.file(`dist/${name}/package.json`).write(
-    JSON.stringify(
-      {
-        name,
-        version: Script.version,
-        preferUnplugged: true,
-        os: [item.os],
-        cpu: [item.arch],
-        ...(item.abi ? { libc: [item.abi] } : {}),
-      },
-      null,
-      2,
-    ),
-  )
-  binaries[name] = Script.version
+// Rename index.js to agentx.js
+if (fs.existsSync("dist/index.js")) {
+  fs.renameSync("dist/index.js", "dist/agentx.js")
 }
 
-if (Script.release) {
-  for (const key of Object.keys(binaries)) {
-    const filename = key.replace("@agent-qofeno/agentx-cli-", "agentx-")
-    if (key.includes("linux")) {
-      await $`tar -czf ../../${filename}.tar.gz *`.cwd(`dist/${key}/bin`)
-    } else {
-      await $`tar -a -c -f ../../${filename}.zip *`.cwd(`dist/${key}/bin`)
-    }
-  }
-  try {
-    await $`gh release upload v${Script.version} ./dist/*.zip ./dist/*.tar.gz --clobber --repo ${process.env.GH_REPO}`
-  } catch (error) {
-    console.error("Failed to upload release to GitHub. Make sure 'gh' CLI is authenticated.", error)
-  }
-}
+console.log("build completed successfully!")
 
-export { binaries }
