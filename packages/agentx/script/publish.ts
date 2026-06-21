@@ -19,9 +19,9 @@ async function publish(dir: string, name: string, version: string) {
   }
   await $`bun pm pack`.cwd(dir)
   if (process.env.NPM_OTP) {
-    await $`npm publish *.tgz --access public --tag ${Script.channel} --otp=${process.env.NPM_OTP}`.cwd(dir)
+    await $`npm publish --access public --tag ${Script.channel} --otp=${process.env.NPM_OTP}`.cwd(dir)
   } else {
-    await $`npm publish *.tgz --access public --tag ${Script.channel}`.cwd(dir)
+    await $`npm publish --access public --tag ${Script.channel}`.cwd(dir)
   }
 }
 
