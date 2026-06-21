@@ -100,7 +100,7 @@ try {
   if (formatted) UI.error(formatted)
   if (formatted === undefined) {
     UI.error("Unexpected error" + EOL)
-    process.stderr.write(errorMessage(e) + EOL)
+    console.error(e)
   }
   process.exitCode = 1
 } finally {

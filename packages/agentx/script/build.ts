@@ -57,5 +57,18 @@ if (fs.existsSync("dist/index.js")) {
   fs.renameSync("dist/index.js", "dist/agentx.js")
 }
 
+// Patch agentx.js to use absolute paths for native modules
+const agentxJsPath = "dist/agentx.js"
+if (fs.existsSync(agentxJsPath)) {
+  let code = fs.readFileSync(agentxJsPath, "utf8")
+  // Replace: fv1.exports="../opentui-c5en9p2g.dll"
+  // With:    fv1.exports=require("path").join(import.meta.dir, "opentui-c5en9p2g.dll")
+  code = code.replace(
+    /([a-zA-Z0-9_]+)\.exports="\.\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
+    `$1.exports=require("path").join(import.meta.dir, "$2")`
+  )
+  fs.writeFileSync(agentxJsPath, code)
+}
+
 console.log("build completed successfully!")
 

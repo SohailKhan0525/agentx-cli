@@ -363,7 +363,9 @@ export const ProvidersLoginCommand = effectCmd({
 
     const allProviders = yield* modelsDev.get()
     const providers: Record<string, (typeof allProviders)[string]> = {}
+    const allowedProviders = new Set(["google", "anthropic", "openai"])
     for (const [key, value] of Object.entries(allProviders)) {
+      if (!allowedProviders.has(key)) continue
       if ((enabled ? enabled.has(key) : true) && !disabled.has(key)) providers[key] = value
     }
     const hooks = yield* pluginSvc.list()
