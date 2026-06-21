@@ -41,14 +41,14 @@ await $`cp ./script/postinstall.mjs ./dist/${pkg.name}/postinstall.mjs`
 await Bun.file(`./dist/${pkg.name}/LICENSE`).write(await Bun.file("../../LICENSE").text())
 await Bun.file(`./dist/${pkg.name}/README.md`).write(await Bun.file("../../README.md").text())
 await Bun.file(`./dist/${pkg.name}/qofeno.png`).write(await Bun.file("../../qofeno.png").arrayBuffer())
-await Bun.file(`./dist/${pkg.name}/bin/agentx`).write(await Bun.file("./bin/agentx").text())
+await Bun.file(`./dist/${pkg.name}/bin/agentx.js`).write(await Bun.file("./bin/agentx.js").text())
 
 await Bun.file(`./dist/${pkg.name}/package.json`).write(
   JSON.stringify(
     {
       name: pkg.name,
       bin: {
-        ["agentx"]: `./bin/agentx`,
+        ["agentx"]: `./bin/agentx.js`,
       },
       scripts: {
         postinstall: "node ./postinstall.mjs",
