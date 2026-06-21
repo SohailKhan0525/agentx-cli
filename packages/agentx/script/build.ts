@@ -44,8 +44,6 @@ const res = await Bun.build({
   define: {
     AGENTX_VERSION: `'${Script.version}'`,
     AGENTX_MODELS_DEV: generated.modelsData,
-    OTUI_TREE_SITTER_WORKER_PATH: 'import.meta.dir + "/parser.worker.js"',
-    AGENTX_WORKER_PATH: 'import.meta.dir + "/cli/tui/worker.js"',
     AGENTX_CHANNEL: `'${Script.channel}'`,
   },
 })
@@ -63,6 +61,14 @@ if (fs.existsSync(bundlePath)) {
     /([a-zA-Z0-9_]+)\.exports="\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
     `$1.exports=import.meta.dir + "/$2"`
   )
+  
+  // Inject globals at the top of the bundle to ensure correct path resolution
+  const globals = `
+var OTUI_TREE_SITTER_WORKER_PATH = import.meta.dir + "/parser.worker.js";
+var AGENTX_WORKER_PATH = import.meta.dir + "/cli/tui/worker.js";
+`;
+  code = globals + code;
+
   fs.writeFileSync(bundlePath, code)
 }
 
