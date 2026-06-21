@@ -1,6 +1,6 @@
 {
     "$schema": "https://json.schemastore.org/package.json",
-    "version": "1.20.7",
+    "version": "1.20.10",
     "name": "@agent-qofeno/agentx-cli",
     "type": "module",
     "license": "MIT",
@@ -16,7 +16,7 @@
         "postinstall": "node script/postinstall.cjs"
     },
     "bin": {
-        "agentx": "./bin/agentx.js"
+        "agentx": "bin/agentx.js"
     },
     "files": [
         "dist",
