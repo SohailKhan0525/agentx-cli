@@ -56,16 +56,19 @@ const bundlePath = "dist/index.js"
 if (fs.existsSync(bundlePath)) {
   let code = fs.readFileSync(bundlePath, "utf8")
   // Replace: fv1.exports="./opentui-c5en9p2g.dll"
-  // With:    fv1.exports=import.meta.dir + "/opentui-c5en9p2g.dll"
+  // With:    fv1.exports=__bundleDir + "/opentui-c5en9p2g.dll"
   code = code.replace(
     /([a-zA-Z0-9_]+)\.exports="\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
-    `$1.exports=import.meta.dir + "/$2"`
+    `$1.exports=__bundleDir + "/$2"`
   )
   
   // Inject globals at the top of the bundle to ensure correct path resolution
   const globals = `
-var OTUI_TREE_SITTER_WORKER_PATH = import.meta.dir + "/parser.worker.js";
-var AGENTX_WORKER_PATH = import.meta.dir + "/cli/tui/worker.js";
+import { fileURLToPath as __fileURLToPath } from "url";
+import { dirname as __dirnameFunc } from "path";
+var __bundleDir = __dirnameFunc(__fileURLToPath(import.meta.url));
+var OTUI_TREE_SITTER_WORKER_PATH = __bundleDir + "/parser.worker.js";
+var AGENTX_WORKER_PATH = __bundleDir + "/cli/tui/worker.js";
 `;
   code = globals + code;
 
