@@ -197,19 +197,32 @@ export const layer = Layer.effect(
     })
 
     const populate = Effect.gen(function* () {
+      let data: Record<string, Provider> | undefined = undefined
       const fromDisk = yield* loadFromDisk
-      if (fromDisk) return fromDisk
-      const snapshot = yield* loadSnapshot
-      if (snapshot) return snapshot
-      if (Flag.AGENTX_DISABLE_MODELS_FETCH) return {}
-      // Flock is cross-process: concurrent agentx CLIs can race on this cache file.
-      const text = yield* Effect.scoped(
-        Effect.gen(function* () {
-          yield* Flock.effect(lockKey)
-          return yield* fetchAndWrite()
-        }),
-      )
-      return JSON.parse(text) as Record<string, Provider>
+      if (fromDisk) data = fromDisk
+      if (!data) {
+        const snapshot = yield* loadSnapshot
+        if (snapshot) data = snapshot
+      }
+      if (!data) {
+        if (Flag.AGENTX_DISABLE_MODELS_FETCH) return {}
+        // Flock is cross-process: concurrent agentx CLIs can race on this cache file.
+        const text = yield* Effect.scoped(
+          Effect.gen(function* () {
+            yield* Flock.effect(lockKey)
+            return yield* fetchAndWrite()
+          }),
+        )
+        data = JSON.parse(text) as Record<string, Provider>
+      }
+
+      const allowed = ["google", "anthropic", "openai"]
+      for (const key of Object.keys(data)) {
+        if (!allowed.includes(key)) {
+          delete data[key]
+        }
+      }
+      return data
     }).pipe(Effect.withSpan("ModelsDev.populate"), Effect.orDie)
 
     const [cachedGet, invalidate] = yield* Effect.cachedInvalidateWithTTL(populate, Duration.infinity)

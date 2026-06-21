@@ -22,9 +22,6 @@ We support the best modern AI providers:
 - **OpenAI**
 - **Anthropic**
 - **Google**
-- **XAI**
-- **Mistral**
-- **Groq**
 
 ## 🚀 Quick Start
 

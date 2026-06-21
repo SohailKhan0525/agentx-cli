@@ -29,9 +29,6 @@ We support the best modern AI providers:
 - **OpenAI** (GPT-4o, GPT-4)
 - **Anthropic** (Claude 3.5 Sonnet, Opus)
 - **Google** (Gemini 1.5 Pro)
-- **XAI**
-- **Mistral**
-- **Groq**
 
 ## 🤔 Why use AgentX?
 
