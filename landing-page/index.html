@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AgentX - The powerful agentic AI coding assistant.">
+    <title>AgentX - AI Coding Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    
+    <nav class="navbar">
+        <div class="logo">
+            <span class="dot">•</span> Agent<span class="highlight">X</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#local">Local Models</a></li>
+            <li><a href="#docs">Documentation</a></li>
+        </ul>
+        <a href="#get-started" class="btn-primary">Get Started</a>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <div class="badge">v1.20.24 is now available</div>
+            <h1>The Ultimate <br><span class="gradient-text">AI Coding</span> Assistant</h1>
+            <p>AgentX integrates deeply into your workflow, supporting both cloud APIs and powerful <b>Local Models</b> like Ollama and LM Studio. Build, test, and publish faster than ever.</p>
+            <div class="cta-group">
+                <a href="#install" class="btn-primary large">Install AgentX</a>
+                <a href="#demo" class="btn-secondary large">View Demo</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="circle red"></span>
+                    <span class="circle yellow"></span>
+                    <span class="circle green"></span>
+                    <span class="title">AgentX - Terminal</span>
+                </div>
+                <div class="terminal-body">
+                    <p><span class="prompt">$</span> npm install -g @agent-qofeno/agentx-cli</p>
+                    <p class="success">+ @agent-qofeno/agentx-cli@1.20.24</p>
+                    <p class="success">added 48 packages in 1.2s</p>
+                    <p><br><span class="prompt">$</span> agentx run "create a modern landing page"</p>
+                    <p class="info">Analyzing request...</p>
+                    <p class="info">Selecting provider: Local Model (Llama 3)</p>
+                    <p class="success">✔ Done! Landing page created.</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="feature-card">
+            <h3>Local Model Support</h3>
+            <p>Use your own hardware. AgentX automatically detects and configures Ollama, LM Studio, and Llama.cpp.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Advanced TUI</h3>
+            <p>A beautiful Terminal UI built for speed, with robust session management and real-time streaming.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Monorepo Ready</h3>
+            <p>Built for modern codebases. Seamlessly handles large monorepos, TS, and complex build scripts.</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 AgentX CLI. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Simple micro-animation on scroll
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                if(rect.top < window.innerHeight - 100) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
