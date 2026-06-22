@@ -51,28 +51,35 @@ const res = await Bun.build({
 // Copy parser.worker.js to dist
 fs.copyFileSync(parserWorker, "dist/parser.worker.js")
 
-// Patch the bundle to use absolute paths for native modules
-const bundlePath = "dist/index.js"
-if (fs.existsSync(bundlePath)) {
-  let code = fs.readFileSync(bundlePath, "utf8")
-  // Replace: fv1.exports="./opentui-c5en9p2g.dll"
-  // With:    fv1.exports=__bundleDir + "/opentui-c5en9p2g.dll"
-  code = code.replace(
-    /([a-zA-Z0-9_]+)\.exports="\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
-    `$1.exports=__bundleDir + "/$2"`
-  )
-  
-  // Inject globals at the top of the bundle to ensure correct path resolution
-  const globals = `
+// Patch the bundles to use absolute paths for native modules
+const bundlePaths = ["dist/index.js", "dist/cli/tui/worker.js"]
+for (const bundlePath of bundlePaths) {
+  if (fs.existsSync(bundlePath)) {
+    let code = fs.readFileSync(bundlePath, "utf8")
+    
+    // For worker.js, __bundleDir needs to point to the root dist folder, not dist/cli/tui
+    const isWorker = bundlePath.endsWith("worker.js")
+    const dirDepth = isWorker ? "/../.." : ""
+    
+    // Replace: fv1.exports="./opentui-c5en9p2g.dll"
+    // With:    fv1.exports=__bundleDir + "/opentui-c5en9p2g.dll"
+    code = code.replace(
+      /([a-zA-Z0-9_]+)\.exports="\.\/(opentui-[a-zA-Z0-9_]+\.dll|libopentui-[a-zA-Z0-9_]+\.(?:so|dylib))"/g,
+      `$1.exports=__bundleDir + "/$2"`
+    )
+    
+    // Inject globals at the top of the bundle to ensure correct path resolution
+    const globals = `
 import { fileURLToPath as __fileURLToPath } from "url";
-import { dirname as __dirnameFunc } from "path";
-var __bundleDir = __dirnameFunc(__fileURLToPath(import.meta.url));
+import { dirname as __dirnameFunc, resolve as __resolveFunc } from "path";
+var __bundleDir = __resolveFunc(__dirnameFunc(__fileURLToPath(import.meta.url)) + "${dirDepth}");
 var OTUI_TREE_SITTER_WORKER_PATH = __bundleDir + "/parser.worker.js";
 var AGENTX_WORKER_PATH = __bundleDir + "/cli/tui/worker.js";
 `;
-  code = globals + code;
+    code = globals + code;
 
-  fs.writeFileSync(bundlePath, code)
+    fs.writeFileSync(bundlePath, code)
+  }
 }
 
 console.log(res.outputs.map(o => o.path))
