@@ -10,6 +10,7 @@ import { useTheme } from "../context/theme"
 import { TextAttributes } from "@opentui/core"
 import type { ProviderAuthAuthorization, ProviderAuthMethod } from "@agentx-cli/sdk/v2"
 import { DialogModel } from "./dialog-model"
+import { DialogLocal } from "./dialog-local"
 import { useToast } from "../ui/toast"
 import { isConsoleManagedProvider } from "../util/provider-origin"
 import { useConnected } from "./use-connected"
@@ -69,6 +70,13 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
     ),
     {
       type: "custom",
+      title: "Use Local Model",
+      value: "local",
+      description: "Use Ollama, LM Studio, or llama.cpp",
+      category: "Providers",
+    },
+    {
+      type: "custom",
       title: "Other",
       value: CUSTOM_PROVIDER_OPTION_VALUE,
       description: "Custom provider",
@@ -124,6 +132,9 @@ export function createDialogProviderOptions() {
             description: provider.description,
             category: provider.category,
             async onSelect() {
+              if (provider.value === "local") {
+                return dialog.replace(() => <DialogLocal />)
+              }
               const providerID = await promptCustomProviderID()
               if (!providerID) return
               return dialog.replace(() => <ApiMethod providerID={providerID} title="API key" custom />)

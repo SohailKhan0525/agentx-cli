@@ -26,6 +26,7 @@
 AgentX is an intelligent, pure CLI-based coding assistant built to superpower your development workflow. It lives entirely in your terminal, meaning you don't need to switch contexts or leave your IDE's integrated terminal to get AI-powered coding help.
 
 We support the best modern AI providers:
+- **Local Models** (Ollama, LM Studio, llama.cpp with automatic hardware-based recommendations)
 - **OpenAI** (GPT-4o, GPT-4)
 - **Anthropic** (Claude 3.5 Sonnet, Opus)
 - **Google** (Gemini 1.5 Pro)
