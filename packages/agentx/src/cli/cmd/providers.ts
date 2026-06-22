@@ -425,7 +425,7 @@ export const ProvidersLoginCommand = effectCmd({
         yield* Prompt.autocomplete({
           message: "Select provider",
           maxItems: 8,
-          options: [...options, { value: "other", label: "Other" }],
+          options: [...options, { value: "local", label: "Use Local Model" }, { value: "other", label: "Other" }],
         }),
       )
     }
@@ -434,6 +434,13 @@ export const ProvidersLoginCommand = effectCmd({
     if (plugin && plugin.auth) {
       const handled = yield* handlePluginAuth({ auth: plugin.auth! }, provider, args.method)
       if (handled) return
+    }
+
+    if (provider === "local") {
+      const { setupLocalModel } = yield* Effect.promise(() => import("./local/setup-local"))
+      yield* setupLocalModel()
+      yield* Prompt.outro("Done")
+      return
     }
 
     if (provider === "other") {
