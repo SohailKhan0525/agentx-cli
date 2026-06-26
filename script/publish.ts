@@ -19,7 +19,7 @@ const pkgjsons = await Array.fromAsync(
 async function prepareReleaseFiles() {
   for (const file of pkgjsons) {
     let pkg = await Bun.file(file).text()
-    pkg = pkg.replaceAll(/"version": "[^"]+"/g, `"version": "${Script.version}"`)
+    pkg = pkg.replace(/"version": "[^"]+"/, `"version": "${Script.version}"`)
     console.log("updated:", file)
     await Bun.file(file).write(pkg)
   }
