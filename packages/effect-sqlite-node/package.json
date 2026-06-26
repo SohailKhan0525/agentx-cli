@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "0.0.0-main-202606200821",
+  "version": "0.0.0-fix-local-model-scanning-202606262039",
   "name": "@agentx-cli/effect-sqlite-node",
   "type": "module",
   "license": "MIT",
