@@ -1,6 +1,6 @@
 {
   "name": "@agentx-cli/function",
-  "version": "0.0.0-fix-local-model-scanning-202606262039",
+  "version": "0.0.0-fix-local-model-scanning-202606262041",
   "$schema": "https://json.schemastore.org/package.json",
   "private": true,
   "type": "module",

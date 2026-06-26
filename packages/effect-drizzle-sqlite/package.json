@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "0.0.0-fix-local-model-scanning-202606262039",
+  "version": "0.0.0-fix-local-model-scanning-202606262041",
   "name": "@agentx-cli/effect-drizzle-sqlite",
   "type": "module",
   "license": "MIT",

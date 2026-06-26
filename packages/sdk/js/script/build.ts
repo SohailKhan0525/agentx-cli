@@ -11,7 +11,7 @@ import { createClient } from "@hey-api/openapi-ts"
 
 const agentx = path.resolve(dir, "../../agentx")
 
-await $`bun dev generate > ${dir}/openapi.json`.cwd(agentx)
+await $`bun run script/generate-openapi.ts > ${dir}/openapi.json`.cwd(agentx)
 
 await createClient({
   input: "./openapi.json",

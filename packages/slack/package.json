@@ -1,6 +1,6 @@
 {
   "name": "@agentx-cli/slack",
-  "version": "0.0.0-fix-local-model-scanning-202606262039",
+  "version": "0.0.0-fix-local-model-scanning-202606262041",
   "type": "module",
   "license": "MIT",
   "scripts": {
