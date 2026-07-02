@@ -1,17 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "version": "1.17.13",
-  "name": "@opencode-ai/http-recorder",
+  "name": "@agentx-cli/http-recorder",
   "description": "Record and replay Effect HTTP client traffic with deterministic cassettes",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/opencode.git",
+    "url": "git+https://github.com/SohailKhan0525/agentx-cli.git",
     "directory": "packages/http-recorder"
   },
-  "homepage": "https://github.com/anomalyco/opencode/tree/dev/packages/http-recorder",
-  "bugs": "https://github.com/anomalyco/opencode/issues",
+  "homepage": "https://github.com/SohailKhan0525/agentx-cli/tree/dev/packages/http-recorder",
+  "bugs": "https://github.com/SohailKhan0525/agentx-cli/issues",
   "keywords": [
     "effect",
     "http",

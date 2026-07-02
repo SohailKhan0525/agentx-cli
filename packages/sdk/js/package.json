@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@opencode-ai/sdk",
+  "name": "@agentx-cli/sdk",
   "version": "1.17.13",
   "type": "module",
   "license": "MIT",

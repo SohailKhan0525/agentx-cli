@@ -1,10 +1,10 @@
 import { describe, expect } from "bun:test"
 import { Effect, Layer } from "effect"
-import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
-import { Location } from "@opencode-ai/core/location"
-import { Project } from "@opencode-ai/core/project"
-import { AbsolutePath } from "@opencode-ai/core/schema"
-import { WorkspaceV2 } from "@opencode-ai/core/workspace"
+import { AppNodeBuilder } from "@agentx-cli/core/effect/app-node-builder"
+import { Location } from "@agentx-cli/core/location"
+import { Project } from "@agentx-cli/core/project"
+import { AbsolutePath } from "@agentx-cli/core/schema"
+import { WorkspaceV2 } from "@agentx-cli/core/workspace"
 import { testEffect } from "./lib/effect"
 
 const workspaceID = WorkspaceV2.ID.make("wrk_test")
