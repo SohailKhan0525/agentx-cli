@@ -1,4 +1,4 @@
-import type { Session } from "@opencode-ai/sdk/v2/client"
+import type { Session } from "@agentx-cli/sdk/v2/client"
 import {
   type ComponentProps,
   createEffect,
@@ -17,23 +17,23 @@ import {
 import { makeEventListener } from "@solid-primitives/event-listener"
 import { createStore, produce } from "solid-js/store"
 import { useQuery } from "@tanstack/solid-query"
-import { Button } from "@opencode-ai/ui/button"
-import { Logo } from "@opencode-ai/ui/logo"
-import { Spinner } from "@opencode-ai/ui/spinner"
-import { ScrollView } from "@opencode-ai/ui/scroll-view"
-import { ProjectAvatar } from "@opencode-ai/ui/v2/project-avatar-v2"
-import { ButtonV2 } from "@opencode-ai/ui/v2/button-v2"
-import { Icon as IconV2 } from "@opencode-ai/ui/v2/icon"
-import { IconButtonV2 } from "@opencode-ai/ui/v2/icon-button-v2"
-import { MenuV2 } from "@opencode-ai/ui/v2/menu-v2"
-import { TooltipV2 } from "@opencode-ai/ui/v2/tooltip-v2"
+import { Button } from "@agentx-cli/ui/button"
+import { Logo } from "@agentx-cli/ui/logo"
+import { Spinner } from "@agentx-cli/ui/spinner"
+import { ScrollView } from "@agentx-cli/ui/scroll-view"
+import { ProjectAvatar } from "@agentx-cli/ui/v2/project-avatar-v2"
+import { ButtonV2 } from "@agentx-cli/ui/v2/button-v2"
+import { Icon as IconV2 } from "@agentx-cli/ui/v2/icon"
+import { IconButtonV2 } from "@agentx-cli/ui/v2/icon-button-v2"
+import { MenuV2 } from "@agentx-cli/ui/v2/menu-v2"
+import { TooltipV2 } from "@agentx-cli/ui/v2/tooltip-v2"
 import { getProjectAvatarVariant, useLayout, type HomeProjectSelection, type LocalProject } from "@/context/layout"
 import { useNavigate } from "@solidjs/router"
-import { base64Encode } from "@opencode-ai/core/util/encode"
-import { Icon } from "@opencode-ai/ui/icon"
+import { base64Encode } from "@agentx-cli/core/util/encode"
+import { Icon } from "@agentx-cli/ui/icon"
 import { usePlatform } from "@/context/platform"
 import { DateTime } from "luxon"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
+import { useDialog } from "@agentx-cli/ui/context/dialog"
 import { useDirectoryPicker } from "@/components/directory-picker"
 import { useSettingsCommand } from "@/components/settings-dialog"
 import { DialogSelectServer, useServerManagementController } from "@/components/dialog-select-server"
@@ -58,13 +58,13 @@ import { sessionTitle } from "@/utils/session-title"
 import { pathKey } from "@/utils/path-key"
 import { useGlobal } from "@/context/global"
 import { useCommand } from "@/context/command"
-import { Binary } from "@opencode-ai/core/util/binary"
+import { Binary } from "@agentx-cli/core/util/binary"
 import { ServerRowMenu } from "@/components/server/server-row-menu"
 import { ServerHealthIndicator } from "@/components/server/server-row"
 import { type ServerHealth } from "@/utils/server-health"
 import { Persist, persisted } from "@/utils/persist"
-import { useMarked } from "@opencode-ai/ui/context/marked"
-import { preloadMarkdown } from "@opencode-ai/session-ui/markdown-cache"
+import { useMarked } from "@agentx-cli/ui/context/marked"
+import { preloadMarkdown } from "@agentx-cli/session-ui/markdown-cache"
 import { archiveHomeSession } from "./home-session-archive"
 import { showToast } from "@/utils/toast"
 
@@ -536,7 +536,7 @@ export function NewHome() {
           clearNotifications={clearNotifications}
           unseenCount={unseenCount}
           openSettings={openSettings}
-          openHelp={() => platform.openLink("https://opencode.ai/desktop-feedback")}
+          openHelp={() => platform.openLink("https://github.com/SohailKhan0525/agentx-cli/desktop-feedback")}
           language={language}
         />
 
@@ -628,7 +628,7 @@ export function NewHome() {
         <HomeUtilityNav
           class="flex lg:hidden"
           openSettings={openSettings}
-          openHelp={() => platform.openLink("https://opencode.ai/desktop-feedback")}
+          openHelp={() => platform.openLink("https://github.com/SohailKhan0525/agentx-cli/desktop-feedback")}
           language={language}
         />
       </div>

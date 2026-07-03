@@ -1,0 +1,15 @@
+src/
+.git/
+.env*
+*.log
+coverage/
+.agentx/
+**/*.test.ts
+**/*.spec.ts
+.github/
+infra/
+nix/
+perf/
+specs/
+script/
+patches/

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test"
-import type { retry } from "@opencode-ai/core/util/retry"
-import type { Message, OpencodeClient, Part, Session } from "@opencode-ai/sdk/v2/client"
+import type { retry } from "@agentx-cli/core/util/retry"
+import type { Message, AgentXClient, Part, Session } from "@agentx-cli/sdk/v2/client"
 import { createServerSession } from "./server-session"
 
 const session = (id: string, parentID?: string): Session => ({
@@ -61,7 +61,7 @@ function messageClient(...responses: Array<MessageResponse | Promise<MessageResp
         return responses[index++]
       },
     },
-  } as unknown as OpencodeClient
+  } as unknown as AgentXClient
   return Object.assign(client, {
     requests,
     requested(count: number) {
@@ -99,7 +99,7 @@ function setup(sessions: Record<string, Session>) {
       diff: async () => ({ data: [] }),
       todo: async () => ({ data: [] }),
     },
-  } as unknown as OpencodeClient
+  } as unknown as AgentXClient
   return { get, messages, store: createServerSession(client) }
 }
 

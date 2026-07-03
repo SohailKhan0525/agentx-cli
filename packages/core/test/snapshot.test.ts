@@ -3,12 +3,12 @@ import { describe, expect } from "bun:test"
 import fs from "fs/promises"
 import path from "path"
 import { Effect, Layer } from "effect"
-import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
-import { Global } from "@opencode-ai/core/global"
-import { Location } from "@opencode-ai/core/location"
-import { AbsolutePath, RelativePath } from "@opencode-ai/core/schema"
-import { Snapshot } from "@opencode-ai/core/snapshot"
-import { Hash } from "@opencode-ai/core/util/hash"
+import { AppNodeBuilder } from "@agentx-cli/core/effect/app-node-builder"
+import { Global } from "@agentx-cli/core/global"
+import { Location } from "@agentx-cli/core/location"
+import { AbsolutePath, RelativePath } from "@agentx-cli/core/schema"
+import { Snapshot } from "@agentx-cli/core/snapshot"
+import { Hash } from "@agentx-cli/core/util/hash"
 import { tmpdir } from "./fixture/tmpdir"
 import { testEffect } from "./lib/effect"
 
@@ -27,7 +27,7 @@ describe("Snapshot", () => {
             await $`git init`.cwd(project).quiet()
             await $`git config core.fsmonitor false`.cwd(project).quiet()
             await $`git config commit.gpgsign false`.cwd(project).quiet()
-            await $`git config user.email test@opencode.test`.cwd(project).quiet()
+            await $`git config user.email test@agentx.test`.cwd(project).quiet()
             await $`git config user.name Test`.cwd(project).quiet()
             await $`git add .`.cwd(project).quiet()
             await $`git commit -m initial`.cwd(project).quiet()
@@ -96,7 +96,7 @@ describe("Snapshot", () => {
             await $`git init`.cwd(project).quiet()
             await $`git config core.fsmonitor false`.cwd(project).quiet()
             await $`git config commit.gpgsign false`.cwd(project).quiet()
-            await $`git config user.email test@opencode.test`.cwd(project).quiet()
+            await $`git config user.email test@agentx.test`.cwd(project).quiet()
             await $`git config user.name Test`.cwd(project).quiet()
             await $`git add .`.cwd(project).quiet()
             await $`git commit -m initial`.cwd(project).quiet()
@@ -141,7 +141,7 @@ describe("Snapshot", () => {
             await $`git init`.cwd(project).quiet()
             await $`git config core.fsmonitor false`.cwd(project).quiet()
             await $`git config commit.gpgsign false`.cwd(project).quiet()
-            await $`git config user.email test@opencode.test`.cwd(project).quiet()
+            await $`git config user.email test@agentx.test`.cwd(project).quiet()
             await $`git config user.name Test`.cwd(project).quiet()
             await $`git add .`.cwd(project).quiet()
             await $`git commit -m initial`.cwd(project).quiet()
