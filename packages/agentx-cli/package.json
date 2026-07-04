@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "1.20.65",
+  "version": "1.20.66",
   "name": "@agent-qofeno/agentx-cli",
   "type": "module",
   "license": "MIT",
@@ -15,7 +15,7 @@
     "dev:temporary": "bun run --conditions=browser ./src/temporary.ts"
   },
   "bin": {
-    "agentx": "./bin/agentx"
+    "agentx": "./bin/agentx.cjs"
   },
   "exports": {
     "./*": "./src/*.ts"
