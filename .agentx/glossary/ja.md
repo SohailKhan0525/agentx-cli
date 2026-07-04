@@ -2,13 +2,13 @@
 
 ## Sources
 
-- PR #9821: https://github.com/anomalyco/opencode/pull/9821
-- PR #13160: https://github.com/anomalyco/opencode/pull/13160
+- PR #9821: https://github.com/SohailKhan0525/agentx-cli/pull/9821
+- PR #13160: https://github.com/SohailKhan0525/agentx-cli/pull/13160
 
 ## Do Not Translate (Locale Additions)
 
-- `OpenCode` (preserve casing in prose; keep `opencode` only in commands, package names, paths, or code)
-- `OpenCode CLI`
+- `AgentX` (preserve casing in prose; keep `agentx` only in commands, package names, paths, or code)
+- `AgentX CLI`
 - `CLI`, `TUI`, `MCP`, `OAuth`
 - Commands, flags, file paths, and code literals (keep exactly as written)
 

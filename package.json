@@ -27,8 +27,7 @@
       "packages/*",
       "packages/console/*",
       "packages/stats/*",
-      "packages/sdk/js",
-      "packages/slack"
+      "packages/sdk/js"
     ],
     "catalog": {
       "@effect/opentelemetry": "4.0.0-beta.83",
@@ -105,6 +104,7 @@
     "prettier": "3.6.2",
     "semver": "7.8.5",
     "sst": "catalog:",
+    "ts-morph": "28.0.0",
     "turbo": "2.8.13"
   },
   "dependencies": {

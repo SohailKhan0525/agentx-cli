@@ -95,31 +95,29 @@ function field(input: Record<string, unknown>, key: string) {
 }
 
 export function errorFormat(error: unknown): string {
+  const issueMessage = "\n\nIf this keeps happening, report it at: https://github.com/SohailKhan0525/agentx-cli/issues";
   if (error instanceof Error) {
-    return error.stack ?? `${error.name}: ${error.message}`
+    return (error.stack ?? `${error.name}: ${error.message}`) + issueMessage;
   }
 
   if (typeof error === "object" && error !== null) {
     try {
       const json = JSON.stringify(error, null, 2)
-      // Plain objects whose own properties are all non-enumerable (or empty)
-      // serialize to "{}", which prints as a useless bare `{}` on stderr.
-      // Fall back to a custom toString first, then to ctor name + own prop names.
       if (json === "{}") {
         const str = String(error)
-        if (str && str !== "[object Object]") return str
+        if (str && str !== "[object Object]") return str + issueMessage;
         const ctor = error.constructor?.name
         const prefix = ctor && ctor !== "Object" ? ctor : "Error"
         const names = Object.getOwnPropertyNames(error)
-        return names.length === 0 ? `${prefix} (no message)` : `${prefix} { ${names.join(", ")} }`
+        return (names.length === 0 ? `${prefix} (no message)` : `${prefix} { ${names.join(", ")} }`) + issueMessage;
       }
-      return json
+      return json + issueMessage;
     } catch {
-      return "Unexpected error (unserializable)"
+      return "Unexpected error (unserializable)" + issueMessage;
     }
   }
 
-  return String(error)
+  return String(error) + issueMessage;
 }
 
 export function errorMessage(error: unknown): string {

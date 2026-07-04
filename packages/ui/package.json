@@ -77,7 +77,8 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-icons-spritesheet": "3.0.1",
-    "vite-plugin-solid": "catalog:"
+    "vite-plugin-solid": "catalog:",
+    "@types/node": "catalog:"
   },
   "dependencies": {
     "@kobalte/core": "catalog:",
