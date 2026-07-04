@@ -30,7 +30,7 @@
     },
     "packages/agentx-cli": {
       "name": "@agent-qofeno/agentx-cli",
-      "version": "1.20.59",
+      "version": "1.20.61",
       "bin": {
         "agentx": "./bin/agentx",
       },

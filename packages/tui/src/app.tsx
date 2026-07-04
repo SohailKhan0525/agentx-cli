@@ -87,7 +87,6 @@ import { cliErrorMessage, errorFormat } from "./util/error"
 
 const appGlobalBindingCommands = [
   "session.list",
-  "session.new",
   "session.quick_switch.1",
   "session.quick_switch.2",
   "session.quick_switch.3",
@@ -106,7 +105,6 @@ const appBindingCommands = [
   "model.cycle_recent_reverse",
   "model.cycle_favorite",
   "model.cycle_favorite_reverse",
-  "agent.list",
   "mcp.list",
   "agent.cycle",
   "agent.cycle.reverse",
@@ -574,20 +572,6 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         },
       },
       {
-        name: "session.new",
-        title: "New session",
-        suggested: route.data.type === "session",
-        category: "Session",
-        slashName: "new",
-        slashAliases: ["clear"],
-        run: () => {
-          route.navigate({
-            type: "home",
-          })
-          dialog.clear()
-        },
-      },
-      {
         name: "workspace.copy_path",
         title: "Copy worktree path",
         category: "Workspace",
@@ -667,15 +651,6 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         hidden: true,
         run: () => {
           local.model.cycleFavorite(-1)
-        },
-      },
-      {
-        name: "agent.list",
-        title: "Switch agent",
-        category: "Agent",
-        slashName: "agents",
-        run: () => {
-          dialog.replace(() => <DialogAgent />)
         },
       },
       {

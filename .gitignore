@@ -2,5 +2,10 @@ node_modules/
 dist/
 .env*
 *.log
-.agentx/
+.agentx/error.log
 coverage/
+msg.txt
+out.txt
+push_log.txt
+push_out.txt
+.turbo/cache/
