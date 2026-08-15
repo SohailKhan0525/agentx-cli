@@ -1,19 +1,31 @@
-# @agentx-cli/llm
+<p align="center">
+  <h1 align="center">@agentx-cli/llm</h1>
+  <p align="center"><strong>Schema-first, provider-neutral LLM client engine for AgentX.</strong></p>
+</p>
 
-Schema-first LLM core for agentx. One typed request, response, event, and tool language; provider quirks live in adapters, not in calling code.
+<p align="center">
+  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm version" src="https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=flat-square&color=blue" /></a>
+  <a href="https://github.com/SohailKhan0525/agentx-cli/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/SohailKhan0525/agentx-cli?style=flat-square" /></a>
+</p>
+
+---
+
+## Overview
+
+`@agentx-cli/llm` provides a single typed request, response, event, and tool language built on top of [Effect](https://effect.website). Provider details and protocol wire formats live strictly in internal adapters, providing a unified developer interface.
 
 ```ts
 import { Effect } from "effect"
 import { LLM, LLMClient } from "@agentx-cli/llm"
 import { OpenAI } from "@agentx-cli/llm/providers"
 
-const model = OpenAI.configure({ apiKey: process.env.OPENAI_API_KEY }).responses("gpt-4o-mini")
+const model = OpenAI.configure({ apiKey: process.env.OPENAI_API_KEY }).responses("gpt-4o")
 
 const request = LLM.request({
   model,
-  system: "You are concise.",
-  prompt: "Say hello in one short sentence.",
-  generation: { maxTokens: 40 },
+  system: "You are an autonomous website builder.",
+  prompt: "Build a production-ready Next.js application.",
+  generation: { maxTokens: 4096 },
 })
 
 const program = Effect.gen(function* () {
@@ -22,110 +34,29 @@ const program = Effect.gen(function* () {
 })
 ```
 
-Run `LLMClient.stream(request)` instead of `generate` when you want incremental `LLMEvent`s. The event stream is provider-neutral — same shape across OpenAI Chat, OpenAI Responses, Anthropic Messages, Gemini, Bedrock Converse, and any OpenAI-compatible deployment.
+---
+
+## Supported AI Providers
+
+AgentX strictly supports 5 production-ready providers:
+
+1. **GitHub Copilot** (`github-copilot`)
+2. **OpenAI** (`openai`) — `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`
+3. **Google** (`google`) — `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash`
+4. **Anthropic** (`anthropic`) — `claude-3-7-sonnet`, `claude-3-5-haiku`, `claude-3-opus`
+5. **Local Models** (`local`) — Ollama, LM Studio, Jan, GPT4All, llama.cpp via `@ai-sdk/openai-compatible`
+
+---
 
 ## Public API
 
-- **`LLM.request({...})`** — build a provider-neutral `LLMRequest`. Accepts ergonomic inputs (`system: string`, `prompt: string`) that normalize into the canonical Schema classes.
-- **`LLM.generate` / `LLM.stream`** — re-exported from `LLMClient` for one-import use.
-- **`Message.user(...)` / `Message.assistant(...)` / `Message.tool(...)`** — message constructors from the canonical schema model.
-- **`Model.make(...)` / `ToolCallPart.make(...)` / `ToolResultPart.make(...)` / `ToolDefinition.make(...)`** — model and tool-related constructors from the canonical schema model.
-- **`LLMClient.prepare(request)`** — compile a request through protocol body construction, validation, and HTTP preparation without sending. Useful for inspection and testing.
-- **`LLMEvent.is.*`** — typed guards (`is.textDelta`, `is.toolCall`, `is.finish`, …) for filtering streams.
+- **`LLM.request({...})`**: Build a provider-neutral `LLMRequest`.
+- **`LLMClient.generate(request)`**: Execute one-shot generation.
+- **`LLMClient.stream(request)`**: Stream typed `LLMEvent` instances incrementally across any provider.
+- **`LLMEvent.is.*`**: Type guards (`is.textDelta`, `is.toolCall`, `is.finish`) for event streams.
 
-## Caching
+---
 
-Prompt caching is **on by default**. Every `LLMRequest` resolves to `cache: "auto"` unless the caller opts out with `cache: "none"`. Each protocol translates `CacheHint`s to its wire format (`cache_control` on Anthropic, `cachePoint` on Bedrock; OpenAI and Gemini do implicit caching server-side and don't need inline markers — auto is a no-op there).
+## License
 
-### Auto placement
-
-`"auto"` places three breakpoints — last tool definition, last system part, latest user message. The last-user-message boundary is the load-bearing detail: in a tool-use loop, a single user turn expands into many assistant/tool round-trips, all sharing that prefix. Caching at that boundary lets every intra-turn API call hit.
-
-The math justifies the default: Anthropic's 5-minute cache write is 1.25× base, read is 0.1×, so a single reuse within 5 minutes already wins. One-shot completions below the per-model minimum-cacheable-token threshold silently no-op on the wire, so the worst case is harmless.
-
-### Opting out
-
-```ts
-LLM.request({
-  model,
-  system,
-  prompt: "one-off question",
-  cache: "none",
-})
-```
-
-### Granular policy
-
-```ts
-cache: {
-  tools?: boolean,
-  system?: boolean,
-  messages?: "latest-user-message" | "latest-assistant" | { tail: number },
-  ttlSeconds?: number,         // ≥ 3600 → 1h on Anthropic/Bedrock; else 5m
-}
-```
-
-### Manual hints
-
-Inline `CacheHint` on any text / system / tool / tool-result part overrides automatic placement. The auto policy preserves manual hints; it only fills gaps.
-
-```ts
-LLM.request({
-  model,
-  system: [
-    { type: "text", text: "stable system prompt", cache: { type: "ephemeral" } },
-  ],
-  ...
-})
-```
-
-### Provider behavior table
-
-| Protocol                | `cache: "auto"`                                                           |
-| ----------------------- | ------------------------------------------------------------------------- |
-| Anthropic Messages      | emits up to 3 `cache_control` markers (4-breakpoint cap enforced)         |
-| Bedrock Converse        | emits up to 3 `cachePoint` blocks (4-breakpoint cap enforced)             |
-| OpenAI Chat / Responses | no-op (implicit caching above 1024 tokens)                                |
-| Gemini                  | no-op (implicit caching on 2.5+; explicit `CachedContent` is out-of-band) |
-
-Normalized cache usage is read back into `response.usage.cacheReadInputTokens` and `cacheWriteInputTokens` across every provider.
-
-## Providers
-
-Provider facades configure endpoint/auth/deployment details first, then expose model selectors that take only a model or deployment id. The selected model carries the executable route value used at runtime.
-
-```ts
-import { OpenAI, CloudflareAIGateway } from "@agentx-cli/llm/providers"
-
-const openai = OpenAI.configure({ apiKey: process.env.OPENAI_API_KEY }).responses("gpt-4o-mini")
-const gateway = CloudflareAIGateway.configure({
-  accountId: process.env.CLOUDFLARE_ACCOUNT_ID,
-  gatewayApiKey: process.env.CLOUDFLARE_API_TOKEN,
-}).model("workers-ai/@cf/meta/llama-3.1-8b-instruct")
-```
-
-Included providers: OpenAI, Anthropic, Google (Gemini), Amazon Bedrock, Azure OpenAI, Cloudflare AI Gateway, Cloudflare Workers AI, GitHub Copilot, OpenRouter, xAI, plus generic OpenAI-compatible helpers for DeepSeek, Cerebras, Groq, Fireworks, Together, etc.
-
-## Provider options & HTTP overlays
-
-Three escape hatches in order of stability:
-
-1. **`generation`** — portable knobs (`maxTokens`, `temperature`, `topP`, `topK`, penalties, seed, stop).
-2. **`providerOptions: { <provider>: {...} }`** — typed-at-the-facade provider-specific knobs (OpenAI `promptCacheKey`, Anthropic `thinking`, Gemini `thinkingConfig`, OpenRouter routing).
-3. **`http: { body, headers, query }`** — last-resort serializable overlays merged into the final HTTP request. Reach for this only when a stable typed path doesn't yet exist.
-
-Route/provider defaults are overridden by request-level values for each axis.
-
-## Routes
-
-Adding a new model or deployment is usually 5-15 lines using `Route.make({ protocol, endpoint, auth, framing, ... })`. The route owns endpoint/auth/framing and the protocol owns body construction plus stream parsing. Transports are reusable IO templates that receive route endpoint/auth at compile time. Capability/catalog metadata lives outside this low-level package; unsupported request shapes fail during protocol lowering. See `AGENTS.md` for the architectural detail.
-
-## Effect
-
-This package is built on Effect. Public methods return `Effect` or `Stream`; provide `LLMClient.layer` for runtime dispatch and import the provider/protocol modules for the routes you use. The example at `example/tutorial.ts` is a runnable walkthrough.
-
-## See also
-
-- `AGENTS.md` — architecture, route construction, contributor guide
-- `example/tutorial.ts` — runnable end-to-end walkthrough
-- `test/provider/*.test.ts` — fixture-first protocol tests; `*.recorded.test.ts` files cover live cassettes
+[MIT](LICENSE)
