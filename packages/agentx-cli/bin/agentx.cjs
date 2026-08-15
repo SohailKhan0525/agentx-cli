@@ -126,49 +126,64 @@ function supportsAvx2() {
 const names = (() => {
   const avx2 = supportsAvx2()
   const baseline = arch === "x64" && !avx2
+  const prefixes = ["@agent-qofeno/agentx-cli-", "@agent-qofeno/agentx-", "agentx-cli-", "agentx-"]
 
+  const suffixes = []
   if (platform === "linux") {
     const musl = (() => {
       try {
         if (fs.existsSync("/etc/alpine-release")) return true
-      } catch {
-        // ignore
-      }
-
+      } catch {}
       try {
         const result = childProcess.spawnSync("ldd", ["--version"], { encoding: "utf8" })
         const text = ((result.stdout || "") + (result.stderr || "")).toLowerCase()
         if (text.includes("musl")) return true
-      } catch {
-        // ignore
-      }
-
+      } catch {}
       return false
     })()
 
     if (musl) {
       if (arch === "x64") {
-        if (baseline) return [`${base}-baseline-musl`, `${base}-musl`, `${base}-baseline`, base]
-        return [`${base}-musl`, `${base}-baseline-musl`, base, `${base}-baseline`]
+        if (baseline) suffixes.push(`${platform}-${arch}-baseline-musl`, `${platform}-${arch}-musl`, `${platform}-${arch}-baseline`, `${platform}-${arch}`)
+        else suffixes.push(`${platform}-${arch}-musl`, `${platform}-${arch}-baseline-musl`, `${platform}-${arch}`, `${platform}-${arch}-baseline`)
+      } else {
+        suffixes.push(`${platform}-${arch}-musl`, `${platform}-${arch}`)
       }
-      return [`${base}-musl`, base]
+    } else {
+      if (arch === "x64") {
+        if (baseline) suffixes.push(`${platform}-${arch}-baseline`, `${platform}-${arch}`, `${platform}-${arch}-baseline-musl`, `${platform}-${arch}-musl`)
+        else suffixes.push(`${platform}-${arch}`, `${platform}-${arch}-baseline`, `${platform}-${arch}-musl`, `${platform}-${arch}-baseline-musl`)
+      } else {
+        suffixes.push(`${platform}-${arch}`)
+      }
     }
-
-    if (arch === "x64") {
-      if (baseline) return [`${base}-baseline`, base, `${base}-baseline-musl`, `${base}-musl`]
-      return [base, `${base}-baseline`, `${base}-musl`, `${base}-baseline-musl`]
-    }
-    return [base, `${base}-musl`]
+  } else if (arch === "x64") {
+    if (baseline) suffixes.push(`${platform}-${arch}-baseline`, `${platform}-${arch}`)
+    else suffixes.push(`${platform}-${arch}`, `${platform}-${arch}-baseline`)
+  } else {
+    suffixes.push(`${platform}-${arch}`)
   }
 
-  if (arch === "x64") {
-    if (baseline) return [`${base}-baseline`, base]
-    return [base, `${base}-baseline`]
+  const result = []
+  for (const prefix of prefixes) {
+    for (const suffix of suffixes) {
+      result.push(prefix + suffix)
+    }
   }
-  return [base]
+  return result
 })()
 
 function findBinary(startDir) {
+  const candidates = [
+    path.join(startDir, binary),
+    path.join(startDir, "agentx.exe"),
+    path.join(startDir, "agentx"),
+    path.join(startDir, "..", "dist", `@agent-qofeno/agentx-cli-${platform}-${arch}`, "bin", binary),
+  ]
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c
+  }
+
   let current = startDir
   for (;;) {
     const modules = path.join(current, "node_modules")
@@ -197,3 +212,4 @@ if (!resolved) {
 }
 
 run(resolved)
+
