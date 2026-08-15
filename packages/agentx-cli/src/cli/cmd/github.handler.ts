@@ -198,7 +198,7 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
             `    1. Commit the \`${WORKFLOW_FILE}\` file and push`,
             step2,
             "",
-            "    3. Go to a GitHub issue and comment `/oc summarize` to see the agent in action",
+            "    3. Go to a GitHub issue and comment `/agentx summarize` to see the agent in action",
             "",
             "   Learn more about the GitHub agent - https://github.com/SohailKhan0525/agentx-cli/docs/github/#usage-examples",
           ].join("\n"),
@@ -345,8 +345,8 @@ on:
 jobs:
   agentx:
     if: |
-      contains(github.event.comment.body, ' /oc') ||
-      startsWith(github.event.comment.body, '/oc') ||
+      contains(github.event.comment.body, ' /ax') ||
+      startsWith(github.event.comment.body, '/ax') ||
       contains(github.event.comment.body, ' /agentx') ||
       startsWith(github.event.comment.body, '/agentx')
     runs-on: ubuntu-latest
@@ -736,7 +736,7 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
       }
 
       const reviewContext = getReviewCommentContext()
-      const mentions = (process.env["MENTIONS"] || "/agentx,/oc")
+      const mentions = (process.env["MENTIONS"] || "/agentx,/ax")
         .split(",")
         .map((m) => m.trim().toLowerCase())
         .filter(Boolean)

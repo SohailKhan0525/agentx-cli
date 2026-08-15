@@ -246,7 +246,7 @@ const TIPS: Tip[] = [
   "Use {highlight}/agentx{/highlight} in GitHub issues/PRs to trigger AI actions",
   "Run {highlight}agentx github install{/highlight} to set up the GitHub workflow",
   "Comment {highlight}/agentx fix this{/highlight} on issues to auto-create PRs",
-  "Comment {highlight}/oc{/highlight} on PR code lines for targeted code reviews",
+  "Comment {highlight}/agentx{/highlight} on PR code lines for targeted code reviews",
   'Use {highlight}"theme": "system"{/highlight} to match your terminal\'s colors',
   "Create JSON theme files in {highlight}.agentx/themes/{/highlight} directory",
   "Themes support dark/light variants for both modes",
