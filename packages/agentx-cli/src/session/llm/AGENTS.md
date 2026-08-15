@@ -35,50 +35,12 @@ Keep new integration code on one of these seams. Avoid importing session service
 
 Both runtimes converge on the same `LLMEvent` stream consumed by the session processor. The gate is per-request: a single session can route some calls through native and fall back for others.
 
-```txt
-                             ╭───────────────────╮
-╭───────────────────────────▶│ session processor │
-│                            ╰─────────┬─────────╯
-│                                      │
-│                                      │
-│                                      │
-│                                      ▼
-│                         ╭─────────────────────────╮
-│                         │ LLM.Service (../llm.ts) │
-│                         ╰────────────┬────────────╯
-│                                      │
-│                                      │
-│                                      │
-│                                      ▼
-│                                ╭───────────╮
-│                              ╭─╯           ╰─╮
-│                              │  native gate  │
-│                              ╰─╮           ╭─╯
-│                                ╰─────┬─────╯
-│                                      │
-│                     ╭────── no ──────┴─────── yes ────────╮
-│                     │                                     │
-│                     ▼                                     ▼
-│       ╭───────────────────────────╮             ╭───────────────────╮
-│       │          AI SDK           │             │ native-runtime.ts │
-│       │ streamText / generateText │             ╰────────┬──────────╯
-│       ╰─────────────┬─────────────╯                      │
-│                     │                                    │
-│                 ╭───╯                                    │
-│                 │                                        │
-│                 ▼                                        ▼
-│     ╭───────────────────────╮             ╭────────────────────────────╮
-│     │       ai-sdk.ts       │             │     native-request.ts      │
-│     │ fullStream → LLMEvent │             │ session input → LLMRequest │
-│     ╰──────────┬────────────╯             ╰──────────────┬─────────────╯
-│                │                                         │
-│                │                                     ╭───╯
-│                │                                     │
-│                ▼                                     ▼
-│       ╭─────────────────╮             ╭─────────────────────────────╮
-╰───────┤ LLMEvent stream │◀────────────┤ LLMClient · RequestExecutor │
-        ╰─────────────────╯             ╰─────────────────────────────╯
-```
+Runtime flow:
+1. Session processor calls LLM.Service (`../llm.ts`).
+2. Native gate evaluates whether request is supported for native execution.
+3. If yes: delegates to `native-runtime.ts` -> `native-request.ts` -> `LLMClient / RequestExecutor` -> emits `LLMEvent` stream.
+4. If no: delegates to AI SDK (`streamText / generateText`) -> `ai-sdk.ts` -> emits `LLMEvent` stream.
+5. `LLMEvent` stream returns to session processor.
 
 `native-runtime.ts` evaluates the gate and either bridges into `@agentx-cli/llm` or returns control so `llm.ts` can take the AI SDK path. Tool execution stays agentx-owned in both branches; only request lowering and transport differ.
 

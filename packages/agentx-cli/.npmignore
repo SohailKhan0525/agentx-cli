@@ -1,0 +1,14 @@
+src/
+.agentx/
+.turbo/
+.vscode/
+.zed/
+specs/
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+*.log
+.env*
+coverage/
+tsconfig.tsbuildinfo

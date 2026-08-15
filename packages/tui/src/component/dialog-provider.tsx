@@ -17,18 +17,16 @@ import { useBindings } from "../keymap"
 import { useClipboard } from "../context/clipboard"
 
 const PROVIDER_PRIORITY: Record<string, number> = {
-  agentx: 0,
-  "agentx-go": 1,
-  openai: 2,
-  "github-copilot": 3,
-  anthropic: 4,
-  google: 5,
-  ollama: 6,
-  lmstudio: 7,
-  jan: 8,
-  gpt4all: 9,
-  llamacpp: 10,
-  localai: 11,
+  "github-copilot": 0,
+  openai: 1,
+  google: 2,
+  anthropic: 3,
+  ollama: 4,
+  lmstudio: 5,
+  jan: 6,
+  gpt4all: 7,
+  llamacpp: 8,
+  localai: 9,
 }
 
 const CUSTOM_PROVIDER_OPTION_VALUE = "__agentx_custom_provider__"
@@ -61,14 +59,25 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
       ),
       map((provider) => ({
         type: "provider" as const,
-        title: provider.name,
+        title: {
+          "github-copilot": "GitHub Copilot",
+          openai: "ChatGPT (OpenAI)",
+          google: "Google (Gemini)",
+          anthropic: "Anthropic (Claude)",
+          ollama: "Ollama (Local)",
+          lmstudio: "LM Studio (Local)",
+          jan: "Jan (Local)",
+          gpt4all: "GPT4All (Local)",
+          llamacpp: "llama.cpp (Local)",
+          localai: "LocalAI (Local)",
+        }[provider.id] ?? provider.name,
         value: provider.id,
         providerID: provider.id,
         description: {
-          agentx: "(Recommended)",
+          "github-copilot": "(GitHub PAT)",
+          openai: "(API key)",
+          google: "(Google AI Studio key)",
           anthropic: "(API key)",
-          openai: "(ChatGPT Plus/Pro or API key)",
-          "agentx-go": "Low cost subscription for everyone",
           ollama: "(Local port 11434)",
           lmstudio: "(Local port 1234)",
           jan: "(Local port 1337)",
@@ -76,18 +85,11 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
           llamacpp: "(Local port 8080)",
           localai: "(Local port 8080)",
         }[provider.id],
-        category: ["ollama", "lmstudio", "jan", "gpt4all", "llamacpp", "localai"].includes(provider.id) 
-          ? "Local Models" 
-          : provider.id in PROVIDER_PRIORITY ? "Popular" : "Providers",
+        category: ["ollama", "lmstudio", "jan", "gpt4all", "llamacpp", "localai"].includes(provider.id)
+          ? "Local Models"
+          : "Cloud Providers",
       })),
     ),
-    {
-      type: "custom",
-      title: "Other",
-      value: CUSTOM_PROVIDER_OPTION_VALUE,
-      description: "Custom provider",
-      category: "Providers",
-    },
   ]
 }
 

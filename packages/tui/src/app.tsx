@@ -780,7 +780,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "docs.open",
         title: "Open docs",
         run: () => {
-          open("https://github.com/SohailKhan0525/agentx-cli/docs").catch(() => {})
+          open("https://github.com/SohailKhan0525/agentx-cli").catch(() => {})
           dialog.clear()
         },
         category: "System",

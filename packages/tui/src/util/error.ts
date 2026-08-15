@@ -94,10 +94,12 @@ function field(input: Record<string, unknown>, key: string) {
   return typeof input[key] === "string" ? input[key] : undefined
 }
 
+const ISSUES_URL = "https://github.com/SohailKhan0525/agentx-cli/issues"
+const ISSUE_PROMPT = `\n\nIf this keeps happening, report it at: \x1b]8;;${ISSUES_URL}\x1b\\${ISSUES_URL}\x1b]8;;\x1b\\`
+
 export function errorFormat(error: unknown): string {
-  const issueMessage = "\n\nIf this keeps happening, report it at: https://github.com/SohailKhan0525/agentx-cli/issues";
   if (error instanceof Error) {
-    return (error.stack ?? `${error.name}: ${error.message}`) + issueMessage;
+    return (error.stack ?? `${error.name}: ${error.message}`) + ISSUE_PROMPT
   }
 
   if (typeof error === "object" && error !== null) {
@@ -105,19 +107,19 @@ export function errorFormat(error: unknown): string {
       const json = JSON.stringify(error, null, 2)
       if (json === "{}") {
         const str = String(error)
-        if (str && str !== "[object Object]") return str + issueMessage;
+        if (str && str !== "[object Object]") return str + ISSUE_PROMPT
         const ctor = error.constructor?.name
         const prefix = ctor && ctor !== "Object" ? ctor : "Error"
         const names = Object.getOwnPropertyNames(error)
-        return (names.length === 0 ? `${prefix} (no message)` : `${prefix} { ${names.join(", ")} }`) + issueMessage;
+        return (names.length === 0 ? `${prefix} (no message)` : `${prefix} { ${names.join(", ")} }`) + ISSUE_PROMPT
       }
-      return json + issueMessage;
+      return json + ISSUE_PROMPT
     } catch {
-      return "Unexpected error (unserializable)" + issueMessage;
+      return "Unexpected error (unserializable)" + ISSUE_PROMPT
     }
   }
 
-  return String(error) + issueMessage;
+  return String(error) + ISSUE_PROMPT
 }
 
 export function errorMessage(error: unknown): string {

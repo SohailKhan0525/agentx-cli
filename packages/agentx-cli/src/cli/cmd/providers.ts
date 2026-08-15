@@ -369,13 +369,16 @@ export const ProvidersLoginCommand = effectCmd({
     const hooks = yield* pluginSvc.list()
 
     const priority: Record<string, number> = {
-      agentx: 0,
+      "github-copilot": 0,
       openai: 1,
-      "github-copilot": 2,
-      google: 3,
-      anthropic: 4,
-      openrouter: 5,
-      vercel: 6,
+      google: 2,
+      anthropic: 3,
+      ollama: 4,
+      lmstudio: 5,
+      jan: 6,
+      gpt4all: 7,
+      llamacpp: 8,
+      localai: 9,
     }
     const pluginProviders = resolvePluginProviders({
       hooks,
@@ -396,8 +399,11 @@ export const ProvidersLoginCommand = effectCmd({
           label: x.name,
           value: x.id,
           hint: {
-            agentx: "recommended",
-            openai: "ChatGPT Plus/Pro or API key",
+            "github-copilot": "GitHub PAT with copilot scope",
+            openai: "ChatGPT API key",
+            google: "Google AI Studio API key",
+            anthropic: "Anthropic API key",
+            ollama: "Local daemon on port 11434",
           }[x.id],
         })),
       ),
@@ -423,7 +429,7 @@ export const ProvidersLoginCommand = effectCmd({
         yield* Prompt.autocomplete({
           message: "Select provider",
           maxItems: 8,
-          options: [...options, { value: "other", label: "Other" }],
+          options,
         }),
       )
     }
@@ -434,47 +440,16 @@ export const ProvidersLoginCommand = effectCmd({
       if (handled) return
     }
 
-    if (provider === "other") {
-      provider = (yield* promptValue(
-        yield* Prompt.text({
-          message: "Enter provider id",
-          validate: (x) => (x && x.match(/^[0-9a-z-]+$/) ? undefined : "a-z, 0-9 and hyphens only"),
-        }),
-      )).replace(/^@ai-sdk\//, "")
-
-      const customPlugin = hooks.findLast((x) => x.auth?.provider === provider)
-      if (customPlugin && customPlugin.auth) {
-        const handled = yield* handlePluginAuth({ auth: customPlugin.auth! }, provider, args.method)
-        if (handled) return
-      }
-
-      yield* Prompt.log.warn(
-        `This only stores a credential for ${provider} - you will need configure it in agentx.json, check the docs for examples.`,
-      )
+    if (provider === "google") {
+      yield* Prompt.log.info("Get a Google AI Studio key at https://aistudio.google.com/app/apikey")
     }
 
-    if (provider === "amazon-bedrock") {
-      yield* Prompt.log.info(
-        "Amazon Bedrock authentication priority:\n" +
-          "  1. Bearer token (AWS_BEARER_TOKEN_BEDROCK or /connect)\n" +
-          "  2. AWS credential chain (profile, access keys, IAM roles, EKS IRSA)\n\n" +
-          "Configure via agentx.json options (profile, region, endpoint) or\n" +
-          "AWS environment variables (AWS_PROFILE, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_WEB_IDENTITY_TOKEN_FILE).",
-      )
+    if (provider === "anthropic") {
+      yield* Prompt.log.info("Get an Anthropic API key at https://console.anthropic.com/settings/keys")
     }
 
-    if (provider === "agentx") {
-      yield* Prompt.log.info("Create an api key at https://github.com/SohailKhan0525/agentx-cli/auth")
-    }
-
-    if (provider === "vercel") {
-      yield* Prompt.log.info("You can create an api key at https://vercel.link/ai-gateway-token")
-    }
-
-    if (["cloudflare", "cloudflare-ai-gateway"].includes(provider)) {
-      yield* Prompt.log.info(
-        "Cloudflare AI Gateway can be configured with CLOUDFLARE_GATEWAY_ID, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_API_TOKEN environment variables. Read more: https://github.com/SohailKhan0525/agentx-cli/docs/providers/#cloudflare-ai-gateway",
-      )
+    if (provider === "openai") {
+      yield* Prompt.log.info("Get an OpenAI API key at https://platform.openai.com/api-keys")
     }
 
     const key = yield* Prompt.password({
