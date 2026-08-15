@@ -19,6 +19,11 @@ export const UpgradeCommand = {
         type: "string",
         choices: ["curl", "npm", "pnpm", "bun", "brew", "choco", "scoop"],
       })
+      .option("seamless", {
+        describe: "perform seamless hot process handoff after upgrade",
+        type: "boolean",
+        default: false,
+      })
   },
   handler: async (args: { target?: string; method?: string }) => {
     UI.empty()
@@ -70,5 +75,8 @@ export const UpgradeCommand = {
     }
     spinner.stop("Upgrade complete")
     prompts.outro("Done")
+    if (args.seamless) {
+      await Installation.seamlessHandoff()
+    }
   },
 }

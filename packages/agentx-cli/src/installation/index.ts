@@ -72,11 +72,20 @@ const ChocoPackage = Schema.Struct({
 })
 const ScoopManifest = NpmPackage
 
+export interface CheckUpdateResult {
+  readonly updateAvailable: boolean
+  readonly current: string
+  readonly latest: string
+}
+
 export interface Interface {
   readonly info: () => Effect.Effect<Info>
   readonly method: () => Effect.Effect<Method>
   readonly latest: (method?: Method) => Effect.Effect<string>
   readonly upgrade: (method: Method, target: string) => Effect.Effect<void, UpgradeFailedError>
+  readonly checkUpdate: () => Effect.Effect<CheckUpdateResult>
+  readonly stageDownload: (target?: string) => Effect.Effect<{ targetVersion: string }, UpgradeFailedError>
+  readonly seamlessHandoff: (opts?: { sessionID?: string; args?: string[] }) => Effect.Effect<void>
 }
 
 export class Service extends Context.Service<Service, Interface>()("@agentx/Installation") {}
@@ -269,13 +278,13 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
             upgradeResult = yield* upgradeCurl(target)
             break
           case "npm":
-            upgradeResult = yield* run(["npm", "install", "-g", `agentx-cli@${target}`])
+            upgradeResult = yield* run(["npm", "install", "-g", `@agent-qofeno/agentx-cli@${target}`])
             break
           case "pnpm":
-            upgradeResult = yield* run(["pnpm", "install", "-g", `agentx-cli@${target}`])
+            upgradeResult = yield* run(["pnpm", "install", "-g", `@agent-qofeno/agentx-cli@${target}`])
             break
           case "bun":
-            upgradeResult = yield* run(["bun", "install", "-g", `agentx-cli@${target}`])
+            upgradeResult = yield* run(["bun", "install", "-g", `@agent-qofeno/agentx-cli@${target}`])
             break
           case "brew": {
             const formula = yield* getBrewFormula()
@@ -319,6 +328,34 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
         })
         yield* text([process.execPath, "--version"])
       }),
+      checkUpdate: Effect.fn("Installation.checkUpdate")(function* () {
+        const current = InstallationVersion
+        const latestVer = yield* result.latest().pipe(
+          Effect.catchAll(() => Effect.succeed(current)),
+        )
+        const updateAvailable = semver.valid(latestVer) && semver.valid(current) ? semver.gt(latestVer, current) : false
+        return {
+          updateAvailable,
+          current,
+          latest: latestVer,
+        }
+      }),
+      stageDownload: Effect.fn("Installation.stageDownload")(function* (target?: string) {
+        const m = yield* result.method()
+        const targetVer = target ?? (yield* result.latest(m))
+        yield* result.upgrade(m, targetVer)
+        return { targetVersion: targetVer }
+      }),
+      seamlessHandoff: Effect.fn("Installation.seamlessHandoff")(function* (opts?: { sessionID?: string; args?: string[] }) {
+        const extraArgs = opts?.sessionID ? ["--session", opts.sessionID, "--continue"] : (opts?.args ?? [])
+        const execArgs = [...process.argv.slice(1), ...extraArgs]
+        yield* appProcess.run(
+          ChildProcess.make(process.argv[0], execArgs, {
+            extendEnv: true,
+          }),
+        )
+        process.exit(0)
+      }),
     }
 
     return Service.of(result)
@@ -332,5 +369,8 @@ const { runPromise } = makeRuntime(Service, AppNodeBuilder.build(node))
 export const latest = (...args: Parameters<Interface["latest"]>) => runPromise((s) => s.latest(...args))
 export const method = () => runPromise((s) => s.method())
 export const upgrade = (...args: Parameters<Interface["upgrade"]>) => runPromise((s) => s.upgrade(...args))
+export const checkUpdate = () => runPromise((s) => s.checkUpdate())
+export const stageDownload = (target?: string) => runPromise((s) => s.stageDownload(target))
+export const seamlessHandoff = (opts?: { sessionID?: string; args?: string[] }) => runPromise((s) => s.seamlessHandoff(opts))
 
 export * as Installation from "."

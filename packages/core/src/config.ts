@@ -102,6 +102,19 @@ export class Info extends Schema.Class<Info>("Config.Info")({
   plugins: ConfigPlugin.Plugins.pipe(Schema.optional).annotate({
     description: "Ordered external plugin packages to load",
   }),
+  auto_update: Schema.Struct({
+    enabled: Schema.Boolean.pipe(Schema.optional).annotate({
+      description: "Whether to check and stage updates automatically in the background",
+    }),
+    interval_minutes: Schema.Number.pipe(Schema.optional).annotate({
+      description: "Background update check interval in minutes (default: 30)",
+    }),
+    notify: Schema.Boolean.pipe(Schema.optional).annotate({
+      description: "Whether to show a status notification when an update is staged",
+    }),
+  }).pipe(Schema.optional).annotate({
+    description: "Real-time background update configuration",
+  }),
   experimental: ConfigExperimental.Experimental.pipe(Schema.optional),
   providers: Schema.Record(Schema.String, ConfigProvider.Info).pipe(Schema.optional),
 }) {}
