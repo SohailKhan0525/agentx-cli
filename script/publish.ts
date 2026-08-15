@@ -35,24 +35,17 @@ if (Script.release && !Script.preview) {
 
 await prepareReleaseFiles()
 
-console.log("\n=== cli ===\n")
-await $`bun ./packages/agentx/script/publish.ts`
-
-console.log("\n=== preview cli ===\n")
-await $`bun ./packages/cli/script/publish.ts`
+console.log("\n=== agentx-cli ===\n")
+await $`bun ./packages/agentx-cli/script/publish.ts`
 
 console.log("\n=== sdk ===\n")
-await $`bun ./packages/sdk/js/script/publish.ts`
+if (await Bun.file("./packages/sdk/js/script/publish.ts").exists()) {
+  await $`bun ./packages/sdk/js/script/publish.ts`
+}
 
 console.log("\n=== plugin ===\n")
-await $`bun ./packages/plugin/script/publish.ts`
-
-console.log("\n=== ui ===\n")
-await $`bun ./packages/ui/script/publish.ts`
-
-if (Script.release) {
-  await $`bun ./packages/desktop/scripts/finalize-latest-json.ts`
-  await $`bun ./packages/desktop/scripts/finalize-latest-yml.ts`
+if (await Bun.file("./packages/plugin/script/publish.ts").exists()) {
+  await $`bun ./packages/plugin/script/publish.ts`
 }
 
 if (Script.release && !Script.preview) {

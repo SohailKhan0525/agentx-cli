@@ -4,11 +4,13 @@
 
 ### The autonomous AI agent that builds complete, production-ready websites from your terminal.
 
-[![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli.svg?style=flat-square)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
-[![npm downloads](https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli.svg?style=flat-square)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli.svg?style=flat-square&color=blue)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli.svg?style=flat-square&color=green)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![GitHub Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=flat-square&color=yellow)](https://github.com/SohailKhan0525/agentx-cli/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/SohailKhan0525/agentx-cli?style=flat-square&color=purple)](https://github.com/SohailKhan0525/agentx-cli/network/members)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-[Quickstart](#quickstart) • [How It Works](#how-it-works) • [Supported Stacks](#supported-stacks) • [Model Providers](#model-providers) • [Documentation](#documentation)
+[Quickstart](#quickstart) • [How It Works](#how-it-works) • [Supported Stacks](#supported-stacks) • [Model Providers](#model-providers) • [Contributing](#contributing) • [Community](#community)
 
 </div>
 
@@ -16,23 +18,26 @@
 
 ## What is AgentX?
 
-AgentX is a specialized AI agent with one purpose: **building complete, production-ready websites from a plain English prompt.**
+AgentX is an autonomous AI coding agent specialized in **building complete, production-ready full-stack websites from plain English prompts**.
 
-Give AgentX a description of the website you want, and it handles the full stack — frontend UI, backend API routes, database schemas, authentication, payments, SEO, performance optimization, and deployment configuration.
+Give AgentX an idea, and it handles the entire stack — responsive UI, backend API routes, database schemas, authentication, payments, SEO, performance optimization, and deployment configuration.
 
-No half-built components. No `// TODO: implement later`. No placeholder data. Every file is complete and production-ready from minute one.
+- **Zero Placeholders** — No `// TODO: implement later`, no lorem ipsum, no fake endpoints.
+- **Production Ready** — Type-checked TypeScript, valid schemas, complete error handling.
+- **Agency-Grade Aesthetics** — HSL tailored palettes, modern typography, smooth micro-interactions, dark mode.
+- **Offline & Private** — Run locally with Ollama, LM Studio, Jan, GPT4All, llama.cpp, or LocalAI with hardware profiling.
 
 ---
 
 ## Quickstart
 
-### Option 1: Run instantly with npx (recommended)
+### Run Instantly with NPX (No installation needed)
 
 ```bash
 npx @agent-qofeno/agentx-cli
 ```
 
-### Option 2: Install globally
+### Install Globally
 
 ```bash
 # Using npm
@@ -41,8 +46,14 @@ npm install -g @agent-qofeno/agentx-cli
 # Using bun
 bun install -g @agent-qofeno/agentx-cli
 
-# Run anywhere
+# Start building
 agentx
+```
+
+### Shell Installation (macOS & Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/install.sh | bash
 ```
 
 ---
@@ -51,24 +62,24 @@ agentx
 
 AgentX executes a methodical **9-phase building process** for every website:
 
-1. **Architecture & Planning** — Analyzes requirements, selects the optimal stack, plans directory structure and database schema.
-2. **Project Scaffolding** — Sets up framework configuration, TypeScript strict mode, Tailwind CSS, dependencies, and build scripts.
-3. **Design System & Primitives** — Creates tailored color palettes, typography scales, and reusable UI components.
-4. **Layout & Navigation** — Builds responsive headers, mobile navigation drawers, search, theme toggles, and multi-column footers.
-5. **Page Development** — Fully implements every page with rich, realistic domain copy (zero lorem ipsum).
-6. **Backend, API & Database** — Creates type-safe API routes, database schemas with Drizzle/Prisma, auth flows, and webhook handlers.
+1. **Architecture & Planning** — Analyzes requirements, chooses the optimal stack, plans directory structure and database schema.
+2. **Project Scaffolding** — Configures TypeScript strict mode, Tailwind CSS, dependencies, and build scripts.
+3. **Design System & Primitives** — Creates tailored color tokens, typography scales, and reusable UI components.
+4. **Layout & Navigation** — Builds responsive headers, mobile navigation drawers, theme toggles, and multi-column footers.
+5. **Page Development** — Implements every page with rich, realistic domain copy (zero lorem ipsum).
+6. **Backend, API & Database** — Creates type-safe API routes, database schemas with Drizzle/Prisma, and auth flows.
 7. **Polish & Micro-Interactions** — Adds smooth entrance animations, hover states, loading skeletons, and toast notifications.
 8. **SEO & Accessibility** — Injects semantic HTML, Open Graph cards, sitemaps, structured JSON-LD data, and WCAG AA contrast.
 9. **Verification & Delivery** — Runs type checks, verifies clean production builds, and provides launch instructions.
 
 ---
 
-## Supported Stacks
+## Supported Frameworks & Stacks
 
-| Framework | Best For | Default Features |
-|-----------|----------|------------------|
-| **Next.js 14+** (App Router) | Full-stack web apps, SaaS platforms | Server Actions, SSR/SSG, SQLite/Postgres with Drizzle |
-| **React + Vite** | Dynamic single-page applications, dashboards | Client-side routing, optimistic UI, state management |
+| Framework | Ideal For | Features Out-of-the-Box |
+|-----------|-----------|-------------------------|
+| **Next.js 14+** (App Router) | Full-stack web apps, SaaS platforms | Server Actions, SSR/SSG, SQLite/Postgres with Drizzle, Auth |
+| **React + Vite** | Dynamic single-page web apps, dashboards | Client-side routing, optimistic UI, state management |
 | **Astro** | Content websites, marketing, blogs, portfolios | Zero-JS by default, MDX content collections, blazing speed |
 | **Nuxt 3** | Vue-based full-stack web applications | Nitro engine, server routes, auto-imports |
 
@@ -76,13 +87,13 @@ AgentX executes a methodical **9-phase building process** for every website:
 
 ## Model Providers
 
-AgentX connects with top cloud AI providers and local model engines:
+AgentX connects seamlessly with top cloud AI providers and local model engines:
 
-| Provider | Supported Models | Setup |
-|----------|------------------|-------|
+| Provider | Supported Models | Authentication |
+|----------|------------------|----------------|
 | **GitHub Copilot** | GPT-4o, Claude 3.5 Sonnet | GitHub PAT with copilot scope |
 | **ChatGPT (OpenAI)** | `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` | OpenAI API key |
-| **Google (Gemini)** | `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash` | Google AI Studio API key |
+| **Google (Gemini)** | `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash` | Google AI Studio key |
 | **Anthropic (Claude)** | `claude-opus-4-6`, `claude-sonnet-4-6`, `claude-haiku-4-5` | Anthropic API key |
 | **Local Models** | Ollama, LM Studio, Jan, GPT4All, llama.cpp, LocalAI | Auto-detected on local ports |
 
@@ -103,7 +114,7 @@ ollama run qwen2.5-coder:14b
 
 ---
 
-## Available Commands
+## Keyboard Shortcuts & Commands
 
 In the AgentX terminal interface:
 
@@ -126,9 +137,17 @@ In the AgentX terminal interface:
 
 ---
 
-## Contributing
+## Star History
 
-Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on development, testing, and pull requests.
+[![Star History Chart](https://api.star-history.com/svg?repos=SohailKhan0525/agentx-cli&type=Date)](https://star-history.com/#SohailKhan0525/agentx-cli&Date)
+
+---
+
+## Community & Discussions
+
+- **GitHub Discussions**: [Ask questions, share creations, and discuss features](https://github.com/SohailKhan0525/agentx-cli/discussions)
+- **Issues & Bug Reports**: [Report bugs or request new features](https://github.com/SohailKhan0525/agentx-cli/issues)
+- **Contributing**: Check out [CONTRIBUTING.md](CONTRIBUTING.md) to get involved!
 
 ---
 

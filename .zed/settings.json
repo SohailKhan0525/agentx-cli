@@ -5,5 +5,16 @@
       "command": "bunx",
       "arguments": ["prettier", "--stdin-filepath", "{buffer_path}"]
     }
+  },
+  "languages": {
+    "TypeScript": {
+      "tab_size": 2
+    },
+    "TSX": {
+      "tab_size": 2
+    },
+    "JSON": {
+      "tab_size": 2
+    }
   }
 }

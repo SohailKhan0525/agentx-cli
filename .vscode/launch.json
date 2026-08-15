@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "AgentX CLI (Dev)",
+      "type": "bun",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/agentx-cli/src/index.ts",
+      "cwd": "${workspaceFolder}",
+      "args": [],
+      "console": "integratedTerminal"
+    }
+  ]
+}
