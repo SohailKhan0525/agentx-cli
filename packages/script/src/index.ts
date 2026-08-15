@@ -33,6 +33,7 @@ const IS_PREVIEW = CHANNEL !== "latest"
 
 const VERSION = await (async () => {
   if (env.AGENTX_VERSION) return env.AGENTX_VERSION
+  if (rootPkg.version && rootPkg.version !== "0.0.0") return rootPkg.version
   if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
   const version = await fetch("https://registry.npmjs.org/@agent-qofeno/agentx-cli/latest")
     .then((res) => {
