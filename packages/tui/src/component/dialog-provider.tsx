@@ -382,32 +382,7 @@ function ApiMethod(props: ApiMethodProps) {
     <DialogPrompt
       title={props.title}
       placeholder="API key"
-      description={
-        {
-          agentx: (
-            <box gap={1}>
-              <text fg={theme.textMuted}>
-                AgentX Zen gives you access to all the best coding models at the cheapest prices with a single API
-                key.
-              </text>
-              <text fg={theme.text}>
-                Go to <span style={{ fg: theme.primary }}>https://github.com/SohailKhan0525/agentx-cli/zen</span> to get a key
-              </text>
-            </box>
-          ),
-          "agentx-go": (
-            <box gap={1}>
-              <text fg={theme.textMuted}>
-                AgentX Go is a $10 per month subscription that provides reliable access to popular open coding models
-                with generous usage limits.
-              </text>
-              <text fg={theme.text}>
-                Go to <span style={{ fg: theme.primary }}>https://github.com/SohailKhan0525/agentx-cli/go</span> and enable AgentX Go
-              </text>
-            </box>
-          ),
-        }[props.providerID] ?? undefined
-      }
+      description={undefined}
       onConfirm={async (value) => {
         if (!value) return
         await sdk.client.auth.set({
