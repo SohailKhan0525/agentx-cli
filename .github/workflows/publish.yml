@@ -42,8 +42,15 @@ jobs:
       - name: Build packages
         run: bun run --cwd packages/agentx-cli script/build.ts --single
 
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          gh release create ${{ github.ref_name }} --title "AgentX ${{ github.ref_name }} — Autonomous Website Builder" --generate-notes || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to NPM
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') && env.NODE_AUTH_TOKEN != ''
         run: |
           npm publish --workspace=packages/agentx-cli --access public
         env:
