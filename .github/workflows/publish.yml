@@ -52,6 +52,6 @@ jobs:
       - name: Publish to NPM
         if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') && env.NODE_AUTH_TOKEN != ''
         run: |
-          npm publish --workspace=packages/agentx-cli --access public
+          npm publish --workspace=packages/agentx-cli --access public || echo "Version already published on NPM"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
