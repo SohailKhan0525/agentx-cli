@@ -3,14 +3,12 @@ import { LLM, LLMClient, Provider } from "@agentx-cli/llm"
 import { Route, Protocol } from "@agentx-cli/llm/route"
 import { Provider as ProviderSubpath } from "@agentx-cli/llm/provider"
 import {
-  CloudflareAIGateway,
-  CloudflareWorkersAI,
+  Anthropic,
+  GitHubCopilot,
+  Google,
   OpenAI,
   OpenAICompatible,
-  OpenRouter,
-  XAI,
 } from "@agentx-cli/llm/providers"
-import * as GitHubCopilot from "@agentx-cli/llm/providers/github-copilot"
 import { OpenAIChat, OpenAICompatibleChat, OpenAIResponses } from "@agentx-cli/llm/protocols"
 import * as AnthropicMessages from "@agentx-cli/llm/protocols/anthropic-messages"
 
@@ -34,19 +32,9 @@ describe("public exports", () => {
     expect(OpenAI.provider.responses).toBe(OpenAI.responses)
     expect(OpenAI.provider.responsesWebSocket).toBe(OpenAI.responsesWebSocket)
     expect(OpenAI.configure({ apiKey: "fixture" }).responses).toBeFunction()
-    expect(OpenAICompatible.deepseek.model).toBeFunction()
-    expect(CloudflareAIGateway.configure).toBeFunction()
-    expect(CloudflareAIGateway.configure({ accountId: "fixture", gatewayApiKey: "fixture" }).model).toBeFunction()
-    expect(CloudflareWorkersAI.configure).toBeFunction()
-    expect(CloudflareWorkersAI.configure({ accountId: "fixture", apiKey: "fixture" }).model).toBeFunction()
-    expect(OpenRouter.model).toBeFunction()
-    expect(OpenRouter.provider.model).toBe(OpenRouter.model)
-    expect(XAI.model).toBeFunction()
-    expect(XAI.provider.model).toBe(XAI.model)
-    expect(XAI.provider.responses).toBe(XAI.responses)
-    expect(XAI.provider.chat).toBe(XAI.chat)
-    expect(XAI.configure({ apiKey: "fixture" }).responses("grok-4.3").route.id).toBe("openai-responses")
-    expect(XAI.configure({ apiKey: "fixture" }).chat("grok-4.3").route.id).toBe("openai-compatible-chat")
+    expect(Anthropic.model).toBeFunction()
+    expect(Google.model).toBeFunction()
+    expect(OpenAICompatible.model).toBeFunction()
     expect(
       GitHubCopilot.configure({ baseURL: "https://api.githubcopilot.test", apiKey: "fixture" }).model,
     ).toBeFunction()

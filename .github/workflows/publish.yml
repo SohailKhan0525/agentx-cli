@@ -40,7 +40,7 @@ jobs:
         run: bun run typecheck
 
       - name: Build packages
-        run: bun run --cwd packages/agentx-cli build
+        run: bun run --cwd packages/agentx-cli script/build.ts --single
 
       - name: Publish to NPM
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'

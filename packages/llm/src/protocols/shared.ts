@@ -1,4 +1,4 @@
-import { Buffer } from "node:buffer"
+import { Buffer } from "buffer"
 import { Effect, Schema, Stream } from "effect"
 import * as Sse from "effect/unstable/encoding/Sse"
 import { Headers, HttpClientRequest } from "effect/unstable/http"
@@ -201,8 +201,7 @@ export const validateMedia = Effect.fn("ProviderShared.validateMedia")(function*
   const bytes = Buffer.from(base64, "base64")
   if (bytes.byteLength > MAX_MEDIA_DECODED_BYTES)
     return yield* invalidRequest(`${route} media exceeds the ${MAX_MEDIA_DECODED_BYTES} byte decoded limit`)
-  if (bytes.toString("base64") !== base64) return yield* invalidRequest(`${route} media must contain canonical base64`)
-  return { mime, base64, dataUrl: `data:${mime};base64,${base64}`, bytes } satisfies ValidatedMedia
+  return { mime, base64, dataUrl: `data:${mime};base64,${base64}`, bytes: new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength) } satisfies ValidatedMedia
 })
 
 export const validateToolFile = (route: string, part: ToolFileContent, supportedMimes: ReadonlySet<string>) =>

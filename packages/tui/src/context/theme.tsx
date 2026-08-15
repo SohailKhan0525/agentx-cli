@@ -26,8 +26,8 @@ import { useKV } from "./kv"
 import { useTuiConfig } from "../config"
 import { Global } from "@agentx-cli/core/global"
 import { Glob } from "@agentx-cli/core/util/glob"
-import { readFile } from "node:fs/promises"
-import path from "node:path"
+import { readFile } from "fs/promises"
+import path from "path"
 
 export type ThemeSource = Readonly<{
   discover(): Promise<Record<string, unknown>>

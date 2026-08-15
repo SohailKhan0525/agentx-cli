@@ -1,6 +1,6 @@
-import { mkdtemp, realpath, rm } from "node:fs/promises"
-import path from "node:path"
-import os from "node:os"
+import { mkdtemp, realpath, rm } from "fs/promises"
+import path from "path"
+import os from "os"
 
 export async function tmpdir() {
   const directory = await realpath(await mkdtemp(path.join(os.tmpdir(), "agentx-tui-test-")))

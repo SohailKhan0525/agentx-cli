@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test"
-import { mkdir, writeFile } from "node:fs/promises"
-import path from "node:path"
+import { mkdir, writeFile } from "fs/promises"
+import path from "path"
 import type { TerminalColors } from "@opentui/core"
 import { DEFAULT_THEMES, addTheme, allThemes, hasTheme, resolveTheme, terminalMode } from "../src/theme"
 import { discoverThemes } from "../src/context/theme"

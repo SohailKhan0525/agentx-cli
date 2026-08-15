@@ -1,4 +1,4 @@
-import path from "node:path"
+import path from "path"
 
 export const LANGUAGE_EXTENSIONS: Record<string, string> = {
   ".abap": "abap",

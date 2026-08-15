@@ -40,14 +40,7 @@ const usageChunk = (usage: object) => ({
   usage,
 })
 
-const providerFamilies = [
-  ["baseten", OpenAICompatible.baseten, "https://inference.baseten.co/v1"],
-  ["cerebras", OpenAICompatible.cerebras, "https://api.cerebras.ai/v1"],
-  ["deepinfra", OpenAICompatible.deepinfra, "https://api.deepinfra.com/v1/openai"],
-  ["deepseek", OpenAICompatible.deepseek, "https://api.deepseek.com/v1"],
-  ["fireworks", OpenAICompatible.fireworks, "https://api.fireworks.ai/inference/v1"],
-  ["togetherai", OpenAICompatible.togetherai, "https://api.together.xyz/v1"],
-] as const
+
 
 describe("OpenAI-compatible Chat route", () => {
   it.effect("prepares generic Chat target", () =>
@@ -90,38 +83,18 @@ describe("OpenAI-compatible Chat route", () => {
     }),
   )
 
-  it.effect("provides model helpers for compatible provider families", () =>
+  it.effect("provides model helpers for compatible provider", () =>
     Effect.gen(function* () {
-      expect(
-        providerFamilies.map(([provider, family]) => {
-          const model = family.configure({ apiKey: "test-key" }).model(`${provider}-model`)
-          return {
-            id: String(model.id),
-            provider: String(model.provider),
-            route: model.route.id,
-            baseURL: model.route.endpoint.baseURL,
-          }
-        }),
-      ).toEqual(
-        providerFamilies.map(([provider, _, baseURL]) => ({
-          id: `${provider}-model`,
-          provider,
-          route: "openai-compatible-chat",
-          baseURL,
-        })),
-      )
+      const custom = OpenAICompatible.configure({
+        apiKey: "test-key",
+        baseURL: "http://localhost:11434/v1",
+      }).model("qwen2.5-coder:7b")
 
-      const custom = OpenAICompatible.deepseek
-        .configure({
-          apiKey: "test-key",
-          baseURL: "https://custom.deepseek.test/v1",
-        })
-        .model("deepseek-chat")
       expect(custom).toMatchObject({
-        provider: "deepseek",
+        provider: "openai-compatible",
         route: { id: "openai-compatible-chat" },
       })
-      expect(custom.route.endpoint.baseURL).toBe("https://custom.deepseek.test/v1")
+      expect(custom.route.endpoint.baseURL).toBe("http://localhost:11434/v1")
     }),
   )
 

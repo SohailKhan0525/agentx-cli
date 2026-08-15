@@ -36,6 +36,9 @@ export const configure = (input: GenericModelOptions) => {
   }
 }
 
+export const model = (modelID: string | ModelID, options?: GenericModelOptions) =>
+  configure(options ?? { baseURL: "http://localhost:11434/v1" }).model(modelID)
+
 // Local service detection with timeout
 const checkService = async (url: string, timeoutMs = 3000) => {
   try {

@@ -1,8 +1,8 @@
-import { execFile, spawn } from "node:child_process"
-import { readFile, rm } from "node:fs/promises"
-import { platform, release, tmpdir } from "node:os"
-import path from "node:path"
-import { promisify } from "node:util"
+import { execFile, spawn } from "child_process"
+import { readFile, rm } from "fs/promises"
+import { platform, release, tmpdir } from "os"
+import path from "path"
+import { promisify } from "util"
 
 const exec = promisify(execFile)
 
@@ -12,7 +12,7 @@ function command(command: string, args: string[] = [], input?: string) {
     const output: Buffer[] = []
     child.on("error", reject)
     child.stdout?.on("data", (chunk: Buffer) => output.push(chunk))
-    child.on("close", (code) => {
+    child.on("close", (code: number | null) => {
       if (code === 0) return resolve(Buffer.concat(output))
       reject(new Error(`${command} exited with code ${code}`))
     })

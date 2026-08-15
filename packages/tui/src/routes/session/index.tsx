@@ -15,8 +15,8 @@ import {
   useContext,
 } from "solid-js"
 import { Dynamic } from "solid-js/web"
-import path from "node:path"
-import { mkdir, writeFile } from "node:fs/promises"
+import path from "path"
+import { mkdir, writeFile } from "fs/promises"
 import { useRoute, useRouteData } from "../../context/route"
 import { useProject } from "../../context/project"
 import { useSync } from "../../context/sync"

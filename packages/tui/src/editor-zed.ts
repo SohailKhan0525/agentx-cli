@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite"
-import { statSync } from "node:fs"
-import { readFile as readFileAsync } from "node:fs/promises"
-import os from "node:os"
-import path from "node:path"
+import { statSync } from "fs"
+import { readFile as readFileAsync } from "fs/promises"
+import os from "os"
+import path from "path"
 import { Option, Schema } from "effect"
 import type { EditorSelection } from "./context/editor"
 

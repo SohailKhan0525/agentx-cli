@@ -1,5 +1,5 @@
-import { realpathSync } from "node:fs"
-import { win32 } from "node:path"
+import { realpathSync } from "fs"
+import { win32 } from "path"
 
 export function normalizePath(input: string, platform: string) {
   if (platform !== "win32") return input

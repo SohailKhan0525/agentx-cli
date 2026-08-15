@@ -1,5 +1,5 @@
 import { dlopen, ptr } from "bun:ffi"
-import type { ReadStream } from "node:tty"
+import type { ReadStream } from "tty"
 
 const STD_INPUT_HANDLE = -10
 const ENABLE_PROCESSED_INPUT = 0x0001

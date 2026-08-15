@@ -1,10 +1,10 @@
 import type { CliRenderer } from "@opentui/core"
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs"
-import { readFile, rm, writeFile } from "node:fs/promises"
-import os from "node:os"
-import path from "node:path"
-import { spawn } from "node:child_process"
-import type { Stream } from "node:stream"
+import { existsSync, readdirSync, readFileSync, statSync } from "fs"
+import { readFile, rm, writeFile } from "fs/promises"
+import os from "os"
+import path from "path"
+import { spawn } from "child_process"
+import type { Stream } from "stream"
 import { resolveZedDbPath, resolveZedSelection } from "./editor-zed"
 
 type EditorStdio = "inherit" | "pipe" | "ignore" | number | Stream
@@ -39,7 +39,7 @@ export async function openEditor(input: { value: string; renderer: CliRenderer; 
         shell: process.platform === "win32",
       })
       child.on("error", reject)
-      child.on("exit", (code, signal) => {
+      child.on("exit", (code: number | null, signal: string | null) => {
         if (code === 0) return resolve()
         reject(new Error(`Editor exited with ${signal ? `signal ${signal}` : `code ${code}`}`))
       })
@@ -62,8 +62,8 @@ export function discoverEditorConnection(directory: string) {
   }
   try {
     return readdirSync(root)
-      .filter((entry) => entry.endsWith(".lock"))
-      .flatMap((entry) => {
+      .filter((entry: string) => entry.endsWith(".lock"))
+      .flatMap((entry: string) => {
         const file = path.join(root, entry)
         const port = Number.parseInt(path.basename(file, ".lock"), 10)
         if (!Number.isInteger(port) || port <= 0 || port > 65535) return []
@@ -88,8 +88,8 @@ export function discoverEditorConnection(directory: string) {
           return []
         }
       })
-      .sort((left, right) => right.score - left.score || right.mtime - left.mtime)
-      .map(({ url, authToken, source }) => ({ url, authToken, source }))[0]
+      .sort((left: { score: number; mtime: number }, right: { score: number; mtime: number }) => right.score - left.score || right.mtime - left.mtime)
+      .map(({ url, authToken, source }: { url: string; authToken?: string; source: string }) => ({ url, authToken, source }))[0]
   } catch {
     return undefined
   }
