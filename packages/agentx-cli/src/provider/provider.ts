@@ -187,12 +187,9 @@ function custom(dep: CustomDep): Record<string, CustomLoader> {
         },
         options: { headerTimeout: OPENAI_HEADER_TIMEOUT_DEFAULT },
       }),
-    xai: () =>
+    google: () =>
       Effect.succeed({
         autoload: false,
-        async getModel(sdk: any, modelID: string, _options?: Record<string, any>) {
-          return sdk.responses(modelID)
-        },
         options: {},
       }),
     "github-copilot": () =>
