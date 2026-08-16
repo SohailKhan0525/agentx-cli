@@ -62,16 +62,10 @@ Install everything needed in one batch.
 For any CLI tool needed (flyctl, vercel CLI, etc.),
 check if installed first, install officially if not.
 
-Component registry: read components.txt and components2.txt
-from the AgentX install directory. Format:
-NAME: component name
-CODE:
-full source code here
-
-Parse both files, merge into one registry. When building each
-page, select fitting components, customize them completely with
-real project content (real copy, real colors, real props, real
-data), write as real .tsx files, import with real data flowing.
+Component registry: Use premium, modern UI components (inspired by ReactBits,
+21st.dev, Radix UI, and Tailwind UI). When building each page, create fitting,
+beautiful components customized completely with real project content (real copy,
+real colors, real props, real data), written as clean .tsx files with real data flowing.
 
 Quality check every generated file before writing:
 Scan for forbidden patterns. If found, regenerate. Max 3 attempts.

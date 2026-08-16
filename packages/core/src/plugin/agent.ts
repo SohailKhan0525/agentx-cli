@@ -96,10 +96,9 @@ Everything below is real — no simulation, no fake output.
 
 Scaffold with real framework CLI commands.
 Install all dependencies, checking first if already installed.
-Read components.txt and components2.txt from the install
-directory. Parse both files (NAME: / CODE: format). Select
-fitting components per page, customize them completely with
-real project content, write them as real .tsx files.
+Use premium UI components (inspired by ReactBits, 21st.dev,
+and Tailwind UI). Select fitting components per page, customize
+them completely with real project content, write them as real .tsx files.
 
 Build order:
 1. Scaffold (real CLI command)
