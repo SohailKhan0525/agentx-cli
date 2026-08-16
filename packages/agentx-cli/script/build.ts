@@ -199,12 +199,15 @@ for (const item of targets) {
     },
   })
 
-  // Smoke test: only run if binary is for current platform
+  // Smoke test & copy binary to bin/ for npm package
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
     const binaryPath = process.platform === "win32" ? `dist/${name}/bin/agentx.exe` : `dist/${name}/bin/agentx`
-    console.log(`Running smoke test: ${binaryPath} --version`)
+    const targetBinary = process.platform === "win32" ? `./bin/agentx.exe` : `./bin/agentx`
+    await $`cp ${binaryPath} ${targetBinary}`
+    console.log(`Copied ${binaryPath} to ${targetBinary}`)
+    console.log(`Running smoke test: ${targetBinary} --version`)
     try {
-      const versionOutput = await $`${binaryPath} --version`.text()
+      const versionOutput = await $`${targetBinary} --version`.text()
       console.log(`Smoke test passed: ${versionOutput.trim()}`)
     } catch (e) {
       console.error(`Smoke test failed for ${name}:`, e)
