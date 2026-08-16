@@ -201,7 +201,7 @@ for (const item of targets) {
 
   // Smoke test: only run if binary is for current platform
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = `dist/${name}/bin/agentx`
+    const binaryPath = process.platform === "win32" ? `dist/${name}/bin/agentx.exe` : `dist/${name}/bin/agentx`
     console.log(`Running smoke test: ${binaryPath} --version`)
     try {
       const versionOutput = await $`${binaryPath} --version`.text()
