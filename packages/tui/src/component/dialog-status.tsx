@@ -3,15 +3,19 @@ import { fileURLToPath } from "bun"
 import { useTheme } from "../context/theme"
 import { useDialog } from "../ui/dialog"
 import { useSync } from "../context/sync"
+import { useLocal } from "../context/local"
 import { For, Match, Switch, Show, createMemo } from "solid-js"
 
 export type DialogStatusProps = {}
 
 export function DialogStatus() {
   const sync = useSync()
+  const local = useLocal()
   const { theme } = useTheme()
   const dialog = useDialog()
 
+  const currentModel = createMemo(() => local.model.current())
+  const connectedProviders = createMemo(() => sync.data.provider_next?.connected ?? [])
   const enabledFormatters = createMemo(() => sync.data.formatter.filter((f) => f.enabled))
 
   const plugins = createMemo(() => {
@@ -44,10 +48,24 @@ export function DialogStatus() {
     <box paddingLeft={2} paddingRight={2} gap={1} paddingBottom={1}>
       <box flexDirection="row" justifyContent="space-between">
         <text fg={theme.text} attributes={TextAttributes.BOLD}>
-          Status
+          AgentX System Status
         </text>
         <text fg={theme.textMuted} onMouseUp={() => dialog.clear()}>
           esc
+        </text>
+      </box>
+      <box>
+        <text fg={theme.textMuted}>
+          Active Model:{" "}
+          <span style={{ fg: theme.primary, attributes: TextAttributes.BOLD }}>
+            {currentModel() ? `${currentModel()!.providerID}/${currentModel()!.modelID}` : "None (connect a provider)"}
+          </span>
+        </text>
+        <text fg={theme.textMuted}>
+          Connected Providers:{" "}
+          <span style={{ fg: theme.text }}>
+            {connectedProviders().length > 0 ? connectedProviders().join(", ") : "None"}
+          </span>
         </text>
       </box>
       <Show when={Object.keys(sync.data.mcp).length > 0} fallback={<text fg={theme.text}>No MCP Servers</text>}>

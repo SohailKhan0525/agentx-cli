@@ -44,41 +44,45 @@ export function DialogMcp() {
     )
   })
 
+  const toggleMcp = async (name: string) => {
+    if (loading() !== null) return
+    setLoading(name)
+    try {
+      await local.mcp.toggle(name)
+      const status = await sdk.client.mcp.status()
+      if (status.data) {
+        sync.set("mcp", status.data)
+      }
+    } catch (error) {
+      console.error("Failed to toggle MCP:", error)
+    } finally {
+      setLoading(null)
+    }
+  }
+
   const actions = createMemo(() => [
     {
       command: "dialog.mcp.toggle",
       title: "toggle",
-      onTrigger: async (option: DialogSelectOption<string>) => {
-        // Prevent toggling while an operation is already in progress
-        if (loading() !== null) return
-
-        setLoading(option.value)
-        try {
-          await local.mcp.toggle(option.value)
-          // Refresh MCP status from server
-          const status = await sdk.client.mcp.status()
-          if (status.data) {
-            sync.set("mcp", status.data)
-          } else {
-            console.error("Failed to refresh MCP status: no data returned")
-          }
-        } catch (error) {
-          console.error("Failed to toggle MCP:", error)
-        } finally {
-          setLoading(null)
-        }
-      },
+      onTrigger: (option: DialogSelectOption<string>) => toggleMcp(option.value),
     },
   ])
 
   return (
     <DialogSelect
       ref={setRef}
-      title="MCPs"
+      title="MCP Servers"
       options={options()}
       actions={actions()}
-      onSelect={(_option) => {
-        // Don't close on select, only on escape
+      emptyView={
+        <box paddingLeft={3} paddingRight={3} paddingBottom={1}>
+          <text fg={theme.textMuted}>
+            No MCP servers configured. Add MCP servers in <span style={{ fg: theme.primary }}>agentx.json</span> to use them.
+          </text>
+        </box>
+      }
+      onSelect={(option) => {
+        toggleMcp(option.value)
       }}
     />
   )

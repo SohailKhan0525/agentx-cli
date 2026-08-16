@@ -44,6 +44,7 @@ import { DialogMcp } from "./component/dialog-mcp"
 import { DialogStatus } from "./component/dialog-status"
 import { DialogThemeList } from "./component/dialog-theme-list"
 import { DialogHelp } from "./ui/dialog-help"
+import { DialogDocs } from "./ui/dialog-docs"
 import { DialogAgent } from "./component/dialog-agent"
 import { DialogSessionList } from "./component/dialog-session-list"
 import { DialogWorkspaceList } from "./component/dialog-workspace-list"
@@ -760,8 +761,20 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         category: "System",
       },
       {
+        name: "session.new",
+        title: "New session",
+        category: "Session",
+        slashName: "new",
+        slashAliases: ["clear", "reset"],
+        run: () => {
+          route.navigate({ type: "home" })
+          dialog.clear()
+        },
+      },
+      {
         name: "theme.mode.lock",
         title: locked() ? "Unlock theme mode" : "Lock theme mode",
+        hidden: true,
         run: () => {
           if (locked()) unlock()
           else lock()
@@ -780,10 +793,11 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "docs.open",
-        title: "Open docs",
+        title: "Documentation & Cheat Sheet",
+        slashName: "docs",
+        slashAliases: ["doc", "cheatsheet"],
         run: () => {
-          open("https://github.com/SohailKhan0525/agentx-cli").catch(() => {})
-          dialog.clear()
+          dialog.replace(() => <DialogDocs />)
         },
         category: "System",
       },

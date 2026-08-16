@@ -63,7 +63,13 @@ export function DialogSkill(props: DialogSkillProps) {
             </text>
             <text fg={theme.textMuted}>{errorMessage(loadError())}</text>
           </box>
-        ) : undefined
+        ) : (
+          <box paddingLeft={4} paddingRight={4} paddingBottom={1}>
+            <text fg={theme.textMuted}>
+              No skills found. Add skills in <span style={{ fg: theme.primary }}>.agents/skills/</span> or <span style={{ fg: theme.primary }}>~/.config/agentx/skills/</span>.
+            </text>
+          </box>
+        )
       }
     />
   )

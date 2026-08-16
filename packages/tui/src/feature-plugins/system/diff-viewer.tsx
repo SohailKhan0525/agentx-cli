@@ -1059,9 +1059,11 @@ const tui: TuiPlugin = async (api) => {
         category: "VCS",
         namespace: "palette",
         run() {
+          const current = api.route.current as any
+          const sessionID = current?.sessionID ?? current?.params?.sessionID
           api.route.navigate(ROUTE, {
             mode: "git",
-            sessionID: "params" in api.route.current ? api.route.current.params?.sessionID : undefined,
+            sessionID,
             returnRoute: api.route.current,
           })
           api.ui.dialog.clear()
