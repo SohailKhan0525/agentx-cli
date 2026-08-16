@@ -23,8 +23,10 @@ const patterns = [
   /model_context_window_exceeded/i,
 ]
 
-export const isContextOverflow = (message: string) =>
-  patterns.some((pattern) => pattern.test(message)) || /^4(00|13)\s*(status code)?\s*\(no body\)/i.test(message)
+export const isContextOverflow = (message: string) => {
+  const truncated = message.length > 1024 ? message.slice(0, 1024) : message
+  return patterns.some((pattern) => pattern.test(truncated)) || /^4(?:00|13)(?:\s+status\s+code)?\s*\(no\s+body\)/i.test(truncated)
+}
 
 export const isContextOverflowFailure = (failure: unknown) =>
   failure instanceof LLMError

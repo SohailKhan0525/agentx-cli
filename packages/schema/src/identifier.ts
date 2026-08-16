@@ -25,6 +25,17 @@ export function create(descending: boolean, timestamp = Date.now()) {
       .toString(16)
       .padStart(2, "0"),
   ).join("")
-  const bytes = crypto.getRandomValues(new Uint8Array(length - 12))
-  return time + Array.from(bytes, (byte) => chars[byte % 62]).join("")
+  const randomLength = length - 12
+  let randomChars = ""
+  const maxValidByte = 256 - (256 % chars.length)
+  while (randomChars.length < randomLength) {
+    const bytes = crypto.getRandomValues(new Uint8Array(randomLength * 2))
+    for (let i = 0; i < bytes.length && randomChars.length < randomLength; i++) {
+      const b = bytes[i]!
+      if (b < maxValidByte) {
+        randomChars += chars[b % chars.length]
+      }
+    }
+  }
+  return time + randomChars
 }
