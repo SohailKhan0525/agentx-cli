@@ -63,6 +63,7 @@ import { KVProvider, useKV } from "./context/kv"
 import * as Model from "./util/model"
 import { ArgsProvider, useArgs, type Args } from "./context/args"
 import open from "open"
+import { openGitHubIssue } from "./util/issue-reporter"
 import { PromptRefProvider, usePromptRef } from "./context/prompt"
 import { TuiConfigProvider, useTuiConfig, type TuiConfig } from "./config"
 import { createTuiApiAdapters } from "./plugin/adapters"
@@ -802,6 +803,25 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         category: "System",
       },
       {
+        name: "app.report_issue",
+        title: "Submit Issue to GitHub",
+        slashName: "issue",
+        slashAliases: ["bug", "report"],
+        run: async () => {
+          await openGitHubIssue({
+            title: "Issue reported from AgentX CLI",
+            context: "Reported via /issue command in AgentX TUI.",
+          })
+          toast.show({
+            variant: "info",
+            message: "Opened GitHub new issue page with pre-filled details",
+            duration: 5000,
+          })
+          dialog.clear()
+        },
+        category: "System",
+      },
+      {
         name: "app.exit",
         title: "Exit the app",
         slashName: "exit",
@@ -1001,6 +1021,15 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
     }
   })
 
+  event.on("installation.updated", (evt) => {
+    toast.show({
+      variant: "success",
+      title: "AgentX Updated",
+      message: `AgentX updated to v${evt.properties.version} in real-time!`,
+      duration: 8000,
+    })
+  })
+
   event.on("session.error", (evt, { workspace }) => {
     if (workspace !== project.workspace.current()) return
     const error = evt.properties.error
@@ -1009,8 +1038,9 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     toast.show({
       variant: "error",
-      message,
-      duration: 5000,
+      title: "Session Error",
+      message: `${message} (use /issue to report)`,
+      duration: 8000,
     })
   })
 
@@ -1024,7 +1054,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
     const choice = await DialogConfirm.show(
       dialog,
       `Update Available`,
-      `A new release v${version} is available. Would you like to update now?`,
+      `A new release v${version} is available. Update in background now?`,
       "skip",
     )
 
@@ -1037,29 +1067,32 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
 
     toast.show({
       variant: "info",
-      message: `Updating to v${version}...`,
+      title: "Updating AgentX",
+      message: `Downloading and updating to v${version} in background...`,
       duration: 30000,
     })
 
-    const result = await sdk.client.global.upgrade({ target: version })
+    const result = await sdk.client.global.upgrade({ target: version }).catch((err) => ({
+      error: err,
+      data: undefined,
+    }))
 
     if (result.error || !result.data?.success) {
       toast.show({
         variant: "error",
         title: "Update Failed",
-        message: "Update failed",
-        duration: 10000,
+        message: result.error ? errorMessage(result.error) : "Failed to update in background",
+        duration: 8000,
       })
       return
     }
 
-    await DialogAlert.show(
-      dialog,
-      "Update Complete",
-      `Successfully updated to AgentX v${result.data.version}. Please restart the application.`,
-    )
-
-    void exit()
+    toast.show({
+      variant: "success",
+      title: "Update Complete",
+      message: `Successfully updated to AgentX v${result.data.version} in real-time!`,
+      duration: 8000,
+    })
   })
 
   const plugin = createMemo(() => {

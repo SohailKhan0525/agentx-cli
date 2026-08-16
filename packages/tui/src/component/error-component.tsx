@@ -1,4 +1,5 @@
 import { release } from "os"
+import open from "open"
 import { TextAttributes, type ScrollBoxRenderable } from "@opentui/core"
 import { useKeyboard, useTerminalDimensions } from "@opentui/solid"
 import { createSignal, For, Show } from "solid-js"
@@ -12,6 +13,7 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
   const exit = useExit()
   const clipboard = useClipboard()
   const [copied, setCopied] = createSignal(false)
+  const [submitted, setSubmitted] = createSignal(false)
 
   // Safe fallback palette per mode (mirrors theme/assets/agentx.json) since the
   // theme context may be the thing that crashed.
@@ -48,7 +50,14 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
     void clipboard.write?.(issueURL.toString()).then(() => setCopied(true))
   }
 
+  const submitIssue = () => {
+    setSubmitted(true)
+    copyReport()
+    void open(issueURL.toString()).catch(() => {})
+  }
+
   const actions = [
+    { key: "s", label: () => (submitted() ? "✓ Opened GitHub" : "Submit Issue"), primary: true, onUse: submitIssue },
     { key: "c", label: () => (copied() ? "✓ Copied" : "Copy report"), copy: true, onUse: copyReport },
     { key: "r", label: () => "Restart", onUse: props.reset },
     { key: "q", label: () => "Quit", onUse: () => exit() },
@@ -87,6 +96,7 @@ export function ErrorComponent(props: { error: Error; reset: () => void; mode?: 
     if (evt.name === "home" && scroll) return scroll.scrollTo(0)
     if (evt.name === "end" && scroll) return scroll.scrollTo(scroll.scrollHeight)
     if (evt.name === "q") return exit()
+    if (evt.name === "s") return submitIssue()
     if (evt.name === "c") return copyReport()
     if (evt.name === "r") return props.reset()
   })
