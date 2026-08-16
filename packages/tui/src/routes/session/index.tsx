@@ -728,6 +728,7 @@ export function Session() {
       title: "Toggle session scrollbar",
       value: "session.toggle.scrollbar",
       category: "Session",
+      hidden: true,
       run: () => {
         setShowScrollbar((prev) => !prev)
         dialog.clear()
@@ -737,6 +738,7 @@ export function Session() {
       title: showGenericToolOutput() ? "Hide generic tool output" : "Show generic tool output",
       value: "session.toggle.generic_tool_output",
       category: "Session",
+      hidden: true,
       run: () => {
         setShowGenericToolOutput((prev) => !prev)
         dialog.clear()

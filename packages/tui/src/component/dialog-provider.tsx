@@ -1,6 +1,6 @@
 import { createMemo, createSignal, onMount, Show } from "solid-js"
 import { useSync } from "../context/sync"
-import { map, pipe, sortBy } from "remeda"
+import { filter, map, pipe, sortBy } from "remeda"
 import { DialogSelect } from "../ui/dialog-select"
 import { useDialog } from "../ui/dialog"
 import { useSDK } from "../context/sdk"
@@ -29,6 +29,19 @@ const PROVIDER_PRIORITY: Record<string, number> = {
   localai: 9,
 }
 
+const ALLOWED_PROVIDERS = new Set([
+  "github-copilot",
+  "openai",
+  "google",
+  "anthropic",
+  "ollama",
+  "lmstudio",
+  "jan",
+  "gpt4all",
+  "llamacpp",
+  "localai",
+])
+
 const CUSTOM_PROVIDER_OPTION_VALUE = "__agentx_custom_provider__"
 const CUSTOM_PROVIDER_ID = /^[a-z0-9][a-z0-9-_]*$/
 
@@ -52,6 +65,7 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
   return [
     ...pipe(
       list,
+      filter((x) => ALLOWED_PROVIDERS.has(x.id)),
       sortBy(
         (x) => PROVIDER_PRIORITY[x.id] ?? 99,
         (x) => x.name.toLowerCase(),

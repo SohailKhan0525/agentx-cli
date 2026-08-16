@@ -675,6 +675,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "variant.cycle",
         title: "Variant cycle",
         category: "Agent",
+        hidden: true,
         run: () => {
           local.model.variant.cycle()
         },
@@ -720,6 +721,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
             {
               name: "console.org.switch",
               title: "Switch org",
+              hidden: true,
               suggested: Boolean(sync.data.console_state.activeOrgName),
               slashName: "org",
               slashAliases: ["orgs", "switch-org"],
@@ -797,6 +799,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.debug",
         title: "Toggle debug panel",
         category: "System",
+        hidden: true,
         run: () => {
           renderer.toggleDebugOverlay()
           dialog.clear()
@@ -806,6 +809,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.console",
         title: "Toggle console",
         category: "System",
+        hidden: true,
         run: () => {
           renderer.console.toggle()
           dialog.clear()
@@ -815,6 +819,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.heap_snapshot",
         title: "Write heap snapshot",
         category: "System",
+        hidden: true,
         run: async () => {
           const files = await props.onSnapshot?.()
           toast.show({
@@ -841,6 +846,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "terminal.title.toggle",
         title: terminalTitleEnabled() ? "Disable terminal title" : "Enable terminal title",
         category: "System",
+        hidden: true,
         run: () => {
           setTerminalTitleEnabled((prev) => {
             const next = !prev
@@ -855,6 +861,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.toggle.animations",
         title: kv.get("animations_enabled", true) ? "Disable animations" : "Enable animations",
         category: "System",
+        hidden: true,
         run: () => {
           kv.set("animations_enabled", !kv.get("animations_enabled", true))
           dialog.clear()
@@ -864,6 +871,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.toggle.file_context",
         title: kv.get("file_context_enabled", true) ? "Disable file context" : "Enable file context",
         category: "System",
+        hidden: true,
         run: () => {
           kv.set("file_context_enabled", !kv.get("file_context_enabled", true))
           dialog.clear()
@@ -873,6 +881,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.toggle.diffwrap",
         title: kv.get("diff_wrap_mode", "word") === "word" ? "Disable diff wrapping" : "Enable diff wrapping",
         category: "System",
+        hidden: true,
         run: () => {
           const current = kv.get("diff_wrap_mode", "word")
           kv.set("diff_wrap_mode", current === "word" ? "none" : "word")
@@ -883,6 +892,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         name: "app.toggle.paste_summary",
         title: pasteSummaryEnabled() ? "Disable paste summary" : "Enable paste summary",
         category: "System",
+        hidden: true,
         run: () => {
           setPasteSummaryEnabled((prev) => {
             const next = !prev
@@ -898,6 +908,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           ? "Disable session directory filtering"
           : "Enable session directory filtering",
         category: "System",
+        hidden: true,
         run: async () => {
           kv.set("session_directory_filter_enabled", !kv.get("session_directory_filter_enabled", true))
           await sync.session.refresh()

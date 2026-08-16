@@ -683,9 +683,23 @@ const layer = Layer.effect(
         const disabled = new Set(cfg.disabled_providers ?? [])
         const enabled = cfg.enabled_providers ? new Set(cfg.enabled_providers) : null
 
+        const DEFAULT_ALLOWED_PROVIDERS = new Set<string>([
+          "github-copilot",
+          "openai",
+          "google",
+          "anthropic",
+          "ollama",
+          "lmstudio",
+          "jan",
+          "gpt4all",
+          "llamacpp",
+          "localai",
+        ])
+
         function isProviderAllowed(providerID: ProviderV2.ID): boolean {
-          if (enabled && !enabled.has(providerID)) return false
+          if (enabled) return enabled.has(providerID)
           if (disabled.has(providerID)) return false
+          if (!DEFAULT_ALLOWED_PROVIDERS.has(providerID) && !cfg.provider?.[providerID]) return false
           return true
         }
 

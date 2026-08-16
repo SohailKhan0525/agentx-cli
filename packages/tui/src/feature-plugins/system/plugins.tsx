@@ -243,6 +243,7 @@ const tui: TuiPlugin = async (api) => {
         title: "Plugins",
         category: "System",
         namespace: "palette",
+        hidden: true,
         run() {
           show(api)
         },
@@ -252,6 +253,7 @@ const tui: TuiPlugin = async (api) => {
         title: "Install plugin",
         category: "System",
         namespace: "palette",
+        hidden: true,
         run() {
           showInstall(api)
         },

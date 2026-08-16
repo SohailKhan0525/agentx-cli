@@ -42,9 +42,22 @@ export const providerHandlers = HttpApiBuilder.group(InstanceHttpApi, "provider"
       const all = yield* ModelsDev.Service.use((s) => s.get())
       const disabled = new Set(config.disabled_providers ?? [])
       const enabled = config.enabled_providers ? new Set(config.enabled_providers) : undefined
+      const DEFAULT_ALLOWED = new Set([
+        "github-copilot",
+        "openai",
+        "google",
+        "anthropic",
+        "ollama",
+        "lmstudio",
+        "jan",
+        "gpt4all",
+        "llamacpp",
+        "localai",
+      ])
       const filtered: Record<string, (typeof all)[string]> = {}
       for (const [key, value] of Object.entries(all)) {
-        if ((enabled ? enabled.has(key) : true) && !disabled.has(key)) filtered[key] = value
+        const isAllowed = enabled ? enabled.has(key) : (DEFAULT_ALLOWED.has(key) || Boolean(config.provider?.[key]))
+        if (isAllowed && !disabled.has(key)) filtered[key] = value
       }
       const connected = yield* provider.list()
       const providers = Object.assign(
