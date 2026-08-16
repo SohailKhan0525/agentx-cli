@@ -3,7 +3,8 @@ import { useSync } from "../../context/sync"
 import { createMemo, Show } from "solid-js"
 import { useTheme } from "../../context/theme"
 import { useTuiConfig } from "../../config"
-import { InstallationChannel, InstallationVersion } from "@agentx-cli/core/installation/version"
+import { InstallationChannel } from "@agentx-cli/core/installation/version"
+import { useVersion } from "../../context/version"
 import { usePluginRuntime } from "../../plugin/runtime"
 
 import { getScrollAcceleration } from "../../util/scroll"
@@ -15,6 +16,7 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
   const sync = useSync()
   const { theme } = useTheme()
   const tuiConfig = useTuiConfig()
+  const { version } = useVersion()
   const session = createMemo(() => sync.session.get(props.sessionID))
   const workspace = () => {
     const workspaceID = session()?.workspaceID
@@ -93,7 +95,7 @@ export function Sidebar(props: { sessionID: string; overlay?: boolean }) {
               <span style={{ fg: theme.text }}>
                 <b>X</b>
               </span>{" "}
-              <span>{InstallationVersion}</span>
+              <span>{version()}</span>
             </text>
           </pluginRuntime.Slot>
         </box>

@@ -58,6 +58,7 @@ import { PromptStashProvider } from "./component/prompt/stash"
 import { DialogAlert } from "./ui/dialog-alert"
 import { DialogConfirm } from "./ui/dialog-confirm"
 import { ToastProvider, useToast } from "./ui/toast"
+import { VersionProvider, useVersion } from "./context/version"
 import { isDefaultTitle } from "./util/session"
 import { KVProvider, useKV } from "./context/kv"
 import * as Model from "./util/model"
@@ -310,10 +311,12 @@ export const run = Effect.fn("Tui.run")(function* (input: TuiInput) {
                                                               <PromptRefProvider>
                                                                 <EditorContextProvider>
                                                                   <LocationProvider>
-                                                                    <App
-                                                                      onSnapshot={input.onSnapshot}
-                                                                      pluginHost={input.pluginHost}
-                                                                    />
+                                                                    <VersionProvider>
+                                                                      <App
+                                                                        onSnapshot={input.onSnapshot}
+                                                                        pluginHost={input.pluginHost}
+                                                                      />
+                                                                    </VersionProvider>
                                                                   </LocationProvider>
                                                                 </EditorContextProvider>
                                                               </PromptRefProvider>
@@ -379,6 +382,7 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
   const pluginRuntime = usePluginRuntime()
   const attention = createTuiAttention({ renderer, config: tuiConfig, kv })
   const clipboard = useClipboard()
+  const { version: appVersion, setVersion } = useVersion()
 
   const api = createTuiApi(
     createTuiApiAdapters({
@@ -794,11 +798,17 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       },
       {
         name: "docs.open",
-        title: "Documentation & Cheat Sheet",
+        title: "Open Documentation on GitHub",
         slashName: "docs",
         slashAliases: ["doc", "cheatsheet"],
-        run: () => {
-          dialog.replace(() => <DialogDocs />)
+        run: async () => {
+          dialog.clear()
+          await open("https://github.com/SohailKhan0525/agentx-cli#readme").catch(() => {})
+          toast.show({
+            variant: "info",
+            message: "Opening AgentX documentation on GitHub in browser...",
+            duration: 5000,
+          })
         },
         category: "System",
       },
@@ -840,10 +850,13 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
           if (res.error || !res.data?.success) {
             toast.show({
               variant: "info",
-              message: `AgentX is on the latest version (${InstallationVersion})`,
+              message: `AgentX is on the latest version (${appVersion()})`,
               duration: 5000,
             })
             return
+          }
+          if (res.data.version) {
+            setVersion(res.data.version)
           }
           toast.show({
             variant: "success",
@@ -1055,6 +1068,9 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
   })
 
   event.on("installation.updated", (evt) => {
+    if (evt.properties.version) {
+      setVersion(evt.properties.version)
+    }
     toast.show({
       variant: "success",
       title: "AgentX Updated",
@@ -1118,6 +1134,10 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
         duration: 8000,
       })
       return
+    }
+
+    if (result.data?.version) {
+      setVersion(result.data.version)
     }
 
     toast.show({

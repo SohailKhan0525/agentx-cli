@@ -61,11 +61,23 @@ type ProviderOption =
       type: "custom"
     })
 
+const DEFAULT_LOCAL_PROVIDERS = [
+  { id: "github-copilot", name: "GitHub Copilot" },
+  { id: "openai", name: "ChatGPT (OpenAI)" },
+  { id: "google", name: "Google (Gemini)" },
+  { id: "anthropic", name: "Anthropic (Claude)" },
+  { id: "ollama", name: "Ollama (Local)" },
+  { id: "lmstudio", name: "LM Studio (Local)" },
+  { id: "jan", name: "Jan (Local)" },
+  { id: "gpt4all", name: "GPT4All (Local)" },
+  { id: "llamacpp", name: "llama.cpp (Local)" },
+  { id: "localai", name: "LocalAI (Local)" },
+]
+
 export function providerOptions(list: { id: string; name: string }[]): ProviderOption[] {
   return [
     ...pipe(
       list,
-      filter((x) => ALLOWED_PROVIDERS.has(x.id)),
       sortBy(
         (x) => PROVIDER_PRIORITY[x.id] ?? 99,
         (x) => x.name.toLowerCase(),
@@ -101,9 +113,16 @@ export function providerOptions(list: { id: string; name: string }[]): ProviderO
         }[provider.id],
         category: ["ollama", "lmstudio", "jan", "gpt4all", "llamacpp", "localai"].includes(provider.id)
           ? "Local Models"
-          : "Cloud Providers",
+          : "Providers",
       })),
     ),
+    {
+      type: "custom",
+      title: "Other",
+      value: CUSTOM_PROVIDER_OPTION_VALUE,
+      description: "Custom provider",
+      category: "Providers",
+    },
   ]
 }
 
@@ -144,8 +163,16 @@ export function createDialogProviderOptions() {
   }
 
   const options = createMemo(() => {
+    const rawList = sync.data.provider_next.all || []
+    const mergedMap = new Map<string, { id: string; name: string }>()
+    for (const item of DEFAULT_LOCAL_PROVIDERS) {
+      mergedMap.set(item.id, item)
+    }
+    for (const item of rawList) {
+      mergedMap.set(item.id, item)
+    }
     return pipe(
-      providerOptions(sync.data.provider_next.all),
+      providerOptions(Array.from(mergedMap.values())),
       map((provider) => {
         if (provider.type === "custom") {
           return {
@@ -174,6 +201,25 @@ export function createDialogProviderOptions() {
           gutter: connected && onboarded() ? () => <text fg={theme.success}>✓</text> : undefined,
           async onSelect() {
             if (consoleManaged) return
+
+            if (["ollama", "lmstudio", "jan", "gpt4all", "llamacpp", "localai"].includes(providerID)) {
+              await sdk.client.auth.set({
+                providerID,
+                auth: {
+                  type: "api",
+                  key: "local",
+                },
+              })
+              await sdk.client.instance.dispose()
+              await sync.bootstrap()
+              dialog.replace(() => <DialogModel providerID={providerID} />)
+              toast.show({
+                variant: "success",
+                message: `Connected to ${provider.title}`,
+                duration: 4000,
+              })
+              return
+            }
 
             const methods = sync.data.provider_auth[providerID] ?? [
               {

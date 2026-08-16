@@ -145,6 +145,53 @@ export const globalHandlers = HttpApiBuilder.group(RootHttpApi, "global", (handl
       return HttpServerResponse.jsonUnsafe(result.body, { status: result.status })
     })
 
+    // Periodic background update checker
+    yield* Effect.forkScoped(
+      Effect.gen(function* () {
+        yield* Effect.sleep("5 seconds")
+        while (true) {
+          const check = yield* installation.checkUpdate().pipe(
+            Effect.catchAll(() =>
+              Effect.succeed({
+                updateAvailable: false,
+                current: InstallationVersion,
+                latest: InstallationVersion,
+              }),
+            ),
+          )
+          if (check.updateAvailable && check.latest) {
+            const method = yield* installation.method().pipe(
+              Effect.catchAll(() => Effect.succeed("unknown" as const)),
+            )
+            if (method !== "unknown") {
+              const upgradeResult = yield* installation.upgrade(method, check.latest).pipe(
+                Effect.as({ success: true as const, version: check.latest }),
+                Effect.catchAll((err) => Effect.succeed({ success: false as const, error: String(err) })),
+              )
+              if (upgradeResult.success) {
+                GlobalBus.emit("event", {
+                  directory: "global",
+                  payload: {
+                    type: Installation.Event.Updated.type,
+                    properties: { version: check.latest },
+                  },
+                })
+              }
+            } else {
+              GlobalBus.emit("event", {
+                directory: "global",
+                payload: {
+                  type: Installation.Event.UpdateAvailable.type,
+                  properties: { version: check.latest },
+                },
+              })
+            }
+          }
+          yield* Effect.sleep("30 minutes")
+        }
+      }).pipe(Effect.ignore),
+    )
+
     return handlers
       .handle("health", health)
       .handleRaw("event", event)
