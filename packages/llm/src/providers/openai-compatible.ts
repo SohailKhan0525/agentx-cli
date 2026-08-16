@@ -77,18 +77,32 @@ export const detectHardware = () => {
   let gpuInfo = ""
   try {
     if (platform === "win32") {
-      gpuInfo = execSync("powershell -NoProfile -Command \"Get-CimInstance -ClassName Win32_VideoController | Select-Object -Property Name\"", { stdio: "pipe" }).toString()
-      hasGPU = gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd") || gpuInfo.toLowerCase().includes("radeon")
+      try {
+        gpuInfo = execSync("nvidia-smi --query-gpu=name --format=csv,noheader", { stdio: "pipe", timeout: 1500 }).toString().trim()
+        hasGPU = Boolean(gpuInfo)
+      } catch {
+        try {
+          gpuInfo = execSync("powershell -NoProfile -Command \"Get-CimInstance -ClassName Win32_VideoController | Select-Object -ExpandProperty Name\"", { stdio: "pipe", timeout: 2000 }).toString().trim()
+          hasGPU = gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd") || gpuInfo.toLowerCase().includes("radeon") || gpuInfo.toLowerCase().includes("intel")
+        } catch {}
+      }
     } else if (platform === "darwin") {
-      gpuInfo = execSync("system_profiler SPDisplaysDataType", { stdio: "pipe" }).toString()
-      hasGPU = gpuInfo.toLowerCase().includes("apple") || gpuInfo.toLowerCase().includes("amd")
+      try {
+        gpuInfo = execSync("system_profiler SPDisplaysDataType", { stdio: "pipe", timeout: 2000 }).toString().trim()
+        hasGPU = gpuInfo.toLowerCase().includes("apple") || gpuInfo.toLowerCase().includes("amd") || gpuInfo.toLowerCase().includes("metal")
+      } catch {}
     } else if (platform === "linux") {
-      gpuInfo = execSync("lspci | grep -i vga", { stdio: "pipe" }).toString()
-      hasGPU = gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd")
+      try {
+        gpuInfo = execSync("nvidia-smi --query-gpu=name --format=csv,noheader", { stdio: "pipe", timeout: 1500 }).toString().trim()
+        hasGPU = Boolean(gpuInfo)
+      } catch {
+        try {
+          gpuInfo = execSync("lspci", { stdio: "pipe", timeout: 1500 }).toString()
+          hasGPU = gpuInfo.toLowerCase().includes("vga") || gpuInfo.toLowerCase().includes("3d controller") || gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd")
+        } catch {}
+      }
     }
-  } catch (e) {
-    // Detection fallback
-  }
+  } catch {}
   return { hasGPU, gpuInfo, totalRam: os.totalmem(), freeRam: os.freemem() }
 }
 

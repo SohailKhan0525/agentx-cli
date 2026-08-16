@@ -8,29 +8,67 @@ import { Flag } from "./flag/flag"
 import { makeGlobalNode } from "./effect/app-node"
 
 const app = "agentx"
-const data = path.join(xdgData!, app)
-const cache = path.join(xdgCache!, app)
-const config = path.join(xdgConfig!, app)
-const state = path.join(xdgState!, app)
-const tmp = path.join(os.tmpdir(), app)
+
+function resolveBaseDirs() {
+  const home = process.env.AGENTX_TEST_HOME ?? os.homedir()
+  const platform = process.platform
+
+  let configBase: string
+  let dataBase: string
+  let cacheBase: string
+  let stateBase: string
+
+  if (platform === "win32") {
+    configBase = process.env.APPDATA || path.join(home, "AppData", "Roaming")
+    dataBase = process.env.LOCALAPPDATA || path.join(home, "AppData", "Local")
+    cacheBase = path.join(dataBase, "cache")
+    stateBase = path.join(dataBase, "state")
+  } else if (platform === "darwin") {
+    const appSupport = path.join(home, "Library", "Application Support")
+    configBase = appSupport
+    dataBase = appSupport
+    cacheBase = path.join(home, "Library", "Caches")
+    stateBase = path.join(appSupport, "state")
+  } else {
+    configBase = process.env.XDG_CONFIG_HOME || path.join(home, ".config")
+    dataBase = process.env.XDG_DATA_HOME || path.join(home, ".local", "share")
+    cacheBase = process.env.XDG_CACHE_HOME || path.join(home, ".cache")
+    stateBase = process.env.XDG_STATE_HOME || path.join(home, ".local", "state")
+  }
+
+  if (xdgConfig) configBase = xdgConfig
+  if (xdgData) dataBase = xdgData
+  if (xdgCache) cacheBase = xdgCache
+  if (xdgState) stateBase = xdgState
+
+  return {
+    config: path.join(configBase, app),
+    data: path.join(dataBase, app),
+    cache: path.join(cacheBase, app),
+    state: path.join(stateBase, app),
+    tmp: path.join(os.tmpdir(), app),
+  }
+}
+
+const resolved = resolveBaseDirs()
 
 const paths = {
   get home() {
     return process.env.AGENTX_TEST_HOME ?? os.homedir()
   },
-  data,
-  bin: path.join(cache, "bin"),
-  log: path.join(data, "log"),
-  repos: path.join(data, "repos"),
-  cache,
-  config,
-  state,
-  tmp,
+  data: resolved.data,
+  bin: path.join(resolved.cache, "bin"),
+  log: path.join(resolved.data, "log"),
+  repos: path.join(resolved.data, "repos"),
+  cache: resolved.cache,
+  config: resolved.config,
+  state: resolved.state,
+  tmp: resolved.tmp,
 }
 
 export const Path = paths
 
-Flock.setGlobal({ state })
+Flock.setGlobal({ state: resolved.state })
 
 await Promise.all([
   fs.mkdir(Path.data, { recursive: true }),

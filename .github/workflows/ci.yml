@@ -11,7 +11,7 @@ on:
       - dev
 
 jobs:
-  check:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -28,5 +28,26 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Build smoke test
+  test-cross-platform:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Core unit tests
+        run: bun test --cwd packages/core test/global.test.ts
+
+      - name: Build single binary smoke test
         run: bun run --cwd packages/agentx-cli script/build.ts --single

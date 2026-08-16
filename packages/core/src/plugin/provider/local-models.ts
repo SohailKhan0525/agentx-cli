@@ -389,6 +389,44 @@ export async function detectAllLocalServices(timeoutMs = 3000): Promise<LocalSer
   return Promise.all(endpoints.map((e) => probeService(e.id, e.name, e.baseURL, e.port, timeoutMs)))
 }
 
+export function getLocalProviderBinaryPaths(): { [provider: string]: string[] } {
+  const home = os.homedir()
+  const platform = process.platform
+
+  if (platform === "win32") {
+    const localAppData = process.env.LOCALAPPDATA || path.join(home, "AppData", "Local")
+    const progFiles = process.env["ProgramFiles"] || "C:\\Program Files"
+    return {
+      ollama: [
+        path.join(localAppData, "Programs", "Ollama", "ollama.exe"),
+        path.join(progFiles, "Ollama", "ollama.exe"),
+      ],
+      lmstudio: [
+        path.join(localAppData, "Programs", "LM-Studio", "LM Studio.exe"),
+        path.join(localAppData, "LM-Studio", "LM Studio.exe"),
+      ],
+      jan: [
+        path.join(localAppData, "Programs", "jan", "Jan.exe"),
+        path.join(localAppData, "jan", "Jan.exe"),
+      ],
+    }
+  }
+
+  if (platform === "darwin") {
+    return {
+      ollama: ["/usr/local/bin/ollama", "/opt/homebrew/bin/ollama", path.join(home, ".ollama", "bin", "ollama")],
+      lmstudio: ["/Applications/LM Studio.app", path.join(home, "Applications", "LM Studio.app")],
+      jan: ["/Applications/Jan.app", path.join(home, "Applications", "Jan.app")],
+    }
+  }
+
+  return {
+    ollama: ["/usr/local/bin/ollama", "/usr/bin/ollama", path.join(home, ".local", "bin", "ollama")],
+    lmstudio: [path.join(home, "Applications", "LM Studio.AppImage"), "/usr/local/bin/lm-studio"],
+    jan: [path.join(home, "Applications", "jan.AppImage"), "/usr/local/bin/jan"],
+  }
+}
+
 // Ollama Management API Utilities
 export async function pullOllamaModel(
   modelName: string,

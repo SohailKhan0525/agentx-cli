@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 
+const [nodeMajor] = process.versions.node.split(".").map(Number)
+if (nodeMajor < 18) {
+  console.error("AgentX requires Node.js 18 or higher.")
+  console.error(`You are running Node.js ${process.versions.node}`)
+  console.error("Please upgrade: https://nodejs.org")
+  process.exit(1)
+}
+
 const childProcess = require("child_process")
 const fs = require("fs")
 const path = require("path")
@@ -178,7 +186,10 @@ function findBinary(startDir) {
     path.join(startDir, binary),
     path.join(startDir, "agentx.exe"),
     path.join(startDir, "agentx"),
+    path.join(startDir, "..", "bin", binary),
     path.join(startDir, "..", "dist", `@agent-qofeno/agentx-cli-${platform}-${arch}`, "bin", binary),
+    path.join(startDir, "..", "dist", `@agent-qofeno/agentx-cli-${platform}-${arch}-baseline`, "bin", binary),
+    path.join(startDir, "..", "dist", `agentx-${platform}-${arch}`, "bin", binary),
   ]
   for (const c of candidates) {
     if (fs.existsSync(c)) return c
@@ -205,7 +216,7 @@ const resolved = envPath || (fs.existsSync(cached) ? cached : findBinary(scriptD
 if (!resolved) {
   console.error(
     "It seems that your package manager failed to install the right version of the agentx CLI for your platform. You can try manually installing " +
-      names.map((n) => `\"${n}\"`).join(" or ") +
+      names.map((n) => `"${n}"`).join(" or ") +
       " package",
   )
   process.exit(1)

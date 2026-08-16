@@ -56,6 +56,23 @@ export class RunFailedError extends Error {
 
 export type Child = ChildProcess & { exited: Promise<number> }
 
+export function killProcessTree(proc: ChildProcess, signal: NodeJS.Signals | number = "SIGTERM") {
+  if (proc.pid === undefined) return
+  if (process.platform === "win32") {
+    try {
+      launch("taskkill", ["/pid", String(proc.pid), "/f", "/t"], { stdio: "ignore", windowsHide: true })
+    } catch {
+      try {
+        proc.kill(signal)
+      } catch {}
+    }
+  } else {
+    try {
+      proc.kill(signal)
+    } catch {}
+  }
+}
+
 export function spawn(cmd: string[], opts: Options = {}): Child {
   if (cmd.length === 0) throw new Error("Command is required")
   opts.abort?.throwIfAborted()
@@ -76,11 +93,11 @@ export function spawn(cmd: string[], opts: Options = {}): Child {
     if (proc.exitCode !== null || proc.signalCode !== null) return
     closed = true
 
-    proc.kill(opts.kill ?? "SIGTERM")
+    killProcessTree(proc, opts.kill ?? "SIGTERM")
 
     const ms = opts.timeout ?? 5_000
     if (ms <= 0) return
-    timer = setTimeout(() => proc.kill("SIGKILL"), ms)
+    timer = setTimeout(() => killProcessTree(proc, "SIGKILL"), ms)
   }
 
   const exited = new Promise<number>((resolve, reject) => {
