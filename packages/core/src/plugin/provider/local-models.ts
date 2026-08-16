@@ -3,6 +3,7 @@ import { define } from "../internal"
 import { ProviderV2 } from "../../provider"
 import { ModelV2 } from "../../model"
 import os from "os"
+import path from "path"
 import { execSync } from "child_process"
 
 export interface HardwareProfile {

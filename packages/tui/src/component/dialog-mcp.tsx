@@ -19,6 +19,7 @@ function Status(props: { enabled: boolean; loading: boolean }) {
 }
 
 export function DialogMcp() {
+  const { theme } = useTheme()
   const local = useLocal()
   const sync = useSync()
   const sdk = useSDK()
