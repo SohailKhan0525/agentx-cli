@@ -55,7 +55,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile --ignore-scripts
 
       - name: Core unit tests
         run: bun test --cwd packages/core test/global.test.ts
