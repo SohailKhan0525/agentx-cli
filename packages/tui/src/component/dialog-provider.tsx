@@ -15,6 +15,8 @@ import { isConsoleManagedProvider } from "../util/provider-origin"
 import { useConnected } from "./use-connected"
 import { useBindings } from "../keymap"
 import { useClipboard } from "../context/clipboard"
+import { DialogLocalModelSetup } from "./dialog-local-setup"
+import { probeService } from "@agentx-cli/core/plugin/provider/local-models"
 
 const PROVIDER_PRIORITY: Record<string, number> = {
   "github-copilot": 0,
@@ -203,21 +205,29 @@ export function createDialogProviderOptions() {
             if (consoleManaged) return
 
             if (["ollama", "lmstudio", "jan", "gpt4all", "llamacpp", "localai"].includes(providerID)) {
-              await sdk.client.auth.set({
-                providerID,
-                auth: {
-                  type: "api",
-                  key: "local",
-                },
-              })
-              await sdk.client.instance.dispose()
-              await sync.bootstrap()
-              dialog.replace(() => <DialogModel providerID={providerID} />)
-              toast.show({
-                variant: "success",
-                message: `Connected to ${provider.title}`,
-                duration: 4000,
-              })
+              // Probe if local provider is actively running
+              const probe = await probeService(providerID, provider.title, "http://localhost:11434/v1", 11434, 1500)
+              if (probe.running) {
+                await sdk.client.auth.set({
+                  providerID,
+                  auth: {
+                    type: "api",
+                    key: "local",
+                  },
+                })
+                await sdk.client.instance.dispose()
+                await sync.bootstrap()
+                dialog.replace(() => <DialogModel providerID={providerID} />)
+                toast.show({
+                  variant: "success",
+                  message: `Connected to ${provider.title}`,
+                  duration: 4000,
+                })
+                return
+              }
+
+              // If not running / not installed, open interactive setup dialog
+              dialog.replace(() => <DialogLocalModelSetup providerID={providerID} providerTitle={provider.title} />)
               return
             }
 

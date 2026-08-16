@@ -497,6 +497,153 @@ export async function getOllamaRunningModels(): Promise<any[]> {
   return []
 }
 
+export function getRecommendedModelForHardware(hw: HardwareProfile): CatalogModel {
+  if (hw.recommendedTier === "max" || hw.recommendedTier === "quality") {
+    return (
+      LOCAL_MODEL_CATALOG.find((m) => m.id === "qwen2.5-coder:14b") ||
+      LOCAL_MODEL_CATALOG.find((m) => m.id === "qwen2.5-coder:7b") ||
+      LOCAL_MODEL_CATALOG[0]
+    )
+  }
+  if (hw.recommendedTier === "balanced") {
+    return (
+      LOCAL_MODEL_CATALOG.find((m) => m.id === "qwen2.5-coder:7b") ||
+      LOCAL_MODEL_CATALOG.find((m) => m.id === "llama3.1:8b") ||
+      LOCAL_MODEL_CATALOG[0]
+    )
+  }
+  return (
+    LOCAL_MODEL_CATALOG.find((m) => m.id === "qwen2.5-coder:1.5b") ||
+    LOCAL_MODEL_CATALOG.find((m) => m.id === "llama3.2:3b") ||
+    LOCAL_MODEL_CATALOG[0]
+  )
+}
+
+export async function installOllamaService(
+  onProgress?: (msg: string) => void,
+): Promise<{ success: boolean; error?: string }> {
+  const platform = process.platform
+  onProgress?.(`Starting Ollama installation for ${platform}...`)
+
+  try {
+    if (platform === "win32") {
+      onProgress?.("Installing Ollama via Windows Package Manager (winget)...")
+      try {
+        execSync("winget install -e --id Ollama.Ollama --accept-source-agreements --accept-package-agreements --silent", {
+          stdio: "pipe",
+          timeout: 120000,
+        })
+        return { success: true }
+      } catch {
+        onProgress?.("Downloading Ollama installer via PowerShell...")
+        const psCmd = `
+          $ErrorActionPreference = 'Stop'
+          $installer = "$env:TEMP\\OllamaSetup.exe"
+          Invoke-WebRequest -Uri "https://ollama.ai/download/OllamaSetup.exe" -OutFile $installer
+          Start-Process -FilePath $installer -ArgumentList "/silent" -Wait
+        `
+        execSync(`powershell -NoProfile -NonInteractive -Command "${psCmd.replace(/\r?\n\s+/g, " ")}"`, {
+          stdio: "pipe",
+          timeout: 180000,
+        })
+        return { success: true }
+      }
+    } else if (platform === "darwin") {
+      onProgress?.("Installing Ollama via Homebrew...")
+      try {
+        execSync("brew install ollama", { stdio: "pipe", timeout: 120000 })
+        return { success: true }
+      } catch {
+        onProgress?.("Running official Ollama install script...")
+        execSync("curl -fsSL https://ollama.ai/install.sh | sh", { stdio: "pipe", timeout: 180000 })
+        return { success: true }
+      }
+    } else {
+      onProgress?.("Running official Linux Ollama install script...")
+      execSync("curl -fsSL https://ollama.ai/install.sh | sh", { stdio: "pipe", timeout: 180000 })
+      return { success: true }
+    }
+  } catch (err: any) {
+    return { success: false, error: err?.message || String(err) }
+  }
+}
+
+export async function ensureOllamaRunning(): Promise<boolean> {
+  const check = await probeService("ollama", "Ollama", "http://localhost:11434/v1", 11434, 1500)
+  if (check.running) return true
+
+  try {
+    const { spawn } = await import("child_process")
+    const p = spawn("ollama", ["serve"], {
+      detached: true,
+      stdio: "ignore",
+      windowsHide: true,
+    })
+    p.unref()
+  } catch {}
+
+  for (let i = 0; i < 10; i++) {
+    await new Promise((r) => setTimeout(r, 1000))
+    const probe = await probeService("ollama", "Ollama", "http://localhost:11434/v1", 11434, 1500)
+    if (probe.running) return true
+  }
+
+  return false
+}
+
+export async function setupLocalOllamaPipeline(
+  onStep?: (status: { step: string; progress?: number; error?: string }) => void,
+): Promise<{ success: boolean; error?: string; service?: LocalServiceInfo }> {
+  onStep?.({ step: "Probing existing Ollama service on localhost:11434..." })
+  let service = await probeService("ollama", "Ollama", "http://localhost:11434/v1", 11434, 2000)
+
+  if (!service.running) {
+    onStep?.({ step: "Ollama service not running. Attempting to start background service..." })
+    const started = await ensureOllamaRunning()
+    if (!started) {
+      onStep?.({ step: "Ollama not found on system. Installing Ollama automatically..." })
+      const installRes = await installOllamaService((msg) => onStep?.({ step: msg }))
+      if (!installRes.success) {
+        return {
+          success: false,
+          error: `Installation failed: ${installRes.error}. Please install Ollama from https://ollama.ai or report an issue.`,
+        }
+      }
+      onStep?.({ step: "Starting installed Ollama service..." })
+      await ensureOllamaRunning()
+    }
+    service = await probeService("ollama", "Ollama", "http://localhost:11434/v1", 11434, 3000)
+  }
+
+  if (!service.running) {
+    return {
+      success: false,
+      error: "Ollama service failed to respond on http://localhost:11434. Please start 'ollama serve' in terminal or check logs.",
+    }
+  }
+
+  const hw = detectHardware()
+  const recModel = getRecommendedModelForHardware(hw)
+
+  const hasModel = service.models.some((m) => m.id.includes(recModel.id.split(":")[0]))
+  if (!hasModel) {
+    onStep?.({ step: `Pulling recommended model for your hardware: ${recModel.name} (${recModel.size})...` })
+    try {
+      await pullOllamaModel(recModel.id, (prog) => {
+        onStep?.({
+          step: `Downloading ${recModel.name}: ${prog.status} (${prog.percentage ?? 0}%)`,
+          progress: prog.percentage,
+        })
+      })
+    } catch (pullErr: any) {
+      onStep?.({ step: `Model download note: ${pullErr.message}.` })
+    }
+  }
+
+  service = await probeService("ollama", "Ollama", "http://localhost:11434/v1", 11434, 3000)
+  return { success: true, service }
+}
+
 export const LocalModelsPlugin = define({
   id: "local-models",
   effect: Effect.fn(function* (ctx) {
