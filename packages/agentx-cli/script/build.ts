@@ -134,7 +134,8 @@ const targets = singleFlag
     })
   : allTargets
 
-await $`rm -rf dist`
+// Use Node.js fs instead of bash `rm -rf dist` — works on Windows, macOS, Linux
+if (fs.existsSync("dist")) fs.rmSync("dist", { recursive: true, force: true })
 
 const binaries: Record<string, string> = {}
 if (!skipInstall) {
@@ -155,7 +156,8 @@ for (const item of targets) {
     .filter(Boolean)
     .join("-")
   console.log(`building ${name}`)
-  await $`mkdir -p dist/${name}/bin`
+  // Use Node.js fs instead of bash `mkdir -p` — works on all platforms
+  fs.mkdirSync(path.join("dist", name, "bin"), { recursive: true })
 
   const localPath = path.resolve(dir, "node_modules/@opentui/core/parser.worker.js")
   const rootPath = path.resolve(dir, "../../node_modules/@opentui/core/parser.worker.js")
@@ -203,7 +205,8 @@ for (const item of targets) {
   if (item.os === process.platform && item.arch === process.arch && !item.abi) {
     const binaryPath = process.platform === "win32" ? `dist/${name}/bin/agentx.exe` : `dist/${name}/bin/agentx`
     const targetBinary = process.platform === "win32" ? `./bin/agentx.exe` : `./bin/agentx`
-    await $`cp ${binaryPath} ${targetBinary}`
+    // Use Node.js fs.copyFileSync instead of bash `cp` — works on all platforms
+    fs.copyFileSync(binaryPath, targetBinary)
     console.log(`Copied ${binaryPath} to ${targetBinary}`)
     console.log(`Running smoke test: ${targetBinary} --version`)
     try {
@@ -215,7 +218,9 @@ for (const item of targets) {
     }
   }
 
-  await $`rm -rf ./dist/${name}/bin/tui`
+  // Use Node.js fs instead of bash `rm -rf` — works on all platforms
+  const tuiDir = path.join("dist", name, "bin", "tui")
+  if (fs.existsSync(tuiDir)) fs.rmSync(tuiDir, { recursive: true, force: true })
   await Bun.file(`dist/${name}/package.json`).write(
     JSON.stringify(
       {

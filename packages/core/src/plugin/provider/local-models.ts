@@ -4,7 +4,9 @@ import { ProviderV2 } from "../../provider"
 import { ModelV2 } from "../../model"
 import os from "os"
 import path from "path"
-import { execSync } from "child_process"
+import { spawnSync } from "child_process"
+import https from "https"
+import fs from "fs"
 
 export interface HardwareProfile {
   os: string
@@ -226,6 +228,55 @@ export const LOCAL_MODEL_CATALOG: CatalogModel[] = [
   },
 ]
 
+/** Cross-platform helper: runs a command as an array (no shell, no bash dependency). */
+function runSync(cmd: string, args: string[], timeoutMs = 5000): string {
+  const result = spawnSync(cmd, args, {
+    encoding: "utf8",
+    stdio: "pipe",
+    timeout: timeoutMs,
+    windowsHide: true,
+  })
+  if (result.status !== 0 || result.error) throw new Error(result.stderr || String(result.error))
+  return result.stdout || ""
+}
+
+/** Cross-platform: checks whether a command exists on PATH. */
+export function commandExists(cmd: string): boolean {
+  try {
+    const checker = process.platform === "win32" ? "where" : "which"
+    const result = spawnSync(checker, [cmd], { stdio: "pipe", timeout: 3000, windowsHide: true })
+    return result.status === 0
+  } catch {
+    return false
+  }
+}
+
+/** Download a URL to a local file path using Node.js https (no curl/wget dependency). */
+function downloadFile(url: string, dest: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(dest)
+    https
+      .get(url, (res) => {
+        if (res.statusCode !== 200) {
+          file.close()
+          fs.unlink(dest, () => {})
+          reject(new Error(`HTTP ${res.statusCode} downloading ${url}`))
+          return
+        }
+        res.pipe(file)
+        file.on("finish", () => file.close(() => resolve()))
+        file.on("error", (err) => {
+          fs.unlink(dest, () => {})
+          reject(err)
+        })
+      })
+      .on("error", (err) => {
+        fs.unlink(dest, () => {})
+        reject(err)
+      })
+  })
+}
+
 export function detectHardware(): HardwareProfile {
   const totalRam = os.totalmem()
   const freeRam = os.freemem()
@@ -241,52 +292,52 @@ export function detectHardware(): HardwareProfile {
   try {
     if (process.platform === "darwin") {
       try {
-        const brand = execSync("sysctl -n machdep.cpu.brand_string", { encoding: "utf8", stdio: "pipe" })
+        // Use spawnSync array form — no shell, safe on all platforms
+        const brand = runSync("sysctl", ["-n", "machdep.cpu.brand_string"])
         if (brand.includes("Apple")) {
           gpuName = brand.trim()
           acceleration = "metal"
           vramGb = totalRamGb // Apple Silicon unified memory
         }
       } catch {
-        const output = execSync("system_profiler SPDisplaysDataType", { encoding: "utf8", stdio: "pipe" })
-        if (output.includes("Apple") || output.includes("M1") || output.includes("M2") || output.includes("M3") || output.includes("M4")) {
-          gpuName = "Apple Silicon"
-          acceleration = "metal"
-          vramGb = totalRamGb
-        }
+        try {
+          const output = runSync("system_profiler", ["SPDisplaysDataType"])
+          if (output.includes("Apple") || output.includes("M1") || output.includes("M2") || output.includes("M3") || output.includes("M4")) {
+            gpuName = "Apple Silicon"
+            acceleration = "metal"
+            vramGb = totalRamGb
+          }
+        } catch {}
       }
     } else if (process.platform === "win32") {
       try {
-        const smi = execSync("nvidia-smi --query-gpu=name,memory.total --format=csv,noheader,nounits", {
-          encoding: "utf8",
-          stdio: "pipe",
-        })
+        const smi = runSync("nvidia-smi", ["--query-gpu=name,memory.total", "--format=csv,noheader,nounits"])
         const [name, mem] = smi.trim().split(",")
         gpuName = name?.trim() || "NVIDIA GPU"
         vramGb = Math.round(parseInt(mem?.trim() || "0") / 1024)
         acceleration = "cuda"
       } catch {
         try {
-          const output = execSync(
-            "powershell -NoProfile -Command \"Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name\"",
-            { encoding: "utf8", stdio: "pipe" },
-          )
+          // Use PowerShell as an array — no embedded bash quoting
+          const output = runSync("powershell", [
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name",
+          ], 3000)
           gpuName = output.trim().split("\n")[0].trim() || "Standard GPU"
         } catch {}
       }
     } else if (process.platform === "linux") {
       try {
-        const smi = execSync("nvidia-smi --query-gpu=name,memory.total --format=csv,noheader,nounits", {
-          encoding: "utf8",
-          stdio: "pipe",
-        })
+        const smi = runSync("nvidia-smi", ["--query-gpu=name,memory.total", "--format=csv,noheader,nounits"])
         const [name, mem] = smi.trim().split(",")
         gpuName = name?.trim() || "NVIDIA GPU"
         vramGb = Math.round(parseInt(mem?.trim() || "0") / 1024)
         acceleration = "cuda"
       } catch {
         try {
-          const rocm = execSync("rocm-smi --showid", { encoding: "utf8", stdio: "pipe" })
+          const rocm = runSync("rocm-smi", ["--showid"])
           if (rocm) {
             gpuName = "AMD ROCm GPU"
             acceleration = "rocm"
@@ -527,41 +578,60 @@ export async function installOllamaService(
 
   try {
     if (platform === "win32") {
-      onProgress?.("Installing Ollama via Windows Package Manager (winget)...")
-      try {
-        execSync("winget install -e --id Ollama.Ollama --accept-source-agreements --accept-package-agreements --silent", {
+      // Try winget first (Windows 10 1709+ built-in)
+      if (commandExists("winget")) {
+        onProgress?.("Installing Ollama via Windows Package Manager (winget)...")
+        const wingetResult = spawnSync(
+          "winget",
+          ["install", "-e", "--id", "Ollama.Ollama", "--accept-source-agreements", "--accept-package-agreements", "--silent"],
+          { stdio: "pipe", timeout: 120000, windowsHide: true },
+        )
+        if (wingetResult.status === 0) return { success: true }
+      }
+      // Fallback: PowerShell download + silent installer (no curl, no bash)
+      onProgress?.("Downloading Ollama installer via PowerShell (no curl needed)...")
+      const psCommand = [
+        "$ErrorActionPreference = 'Stop';",
+        "$installer = Join-Path $env:TEMP 'OllamaSetup.exe';",
+        "Invoke-WebRequest -Uri 'https://ollama.ai/download/OllamaSetup.exe' -OutFile $installer;",
+        "Start-Process -FilePath $installer -ArgumentList '/silent' -Wait;",
+      ].join(" ")
+      const psResult = spawnSync(
+        "powershell",
+        ["-NoProfile", "-NonInteractive", "-Command", psCommand],
+        { stdio: "pipe", timeout: 180000, windowsHide: true },
+      )
+      if (psResult.status === 0) return { success: true }
+      throw new Error(psResult.stderr || "PowerShell installer failed")
+    } else if (platform === "darwin") {
+      // Try Homebrew first
+      if (commandExists("brew")) {
+        onProgress?.("Installing Ollama via Homebrew...")
+        const brewResult = spawnSync("brew", ["install", "ollama"], {
           stdio: "pipe",
           timeout: 120000,
         })
-        return { success: true }
-      } catch {
-        onProgress?.("Downloading Ollama installer via PowerShell...")
-        const psCmd = `
-          $ErrorActionPreference = 'Stop'
-          $installer = "$env:TEMP\\OllamaSetup.exe"
-          Invoke-WebRequest -Uri "https://ollama.ai/download/OllamaSetup.exe" -OutFile $installer
-          Start-Process -FilePath $installer -ArgumentList "/silent" -Wait
-        `
-        execSync(`powershell -NoProfile -NonInteractive -Command "${psCmd.replace(/\r?\n\s+/g, " ")}"`, {
-          stdio: "pipe",
-          timeout: 180000,
-        })
-        return { success: true }
+        if (brewResult.status === 0) return { success: true }
       }
-    } else if (platform === "darwin") {
-      onProgress?.("Installing Ollama via Homebrew...")
-      try {
-        execSync("brew install ollama", { stdio: "pipe", timeout: 120000 })
-        return { success: true }
-      } catch {
-        onProgress?.("Running official Ollama install script...")
-        execSync("curl -fsSL https://ollama.ai/install.sh | sh", { stdio: "pipe", timeout: 180000 })
-        return { success: true }
-      }
+      // Fallback: download official install.sh and run with sh (no curl pipe to sh)
+      onProgress?.("Downloading official Ollama install script...")
+      const tmpScript = path.join(os.tmpdir(), `ollama-install-${Date.now()}.sh`)
+      await downloadFile("https://ollama.com/install.sh", tmpScript)
+      fs.chmodSync(tmpScript, 0o755)
+      const shResult = spawnSync("sh", [tmpScript], { stdio: "pipe", timeout: 180000 })
+      fs.unlink(tmpScript, () => {})
+      if (shResult.status === 0) return { success: true }
+      throw new Error(shResult.stderr || "Install script failed")
     } else {
-      onProgress?.("Running official Linux Ollama install script...")
-      execSync("curl -fsSL https://ollama.ai/install.sh | sh", { stdio: "pipe", timeout: 180000 })
-      return { success: true }
+      // Linux: download install script and run with sh (NO curl | sh bash pipe)
+      onProgress?.("Downloading official Linux Ollama install script...")
+      const tmpScript = path.join(os.tmpdir(), `ollama-install-${Date.now()}.sh`)
+      await downloadFile("https://ollama.com/install.sh", tmpScript)
+      fs.chmodSync(tmpScript, 0o755)
+      const shResult = spawnSync("sh", [tmpScript], { stdio: "pipe", timeout: 180000 })
+      fs.unlink(tmpScript, () => {})
+      if (shResult.status === 0) return { success: true }
+      throw new Error(shResult.stderr || "Install script failed")
     }
   } catch (err: any) {
     return { success: false, error: err?.message || String(err) }

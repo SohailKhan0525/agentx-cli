@@ -3,7 +3,7 @@ import * as OpenAICompatibleChat from "../protocols/openai-compatible-chat"
 import type { RouteDefaultsInput } from "../route/client"
 import { AuthOptions, type ProviderAuthOption } from "../route/auth-options"
 import os from "os"
-import { execSync } from "child_process"
+import { spawnSync } from "child_process"
 
 export const id = ProviderID.make("openai-compatible")
 
@@ -70,35 +70,52 @@ export const detectLocalServices = async (timeoutMs = 3000) => {
   return results.filter((s) => s.running)
 }
 
-// Hardware detection
+// Hardware detection — cross-platform, no bash dependency
 export const detectHardware = () => {
   const platform = process.platform
   let hasGPU = false
   let gpuInfo = ""
+
+  /** Run a command safely as an array — no shell, no bash pipe, no string injection */
+  const runCmd = (cmd: string, args: string[], timeoutMs = 2000): string => {
+    const result = spawnSync(cmd, args, { stdio: "pipe", timeout: timeoutMs, windowsHide: true, encoding: "utf8" })
+    if (result.status !== 0 || result.error) throw new Error(String(result.error))
+    return result.stdout || ""
+  }
+
   try {
     if (platform === "win32") {
       try {
-        gpuInfo = execSync("nvidia-smi --query-gpu=name --format=csv,noheader", { stdio: "pipe", timeout: 1500 }).toString().trim()
+        gpuInfo = runCmd("nvidia-smi", ["--query-gpu=name", "--format=csv,noheader"], 1500).trim()
         hasGPU = Boolean(gpuInfo)
       } catch {
         try {
-          gpuInfo = execSync("powershell -NoProfile -Command \"Get-CimInstance -ClassName Win32_VideoController | Select-Object -ExpandProperty Name\"", { stdio: "pipe", timeout: 2000 }).toString().trim()
-          hasGPU = gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd") || gpuInfo.toLowerCase().includes("radeon") || gpuInfo.toLowerCase().includes("intel")
+          // PowerShell passed as array — no embedded shell quoting needed
+          gpuInfo = runCmd(
+            "powershell",
+            ["-NoProfile", "-NonInteractive", "-Command",
+              "Get-CimInstance -ClassName Win32_VideoController | Select-Object -ExpandProperty Name"],
+            2000,
+          ).trim()
+          const lower = gpuInfo.toLowerCase()
+          hasGPU = lower.includes("nvidia") || lower.includes("amd") || lower.includes("radeon") || lower.includes("intel")
         } catch {}
       }
     } else if (platform === "darwin") {
       try {
-        gpuInfo = execSync("system_profiler SPDisplaysDataType", { stdio: "pipe", timeout: 2000 }).toString().trim()
-        hasGPU = gpuInfo.toLowerCase().includes("apple") || gpuInfo.toLowerCase().includes("amd") || gpuInfo.toLowerCase().includes("metal")
+        gpuInfo = runCmd("system_profiler", ["SPDisplaysDataType"], 2000).trim()
+        const lower = gpuInfo.toLowerCase()
+        hasGPU = lower.includes("apple") || lower.includes("amd") || lower.includes("metal")
       } catch {}
     } else if (platform === "linux") {
       try {
-        gpuInfo = execSync("nvidia-smi --query-gpu=name --format=csv,noheader", { stdio: "pipe", timeout: 1500 }).toString().trim()
+        gpuInfo = runCmd("nvidia-smi", ["--query-gpu=name", "--format=csv,noheader"], 1500).trim()
         hasGPU = Boolean(gpuInfo)
       } catch {
         try {
-          gpuInfo = execSync("lspci", { stdio: "pipe", timeout: 1500 }).toString()
-          hasGPU = gpuInfo.toLowerCase().includes("vga") || gpuInfo.toLowerCase().includes("3d controller") || gpuInfo.toLowerCase().includes("nvidia") || gpuInfo.toLowerCase().includes("amd")
+          gpuInfo = runCmd("lspci", [], 1500)
+          const lower = gpuInfo.toLowerCase()
+          hasGPU = lower.includes("vga") || lower.includes("3d controller") || lower.includes("nvidia") || lower.includes("amd")
         } catch {}
       }
     }

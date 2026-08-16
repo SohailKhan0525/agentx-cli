@@ -32,11 +32,14 @@ jobs:
         run: bun run lint
 
   test-cross-platform:
+    name: Test (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      HUSKY: "0"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,6 +49,11 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Node.js (for npm install path validation)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
@@ -54,3 +62,11 @@ jobs:
 
       - name: Build single binary smoke test
         run: bun run --cwd packages/agentx-cli script/build.ts --single
+
+      - name: Verify binary starts (Unix)
+        if: runner.os != 'Windows'
+        run: ./packages/agentx-cli/bin/agentx --version
+
+      - name: Verify binary starts (Windows)
+        if: runner.os == 'Windows'
+        run: .\packages\agentx-cli\bin\agentx.exe --version
