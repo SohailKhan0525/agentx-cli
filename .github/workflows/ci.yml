@@ -10,6 +10,9 @@ on:
       - main
       - dev
 
+env:
+  HUSKY: "0"
+
 jobs:
   lint:
     runs-on: ubuntu-latest
