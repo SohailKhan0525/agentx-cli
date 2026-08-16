@@ -461,12 +461,12 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
       }
 
       const title = session.title.length > 40 ? session.title.slice(0, 37) + "..." : session.title
-      renderer.setTerminalTitle(`OC | ${title}`)
+      renderer.setTerminalTitle(`AX | ${title}`)
       return
     }
 
     if (route.data.type === "plugin") {
-      renderer.setTerminalTitle(`OC | ${route.data.id}`)
+      renderer.setTerminalTitle(`AX | ${route.data.id}`)
     }
   })
 
@@ -818,6 +818,39 @@ function App(props: { onSnapshot?: () => Promise<string[]>; pluginHost: TuiPlugi
             duration: 5000,
           })
           dialog.clear()
+        },
+        category: "System",
+      },
+      {
+        name: "app.check_update",
+        title: "Check for Updates",
+        slashName: "update",
+        slashAliases: ["upgrade"],
+        run: async () => {
+          dialog.clear()
+          toast.show({
+            variant: "info",
+            message: "Checking for latest updates...",
+            duration: 5000,
+          })
+          const res = await sdk.client.global.upgrade({}).catch((err) => ({
+            error: err,
+            data: undefined,
+          }))
+          if (res.error || !res.data?.success) {
+            toast.show({
+              variant: "info",
+              message: `AgentX is on the latest version (${InstallationVersion})`,
+              duration: 5000,
+            })
+            return
+          }
+          toast.show({
+            variant: "success",
+            title: "Update Complete",
+            message: `AgentX updated to v${res.data.version} in real-time!`,
+            duration: 8000,
+          })
         },
         category: "System",
       },

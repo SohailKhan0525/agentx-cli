@@ -4,6 +4,10 @@ import fs from "fs/promises"
 import path from "path"
 import { fileURLToPath } from "url"
 
+if (process.platform === "win32") {
+  process.exit(0)
+}
+
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const dir = path.resolve(__dirname, "..")

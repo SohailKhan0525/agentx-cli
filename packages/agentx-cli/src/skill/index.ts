@@ -34,6 +34,11 @@ const CUSTOMIZE_AGENTX_SKILL_DESCRIPTION =
   "Use ONLY when the user is editing or creating agentx's own configuration: agentx.json, agentx.jsonc, files under .agentx/, or files under ~/.config/agentx/. Also use when creating or fixing agentx agents, subagents, skills, plugins, MCP servers, or permission rules. Do not use for the user's own application code, or for any project that is not configuring agentx itself."
 const CUSTOMIZE_AGENTX_SKILL_BODY = SkillPlugin.CustomizeAgentXContent
 
+const UI_UX_PRO_MAX_SKILL_NAME = "ui-ux-pro-max"
+const UI_UX_PRO_MAX_SKILL_DESCRIPTION =
+  "Master UI/UX design intelligence for creating stunning, production-ready, accessible, and high-converting modern web applications and websites. Use whenever designing, building, or refining user interfaces, websites, web apps, components, themes, layouts, or user experiences."
+const UI_UX_PRO_MAX_SKILL_BODY = SkillPlugin.UiUxProMaxContent
+
 export const Info = Schema.Struct({
   name: Schema.String,
   description: Schema.optional(Schema.String),
@@ -280,6 +285,12 @@ const layer = Layer.effect(
           description: CUSTOMIZE_AGENTX_SKILL_DESCRIPTION,
           location: "<built-in>",
           content: CUSTOMIZE_AGENTX_SKILL_BODY,
+        }
+        s.skills[UI_UX_PRO_MAX_SKILL_NAME] = {
+          name: UI_UX_PRO_MAX_SKILL_NAME,
+          description: UI_UX_PRO_MAX_SKILL_DESCRIPTION,
+          location: "<built-in>",
+          content: UI_UX_PRO_MAX_SKILL_BODY,
         }
         yield* loadSkills(s, yield* InstanceState.get(discovered), events)
         return s
