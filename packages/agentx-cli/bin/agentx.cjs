@@ -184,8 +184,6 @@ const names = (() => {
 function findBinary(startDir) {
   const candidates = [
     path.join(startDir, binary),
-    path.join(startDir, "agentx.exe"),
-    path.join(startDir, "agentx"),
     path.join(startDir, "..", "bin", binary),
     path.join(startDir, "..", "dist", `@agent-qofeno/agentx-cli-${platform}-${arch}`, "bin", binary),
     path.join(startDir, "..", "dist", `@agent-qofeno/agentx-cli-${platform}-${arch}-baseline`, "bin", binary),
