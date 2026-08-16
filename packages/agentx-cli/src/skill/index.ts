@@ -39,6 +39,11 @@ const UI_UX_PRO_MAX_SKILL_DESCRIPTION =
   "Master UI/UX design intelligence for creating stunning, production-ready, accessible, and high-converting modern web applications and websites. Use whenever designing, building, or refining user interfaces, websites, web apps, components, themes, layouts, or user experiences."
 const UI_UX_PRO_MAX_SKILL_BODY = SkillPlugin.UiUxProMaxContent
 
+const FRONTEND_UI_UX_WIZARD_SKILL_NAME = "frontend-ui-ux-wizard"
+const FRONTEND_UI_UX_WIZARD_SKILL_DESCRIPTION =
+  "Designs and builds real, production-ready websites — landing pages, marketing sites, web apps, redesigns — with an intentional, non-templated visual identity, then checks the build for errors, pushes to GitHub, and deploys it live."
+const FRONTEND_UI_UX_WIZARD_SKILL_BODY = SkillPlugin.FrontendUiUxWizardContent
+
 export const Info = Schema.Struct({
   name: Schema.String,
   description: Schema.optional(Schema.String),
@@ -291,6 +296,12 @@ const layer = Layer.effect(
           description: UI_UX_PRO_MAX_SKILL_DESCRIPTION,
           location: "<built-in>",
           content: UI_UX_PRO_MAX_SKILL_BODY,
+        }
+        s.skills[FRONTEND_UI_UX_WIZARD_SKILL_NAME] = {
+          name: FRONTEND_UI_UX_WIZARD_SKILL_NAME,
+          description: FRONTEND_UI_UX_WIZARD_SKILL_DESCRIPTION,
+          location: "<built-in>",
+          content: FRONTEND_UI_UX_WIZARD_SKILL_BODY,
         }
         yield* loadSkills(s, yield* InstanceState.get(discovered), events)
         return s

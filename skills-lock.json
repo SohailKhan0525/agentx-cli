@@ -102,6 +102,12 @@
       "sourceType": "github",
       "skillPath": "skills/ui-ux-pro-max/SKILL.md",
       "computedHash": "3f6368d4a9844ec800a94e803a6bc0b12bc12ff66699d91ad1fa70b9ce4f3be5"
+    },
+    "frontend-ui-ux-wizard": {
+      "source": "sohailkhan0525/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-ui-ux-wizard/SKILL.md",
+      "computedHash": "7e3cb2818a09eb627aa5eef2282245b74154faee89f5bc9631626f21c29e73d2"
     }
   }
 }

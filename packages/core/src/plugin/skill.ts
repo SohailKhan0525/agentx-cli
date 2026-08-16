@@ -8,9 +8,11 @@ import { AbsolutePath } from "../schema"
 import { SkillV2 } from "../skill"
 import customizeAgentXContent from "./skill/customize-agentx.md" with { type: "text" }
 import uiUxProMaxContent from "./skill/ui-ux-pro-max.md" with { type: "text" }
+import frontendUiUxWizardContent from "./skill/frontend-ui-ux-wizard.md" with { type: "text" }
 
 export const CustomizeAgentXContent = customizeAgentXContent
 export const UiUxProMaxContent = uiUxProMaxContent
+export const FrontendUiUxWizardContent = frontendUiUxWizardContent
 
 export const Plugin = define({
   id: "skill",
@@ -37,6 +39,18 @@ export const Plugin = define({
               "Master UI/UX design intelligence for creating stunning, production-ready, accessible, and high-converting modern web applications and websites. Use whenever designing, building, or refining user interfaces, websites, web apps, components, themes, layouts, or user experiences.",
             location: AbsolutePath.make("/builtin/ui-ux-pro-max.md"),
             content: UiUxProMaxContent,
+          }),
+        }),
+      )
+      draft.source(
+        SkillV2.EmbeddedSource.make({
+          type: "embedded",
+          skill: SkillV2.Info.make({
+            name: "frontend-ui-ux-wizard",
+            description:
+              "Designs and builds real, production-ready websites — landing pages, marketing sites, web apps, redesigns — with an intentional, non-templated visual identity, then checks the build for errors, pushes to GitHub, and deploys it live.",
+            location: AbsolutePath.make("/builtin/frontend-ui-ux-wizard.md"),
+            content: FrontendUiUxWizardContent,
           }),
         }),
       )
