@@ -1,23 +1,23 @@
-import { dlopen, ptr } from "bun:ffi"
 import type { ReadStream } from "tty"
 
 const STD_INPUT_HANDLE = -10
 const ENABLE_PROCESSED_INPUT = 0x0001
 
-const kernel = () =>
-  dlopen("kernel32.dll", {
-    GetStdHandle: { args: ["i32"], returns: "ptr" },
-    GetConsoleMode: { args: ["ptr", "ptr"], returns: "i32" },
-    SetConsoleMode: { args: ["ptr", "u32"], returns: "i32" },
-    FlushConsoleInputBuffer: { args: ["ptr"], returns: "i32" },
-  })
-
-let k32: ReturnType<typeof kernel> | undefined
+let k32: any
+let ffi: any
+const ptr = (b: any) => ffi?.ptr?.(b) ?? b
 
 function load() {
   if (process.platform !== "win32") return false
+  if (typeof globalThis.Bun === "undefined" || !(globalThis as any).Bun?.ffi) return false
   try {
-    k32 ??= kernel()
+    ffi = (globalThis as any).Bun.ffi
+    k32 ??= ffi.dlopen("kernel32.dll", {
+      GetStdHandle: { args: ["i32"], returns: "ptr" },
+      GetConsoleMode: { args: ["ptr", "ptr"], returns: "i32" },
+      SetConsoleMode: { args: ["ptr", "u32"], returns: "i32" },
+      FlushConsoleInputBuffer: { args: ["ptr"], returns: "i32" },
+    })
     return true
   } catch {
     return false

@@ -1,6 +1,13 @@
+# Source
+src/
 packages/web/
 packages/docs/
 packages/console/
+**/*.ts
+**/*.tsx
+!dist/
+
+# Dev files
 .git/
 .github/
 .agentx/
@@ -11,10 +18,14 @@ patches/
 script/
 perf/
 specs/
+**/*.test.js
+**/*.spec.js
 **/*.test.ts
 **/*.spec.ts
 **/*.test.tsx
 **/*.spec.tsx
+
+# Junk
 msg.txt
 out.txt
 push_log.txt
@@ -22,5 +33,17 @@ push_out.txt
 *.log
 .env*
 coverage/
-nix/
-infra/
+
+# Config (not needed at runtime)
+bun.lock
+bunfig.toml
+turbo.json
+tsconfig.json
+*.exe
+.dockerignore
+.gitleaksignore
+.oxlintrc.json
+.prettierignore
+.editorconfig
+.gitattributes
+

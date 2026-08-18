@@ -60,13 +60,9 @@ jobs:
       - name: Core unit tests
         run: bun test --cwd packages/core test/global.test.ts
 
-      - name: Build single binary smoke test
-        run: bun run --cwd packages/agentx-cli script/build.ts --single
+      - name: Build Node.js bundle smoke test
+        run: bun run --cwd packages/agentx-cli script/build.ts
 
-      - name: Verify binary starts (Unix)
-        if: runner.os != 'Windows'
-        run: ./packages/agentx-cli/bin/agentx --version
+      - name: Verify CLI starts with Node.js
+        run: node packages/agentx-cli/dist/index.js --version
 
-      - name: Verify binary starts (Windows)
-        if: runner.os == 'Windows'
-        run: .\packages\agentx-cli\bin\agentx.exe --version

@@ -1,12 +1,42 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "1.20.92",
+  "version": "1.20.93",
   "name": "@agent-qofeno/agentx-cli",
+  "description": "The AI agent that builds production-ready websites from your terminal",
   "type": "module",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
+  "bin": {
+    "agentx": "./dist/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SohailKhan0525/agentx-cli.git"
+  },
+  "homepage": "https://github.com/SohailKhan0525/agentx-cli",
+  "bugs": {
+    "url": "https://github.com/SohailKhan0525/agentx-cli/issues"
+  },
+  "author": "SohailKhan0525",
+  "keywords": [
+    "ai",
+    "cli",
+    "agent",
+    "website-builder",
+    "terminal",
+    "openai",
+    "anthropic",
+    "gemini",
+    "local-models",
+    "ollama",
+    "nextjs",
+    "agentx"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test --timeout 30000 --only-failures",
@@ -16,9 +46,6 @@
     "build": "bun run script/build.ts",
     "dev": "bun run --conditions=browser ./src/index.ts",
     "dev:temporary": "bun run --conditions=browser ./src/temporary.ts"
-  },
-  "bin": {
-    "agentx": "bin/agentx.cjs"
   },
   "exports": {
     "./*": "./src/*.ts"
@@ -129,7 +156,7 @@
   },
   "dependencies": {},
   "files": [
-    "bin",
+    "dist",
     "skills",
     "README.md",
     "AGENTS.md",

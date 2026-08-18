@@ -17,15 +17,12 @@ const generated = await import("./generate.ts")
 import { Script } from "@agentx-cli/script"
 import pkg from "../package.json"
 
-const singleFlag = process.argv.includes("--single")
-const baselineFlag = process.argv.includes("--baseline")
-const skipInstall = process.argv.includes("--skip-install")
 const sourcemapsFlag = process.argv.includes("--sourcemaps")
 const plugin = createSolidTransformPlugin()
 const skipEmbedWebUi = true
 
 const createEmbeddedWebUIBundle = async () => {
-  console.log(`Building Web UI to embed in the binary`)
+  console.log(`Building Web UI to embed in the package`)
   const appDir = path.join(import.meta.dirname, "../../app")
   const dist = path.join(appDir, "dist")
   await $`AGENTX_CHANNEL=${Script.channel} bun run --cwd ${appDir} build`
@@ -50,203 +47,59 @@ const createEmbeddedWebUIBundle = async () => {
 
 const embeddedFileMap = skipEmbedWebUi ? null : await createEmbeddedWebUIBundle()
 
-const allTargets: {
-  os: string
-  arch: "arm64" | "x64"
-  abi?: "musl"
-  avx2?: false
-}[] = [
-  {
-    os: "linux",
-    arch: "arm64",
+const bunShimPlugin = {
+  name: "bun-shim",
+  setup(build: any) {
+    build.onResolve({ filter: /^bun$/ }, () => ({
+      path: path.resolve(__dirname, "./bun-shim.ts"),
+    }))
+    build.onResolve({ filter: /^jsonc-parser$/ }, () => ({
+      path: require.resolve("jsonc-parser/lib/esm/main.js", { paths: [dir, path.resolve(dir, "../..")] }),
+    }))
   },
-  {
-    os: "linux",
-    arch: "x64",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    avx2: false,
-  },
-  {
-    os: "linux",
-    arch: "arm64",
-    abi: "musl",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    abi: "musl",
-  },
-  {
-    os: "linux",
-    arch: "x64",
-    abi: "musl",
-    avx2: false,
-  },
-  {
-    os: "darwin",
-    arch: "arm64",
-  },
-  {
-    os: "darwin",
-    arch: "x64",
-  },
-  {
-    os: "darwin",
-    arch: "x64",
-    avx2: false,
-  },
-  {
-    os: "win32",
-    arch: "arm64",
-  },
-  {
-    os: "win32",
-    arch: "x64",
-  },
-  {
-    os: "win32",
-    arch: "x64",
-    avx2: false,
-  },
-]
+}
 
-const targets = singleFlag
-  ? allTargets.filter((item) => {
-      if (item.os !== process.platform || item.arch !== process.arch) {
-        return false
-      }
-
-      // When building for the current platform, prefer a single native binary by default.
-      // Baseline binaries require additional Bun artifacts and can be flaky to download.
-      if (item.avx2 === false) {
-        return baselineFlag
-      }
-
-      // also skip abi-specific builds for the same reason
-      if (item.abi !== undefined) {
-        return false
-      }
-
-      return true
-    })
-  : allTargets
-
-// Use Node.js fs instead of bash `rm -rf dist` — works on Windows, macOS, Linux
+// Clean dist directory
 if (fs.existsSync("dist")) fs.rmSync("dist", { recursive: true, force: true })
+fs.mkdirSync("dist", { recursive: true })
 
-const binaries: Record<string, string> = {}
-if (!skipInstall) {
-  const allDeps: Record<string, string> = { ...pkg.devDependencies, ...pkg.dependencies }
-  await $`bun install --os="*" --cpu="*" @opentui/core@${allDeps["@opentui/core"] ?? "catalog:"}`
-  await $`bun install --os="*" --cpu="*" @parcel/watcher@${allDeps["@parcel/watcher"] ?? "2.5.1"}`
-  await $`bun install --os="*" --cpu="*" @ff-labs/fff-bun@${allDeps["@ff-labs/fff-bun"] ?? "0.9.4"}`
-}
-for (const item of targets) {
-  const name = [
-    pkg.name,
-    // changing to win32 flags npm for some reason
-    item.os === "win32" ? "windows" : item.os,
-    item.arch,
-    item.avx2 === false ? "baseline" : undefined,
-    item.abi === undefined ? undefined : item.abi,
-  ]
-    .filter(Boolean)
-    .join("-")
-  console.log(`building ${name}`)
-  // Use Node.js fs instead of bash `mkdir -p` — works on all platforms
-  fs.mkdirSync(path.join("dist", name, "bin"), { recursive: true })
+console.log(`Building Node.js bundle for ${pkg.name}@${Script.version}...`)
 
-  const localPath = path.resolve(dir, "node_modules/@opentui/core/parser.worker.js")
-  const rootPath = path.resolve(dir, "../../node_modules/@opentui/core/parser.worker.js")
-  const parserWorker = fs.realpathSync(fs.existsSync(localPath) ? localPath : rootPath)
-  const workerPath = "./src/cli/tui/worker.ts"
+const buildResult = await Bun.build({
+  target: "node",
+  entrypoints: ["./src/index.ts"],
+  outdir: "./dist",
+  format: "esm",
+  minify: false,
+  sourcemap: sourcemapsFlag ? "linked" : "none",
+  plugins: [bunShimPlugin, plugin],
+  external: ["node-gyp", "fsevents"],
+  define: {
+    AGENTX_VERSION: `'${Script.version}'`,
+    AGENTX_MODELS_DEV: generated.modelsData,
+    AGENTX_CHANNEL: `'${Script.channel}'`,
+    "process.env.AGENTX_CHANNEL": `'${Script.channel}'`,
+  },
+  files: embeddedFileMap ? { "agentx-web-ui.gen.ts": embeddedFileMap } : {},
+})
 
-  // Use platform-specific bunfs root path based on target OS
-  const bunfsRoot = item.os === "win32" ? "B:/~BUN/root/" : "/$bunfs/root/"
-  const workerRelativePath = path.relative(dir, parserWorker).replaceAll("\\", "/")
-
-  await Bun.build({
-    conditions: ["bun", "node"],
-    tsconfig: "./tsconfig.json",
-    plugins: [plugin],
-    external: ["node-gyp"],
-    format: "esm",
-    minify: true,
-    sourcemap: sourcemapsFlag ? "linked" : "none",
-    splitting: true,
-    compile: {
-      autoloadBunfig: false,
-      autoloadDotenv: false,
-      autoloadTsconfig: true,
-      autoloadPackageJson: true,
-      target: name.replace(pkg.name, "bun") as any,
-      outfile: `dist/${name}/bin/agentx`,
-      execArgv: [`--user-agent=agentx/${Script.version}`, "--use-system-ca", "--"],
-      windows: {},
-    },
-    files: embeddedFileMap ? { "agentx-web-ui.gen.ts": embeddedFileMap } : {},
-    entrypoints: ["./src/index.ts", parserWorker, workerPath, ...(embeddedFileMap ? ["agentx-web-ui.gen.ts"] : [])],
-    define: {
-      FFF_LIBC: JSON.stringify(item.abi === "musl" ? "musl" : "gnu"),
-      AGENTX_VERSION: `'${Script.version}'`,
-      AGENTX_MODELS_DEV: generated.modelsData,
-      OTUI_TREE_SITTER_WORKER_PATH: bunfsRoot + workerRelativePath,
-      AGENTX_WORKER_PATH: workerPath,
-      AGENTX_CHANNEL: `'${Script.channel}'`,
-      AGENTX_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",
-      ...(item.os === "linux" ? { "process.env.OPENTUI_LIBC": JSON.stringify(item.abi ?? "glibc") } : {}),
-    },
-  })
-
-  // Smoke test & copy binary to bin/ for npm package
-  if (item.os === process.platform && item.arch === process.arch && !item.abi) {
-    const binaryPath = process.platform === "win32" ? `dist/${name}/bin/agentx.exe` : `dist/${name}/bin/agentx`
-    const targetBinary = process.platform === "win32" ? `./bin/agentx.exe` : `./bin/agentx`
-    // Use Node.js fs.copyFileSync instead of bash `cp` — works on all platforms
-    fs.copyFileSync(binaryPath, targetBinary)
-    console.log(`Copied ${binaryPath} to ${targetBinary}`)
-    console.log(`Running smoke test: ${targetBinary} --version`)
-    try {
-      const versionOutput = await $`${targetBinary} --version`.text()
-      console.log(`Smoke test passed: ${versionOutput.trim()}`)
-    } catch (e) {
-      console.error(`Smoke test failed for ${name}:`, e)
-      process.exit(1)
-    }
-  }
-
-  // Use Node.js fs instead of bash `rm -rf` — works on all platforms
-  const tuiDir = path.join("dist", name, "bin", "tui")
-  if (fs.existsSync(tuiDir)) fs.rmSync(tuiDir, { recursive: true, force: true })
-  await Bun.file(`dist/${name}/package.json`).write(
-    JSON.stringify(
-      {
-        name,
-        version: Script.version,
-        preferUnplugged: true,
-        os: [item.os],
-        cpu: [item.arch],
-        ...(item.abi ? { libc: [item.abi] } : {}),
-      },
-      null,
-      2,
-    ),
-  )
-  binaries[name] = Script.version
+if (!buildResult.success) {
+  console.error("Build failed:", buildResult.logs)
+  process.exit(1)
 }
 
-if (Script.release) {
-  for (const key of Object.keys(binaries)) {
-    if (key.includes("linux")) {
-      await $`tar -czf ../../${key}.tar.gz *`.cwd(`dist/${key}/bin`)
-    } else {
-      await $`zip -r ../../${key}.zip *`.cwd(`dist/${key}/bin`)
-    }
-  }
-  await $`gh release upload v${Script.version} ./dist/*.zip ./dist/*.tar.gz --clobber --repo ${process.env.GH_REPO}`
+// Ensure shebang exists at top of output file
+const outputPath = path.resolve(dir, "dist/index.js")
+let content = fs.readFileSync(outputPath, "utf8")
+if (!content.startsWith("#!/usr/bin/env node")) {
+  content = "#!/usr/bin/env node\n" + content
+  fs.writeFileSync(outputPath, content, "utf8")
 }
 
-export { binaries }
+// Make executable
+try {
+  fs.chmodSync(outputPath, 0o755)
+} catch {}
+
+console.log(`✓ Node.js bundle successfully generated at ${outputPath}`)
+

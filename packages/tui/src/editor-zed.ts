@@ -1,10 +1,48 @@
-import { Database } from "bun:sqlite"
 import { statSync } from "fs"
 import { readFile as readFileAsync } from "fs/promises"
 import os from "os"
 import path from "path"
 import { Option, Schema } from "effect"
 import type { EditorSelection } from "./context/editor"
+
+interface ZedDb {
+  query(sql: string): {
+    all(params?: Record<string, any>): any[]
+    get(params?: Record<string, any>): any
+  }
+  close(): void
+}
+
+function openZedDatabase(dbPath: string): ZedDb | null {
+  try {
+    if (typeof (globalThis as any).Bun !== "undefined" && (globalThis as any).Bun?.Database) {
+      const db = new (globalThis as any).Bun.Database(dbPath, { readonly: true })
+      return db
+    }
+    const { createRequire } = require("module")
+    const req = createRequire(import.meta.url)
+    const { DatabaseSync } = req("node:sqlite")
+    const db = new DatabaseSync(dbPath, { readOnly: true })
+    return {
+      query(sql: string) {
+        const stmt = db.prepare(sql)
+        return {
+          all(params?: Record<string, any>) {
+            return params ? stmt.all(params) : stmt.all()
+          },
+          get(params?: Record<string, any>) {
+            return params ? stmt.get(params) : stmt.get()
+          },
+        }
+      },
+      close() {
+        db.close()
+      },
+    }
+  } catch {
+    return null
+  }
+}
 
 const ZedEditorRowSchema = Schema.Struct({
   item_kind: Schema.String,
@@ -87,9 +125,9 @@ export async function resolveZedSelection(dbPath: string, cwd = process.cwd()): 
 }
 
 function queryZedActiveEditor(dbPath: string, cwd: string) {
-  let db: Database | undefined
+  const db = openZedDatabase(dbPath)
+  if (!db) return { type: "unavailable" as const }
   try {
-    db = new Database(dbPath, { readonly: true })
     const raw = db
       .query(
         `select
@@ -126,14 +164,14 @@ function queryZedActiveEditor(dbPath: string, cwd: string) {
   } catch {
     return { type: "unavailable" as const }
   } finally {
-    db?.close()
+    db.close()
   }
 }
 
 function queryZedEditorSelections(dbPath: string, row: ZedActiveEditorRow) {
-  let db: Database | undefined
+  const db = openZedDatabase(dbPath)
+  if (!db) return { type: "unavailable" as const }
   try {
-    db = new Database(dbPath, { readonly: true })
     const raw = db
       .query(
         `select
@@ -154,14 +192,14 @@ function queryZedEditorSelections(dbPath: string, row: ZedActiveEditorRow) {
   } catch {
     return { type: "unavailable" as const }
   } finally {
-    db?.close()
+    db.close()
   }
 }
 
 function queryZedEditorContents(dbPath: string, row: ZedActiveEditorRow) {
-  let db: Database | undefined
+  const db = openZedDatabase(dbPath)
+  if (!db) return { type: "unavailable" as const }
   try {
-    db = new Database(dbPath, { readonly: true })
     const parsed = decodeZedEditorContents(
       db
         .query(
@@ -176,7 +214,7 @@ function queryZedEditorContents(dbPath: string, row: ZedActiveEditorRow) {
   } catch {
     return { type: "unavailable" as const }
   } finally {
-    db?.close()
+    db.close()
   }
 }
 

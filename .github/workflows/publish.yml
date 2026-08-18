@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to publish (e.g. 1.20.92) — leave blank to use package.json version'
+        description: 'Version to publish (e.g. 1.20.93) — leave blank to use package.json version'
         required: false
         default: ''
 
@@ -21,7 +21,7 @@ env:
 
 jobs:
   build-and-publish:
-    name: Build & Publish All Platforms
+    name: Build & Publish AgentX (Node.js)
     runs-on: ubuntu-latest
 
     steps:
@@ -35,98 +35,38 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Setup Node.js (for npm publish)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile --ignore-scripts
 
-      - name: Build all platform binaries
+      - name: Build Node.js bundle
         run: bun run --cwd packages/agentx-cli script/build.ts
-        env:
-          AGENTX_BUILD_ALL: "1"
 
-      - name: List built platform packages
-        run: |
-          echo "=== Built platform packages ==="
-          ls -la packages/agentx-cli/dist/@agent-qofeno/ 2>/dev/null || echo "No dist directory found"
+      - name: Verify CLI with Node.js
+        run: node packages/agentx-cli/dist/index.js --version
 
       # ─── GitHub Release ───────────────────────────────────────────────────
-      - name: Create GitHub Release & Upload Binaries
+      - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
           TAG_NAME="${{ github.ref_name }}"
-          VERSION="${TAG_NAME#v}"
-
-          # Create or update the release
           gh release create "$TAG_NAME" \
             --title "AgentX $TAG_NAME — Autonomous Website Builder" \
             --generate-notes \
             || gh release edit "$TAG_NAME" --title "AgentX $TAG_NAME — Autonomous Website Builder" || true
-
-          # Upload all platform binaries as release assets
-          for dir in packages/agentx-cli/dist/@agent-qofeno/*/; do
-            pkg_name=$(basename "$dir")
-            if [[ "$pkg_name" == *"windows"* ]]; then
-              zip_name="${pkg_name}-${VERSION}.zip"
-              (cd "$dir/bin" && zip -r "../../../../${zip_name}" .)
-              gh release upload "$TAG_NAME" "${zip_name}" --clobber || echo "Warning: failed to upload $zip_name"
-            else
-              tar_name="${pkg_name}-${VERSION}.tar.gz"
-              (cd "$dir/bin" && tar -czf "../../../../${tar_name}" .)
-              gh release upload "$TAG_NAME" "${tar_name}" --clobber || echo "Warning: failed to upload $tar_name"
-            fi
-          done
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # ─── NPM Publish: All Platform Packages ───────────────────────────────
-      - name: Publish all platform binary packages to npm
+      # ─── NPM Publish ──────────────────────────────────────────────────────
+      - name: Publish @agent-qofeno/agentx-cli to npm
         if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') && env.NODE_AUTH_TOKEN != ''
         run: |
-          echo "=== Publishing all @agent-qofeno platform packages ==="
-          DIST_DIR="packages/agentx-cli/dist/@agent-qofeno"
-
-          if [ ! -d "$DIST_DIR" ]; then
-            echo "ERROR: $DIST_DIR not found - build may have failed"
-            exit 1
-          fi
-
-          PUBLISHED=0
-          FAILED=0
-
-          for dir in "$DIST_DIR"/*/; do
-            pkg_name=$(basename "$dir")
-            echo ""
-            echo "--- Publishing $pkg_name ---"
-            if npm publish "$dir" --access public 2>&1; then
-              echo "✓ Published @agent-qofeno/$pkg_name"
-              PUBLISHED=$((PUBLISHED + 1))
-            else
-              EXIT_CODE=$?
-              if npm show "@agent-qofeno/$pkg_name" version 2>/dev/null | grep -q "$(cat $dir/package.json | python3 -c "import sys,json;print(json.load(sys.stdin)['version'])")"; then
-                echo "⚠ @agent-qofeno/$pkg_name already published (skipping)"
-              else
-                echo "✗ Failed to publish @agent-qofeno/$pkg_name (exit $EXIT_CODE)"
-                FAILED=$((FAILED + 1))
-              fi
-            fi
-          done
-
-          echo ""
-          echo "=== Platform packages: $PUBLISHED published, $FAILED failed ==="
-          [ "$FAILED" -eq 0 ] || exit 1
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # ─── NPM Publish: Root Package ─────────────────────────────────────────
-      - name: Publish root @agent-qofeno/agentx-cli to npm
-        if: (startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch') && env.NODE_AUTH_TOKEN != ''
-        run: |
-          echo "=== Publishing root @agent-qofeno/agentx-cli ==="
+          echo "=== Publishing @agent-qofeno/agentx-cli to npm ==="
           CURRENT_VERSION=$(node -p "require('./packages/agentx-cli/package.json').version")
           echo "Version: $CURRENT_VERSION"
 
@@ -147,16 +87,10 @@ jobs:
       - name: Publish summary
         if: always()
         run: |
-          TAG="${{ github.ref_name }}"
-          VERSION="${TAG#v}"
+          VERSION=$(node -p "require('./packages/agentx-cli/package.json').version")
           echo "## 📦 Publish Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Package | Version | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|---------|---------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| \`@agent-qofeno/agentx-cli\` | \`$VERSION\` | Check npm step above |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Platform Packages Published:" >> $GITHUB_STEP_SUMMARY
-          for dir in packages/agentx-cli/dist/@agent-qofeno/*/; do
-            pkg_name=$(basename "$dir")
-            echo "- \`@agent-qofeno/$pkg_name\`" >> $GITHUB_STEP_SUMMARY
-          done 2>/dev/null || echo "_(no dist directory — build step may have failed)_" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Version | Distribution |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|---------|--------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| \`@agent-qofeno/agentx-cli\` | \`$VERSION\` | Universal Node.js Bundle (\`dist/index.js\`) |" >> $GITHUB_STEP_SUMMARY
+

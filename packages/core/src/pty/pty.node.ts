@@ -1,9 +1,21 @@
-import * as pty from "@lydell/node-pty"
+import { createRequire } from "module"
 import type { Opts, Proc } from "./pty"
 
 export type { Disp, Exit, Opts, Proc } from "./pty"
 
+const req = createRequire(import.meta.url)
+
 export function spawn(file: string, args: string[], opts: Opts): Proc {
+  let pty: any
+  try {
+    pty = req("@lydell/node-pty")
+  } catch {
+    try {
+      pty = req("node-pty")
+    } catch {
+      throw new Error("Terminal PTY support requires @lydell/node-pty or node-pty.")
+    }
+  }
   const proc = pty.spawn(file, args, opts)
   return {
     pid: proc.pid,
@@ -24,3 +36,4 @@ export function spawn(file: string, args: string[], opts: Opts): Proc {
     },
   }
 }
+

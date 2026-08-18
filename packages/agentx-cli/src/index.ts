@@ -1,3 +1,17 @@
+#!/usr/bin/env node
+
+const [nodeMajor] = process.versions.node ? process.versions.node.split(".").map(Number) : [18]
+if (nodeMajor < 18) {
+  process.stderr.write(
+    "\n✗ AgentX requires Node.js 18 or higher.\n" +
+      "  You are running: v" +
+      process.versions.node +
+      "\n" +
+      "  Download Node.js: https://nodejs.org\n\n",
+  )
+  process.exit(1)
+}
+
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import { RunCommand } from "./cli/cmd/run"

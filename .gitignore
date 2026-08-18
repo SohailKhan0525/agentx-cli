@@ -9,5 +9,6 @@ out.txt
 push_log.txt
 push_out.txt
 .turbo/cache/
-packages/agentx-cli/bin/agentx
-packages/agentx-cli/bin/agentx.exe
+*.exe
+.DS_Store
+
