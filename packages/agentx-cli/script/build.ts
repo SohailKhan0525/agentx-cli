@@ -74,23 +74,47 @@ const bunShimPlugin = {
 if (fs.existsSync("dist")) fs.rmSync("dist", { recursive: true, force: true })
 fs.mkdirSync("dist", { recursive: true })
 
-// Copy platform native binaries to dist if available
-const directBinaryPaths = [
-  "../../node_modules/.bun/@opentui+core-win32-x64@0.3.4/node_modules/@opentui/core-win32-x64/opentui.dll",
-  "../../node_modules/.bun/@opentui+core-linux-x64@0.3.4/node_modules/@opentui/core-linux-x64/libopentui.so",
-  "../../node_modules/.bun/@opentui+core-darwin-arm64@0.3.4/node_modules/@opentui/core-darwin-arm64/libopentui.dylib",
-  "node_modules/@opentui/core-win32-x64/opentui.dll",
-  "node_modules/@opentui/core-linux-x64/libopentui.so",
-  "node_modules/@opentui/core-darwin-arm64/libopentui.dylib",
+// Ensure all platform native binaries are present in dist
+const requiredBinaries = [
+  { name: "opentui.dll", pkg: "@opentui/core-win32-x64@0.3.4" },
+  { name: "libopentui.so", pkg: "@opentui/core-linux-x64@0.3.4" },
+  { name: "libopentui.dylib", pkg: "@opentui/core-darwin-arm64@0.3.4" },
 ]
-for (const rel of directBinaryPaths) {
-  const src = path.resolve(dir, rel)
-  const dest = path.join("dist", path.basename(rel))
-  if (fs.existsSync(src) && !fs.existsSync(dest)) {
+
+for (const { name, pkg: npmPkg } of requiredBinaries) {
+  const dest = path.join("dist", name)
+  if (fs.existsSync(dest)) continue
+
+  let copied = false
+  const directPaths = [
+    `../../node_modules/.bun/${npmPkg.replace("@", "").replace("/", "+")}/node_modules/${npmPkg.split("@")[0] || npmPkg.split("@")[1]}/${name}`,
+    `node_modules/${npmPkg.split("@")[0] || npmPkg.split("@")[1]}/${name}`,
+  ]
+  for (const rel of directPaths) {
+    const src = path.resolve(dir, rel)
+    if (fs.existsSync(src)) {
+      try {
+        fs.copyFileSync(src, dest)
+        console.log(`Copied ${name} from local node_modules to dist/`)
+        copied = true
+        break
+      } catch {}
+    }
+  }
+
+  // If missing (e.g. on Linux CI where win32 package is not installed), unpack from npm
+  if (!copied) {
     try {
-      fs.copyFileSync(src, dest)
-      console.log(`Copied ${path.basename(rel)} to dist/`)
-    } catch {}
+      console.log(`Downloading ${npmPkg} for ${name}...`)
+      const { execSync } = require("child_process")
+      const tarball = execSync(`npm pack ${npmPkg}`, { cwd: "dist", encoding: "utf8" }).trim().split("\n").pop()!.trim()
+      const tarballPath = path.join("dist", tarball)
+      execSync(`tar -xzf ${tarball} --strip-components=1 package/${name}`, { cwd: "dist" })
+      if (fs.existsSync(tarballPath)) fs.unlinkSync(tarballPath)
+      console.log(`Successfully unpacked ${name} into dist/`)
+    } catch (e) {
+      console.error(`Warning: Failed to fetch native binary ${name}:`, e)
+    }
   }
 }
 
