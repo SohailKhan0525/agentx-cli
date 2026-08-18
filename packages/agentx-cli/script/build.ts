@@ -147,6 +147,51 @@ function patchBundleFile(filePath: string, isEntry = false) {
     `return { ptr(value) { if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset); return 0n; }, toArrayBuffer(pointer, offset, length) { return new ArrayBuffer(length ?? 0); } };`
   )
 
+  // Patch opentui unsupported backend to provide safe JS fallback instead of throwing
+  content = content.replaceAll(
+    /function unavailable\d*\(cause\) \{\s*throw new Error\(FFI_UNAVAILABLE, \{ cause \}\);\s*\}/g,
+    `function unavailable2(cause) { return 0; }`
+  )
+  content = content.replaceAll(
+    /function createUnsupportedBackend\(cause\) \{[\s\S]*?^\}/gm,
+    `function createUnsupportedBackend(cause) {
+  let counter = 1;
+  const dummySymbols = new Proxy({}, {
+    get(target, prop) {
+      if (prop === "encodeUnicode") return (textBytes, len, outPtr, outLen, widthMethod) => 1;
+      if (prop === "createEventSink" || prop === "createRenderer" || prop === "createAudioEngine" || prop === "createNativeSpanFeed" || prop === "createSyntaxStyle" || prop === "createTextBuffer" || prop === "createEditBuffer") return (...args) => counter++;
+      if (prop === "getTerminalCapabilities") return (...args) => {};
+      return (...args) => 0;
+    }
+  });
+  return {
+    dlopen(path, symbols) {
+      const callbacks = new Set();
+      return {
+        symbols: dummySymbols,
+        createCallback(cb, def) {
+          const raw = {
+            ptr: BigInt(counter++),
+            threadsafe: false,
+            close() {}
+          };
+          return createManagedCallback(raw, callbacks);
+        },
+        close() {}
+      };
+    },
+    ptr(value) {
+      if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset || 1);
+      return 1n;
+    },
+    suffix: process.platform === "win32" ? ".dll" : process.platform === "darwin" ? ".dylib" : ".so",
+    toArrayBuffer(pointer, offset, length) {
+      return new ArrayBuffer(length ?? 0);
+    }
+  };
+}`
+  )
+
   // Patch opentui platform unsupported checks without early return
   content = content.replaceAll(
     /if \(!existsSync\d*\(targetLibPath\)\) \{\s*throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);\s*\}/g,
@@ -186,8 +231,8 @@ function patchBundleFile(filePath: string, isEntry = false) {
 
 // Patch index.js and all generated worker bundles
 patchBundleFile(path.resolve(dir, "dist/index.js"), true)
-patchBundleFile(path.resolve(dir, "dist/worker.js"), false)
-patchBundleFile(path.resolve(dir, "dist/cli/tui/worker.js"), false)
+patchBundleFile(path.resolve(dir, "dist/worker.js"), true)
+patchBundleFile(path.resolve(dir, "dist/cli/tui/worker.js"), true)
 
 // Make executable
 try {
