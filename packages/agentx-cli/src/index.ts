@@ -15,6 +15,11 @@ if (nodeMajor < 18) {
 import fs from "node:fs"
 import path from "node:path"
 import { readFile, writeFile, access } from "node:fs/promises"
+import { Worker as NodeWorker } from "node:worker_threads"
+
+if (typeof (globalThis as any).Worker === "undefined") {
+  ;(globalThis as any).Worker = NodeWorker
+}
 
 if (typeof (globalThis as any).Bun === "undefined") {
   const BunPolyfill: any = {
@@ -197,7 +202,7 @@ try {
   if (formatted) UI.error(formatted)
   if (formatted === undefined) {
     UI.error("Unexpected error" + EOL)
-    process.stderr.write(errorMessage(e) + EOL)
+    process.stderr.write((e instanceof Error && e.stack ? e.stack : errorMessage(e)) + EOL)
   }
   process.exitCode = 1
 } finally {

@@ -59,12 +59,40 @@ const bunShimPlugin = {
     build.onResolve({ filter: /^bun-ffi-structs$/ }, () => ({
       path: path.resolve(__dirname, "./bun-ffi-structs-shim.ts"),
     }))
+    build.onResolve({ filter: /^@opentui\/core-(darwin|linux|win32)/ }, (args: any) => {
+      try {
+        const resolved = require.resolve(args.path, { paths: [dir, path.resolve(dir, "../..")] })
+        return { path: resolved }
+      } catch {
+        return { path: path.resolve(__dirname, "./opentui-platform-shim.ts") }
+      }
+    })
   },
 }
 
 // Clean dist directory
 if (fs.existsSync("dist")) fs.rmSync("dist", { recursive: true, force: true })
 fs.mkdirSync("dist", { recursive: true })
+
+// Copy platform native binaries to dist if available
+const directBinaryPaths = [
+  "../../node_modules/.bun/@opentui+core-win32-x64@0.3.4/node_modules/@opentui/core-win32-x64/opentui.dll",
+  "../../node_modules/.bun/@opentui+core-linux-x64@0.3.4/node_modules/@opentui/core-linux-x64/libopentui.so",
+  "../../node_modules/.bun/@opentui+core-darwin-arm64@0.3.4/node_modules/@opentui/core-darwin-arm64/libopentui.dylib",
+  "node_modules/@opentui/core-win32-x64/opentui.dll",
+  "node_modules/@opentui/core-linux-x64/libopentui.so",
+  "node_modules/@opentui/core-darwin-arm64/libopentui.dylib",
+]
+for (const rel of directBinaryPaths) {
+  const src = path.resolve(dir, rel)
+  const dest = path.join("dist", path.basename(rel))
+  if (fs.existsSync(src) && !fs.existsSync(dest)) {
+    try {
+      fs.copyFileSync(src, dest)
+      console.log(`Copied ${path.basename(rel)} to dist/`)
+    } catch {}
+  }
+}
 
 console.log(`Building Node.js bundle for ${pkg.name}@${Script.version}...`)
 
@@ -102,6 +130,30 @@ if (!content.startsWith("#!/usr/bin/env node")) {
 content = content.replaceAll(
   /throw new Error\(FFI_LOAD_ERROR[\s\S]*?\);/g,
   `return { ptr(value) { if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset); return 0n; }, toArrayBuffer(pointer, offset, length) { return new ArrayBuffer(length ?? 0); } };`
+)
+
+// Patch opentui platform unsupported checks without early return
+content = content.replaceAll(
+  /if \(!existsSync\d*\(targetLibPath\)\) \{\s*throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);\s*\}/g,
+  `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
+)
+content = content.replaceAll(
+  /if \(!existsSync\d*\(targetLibPath\)\) \{\s*return \{ default: "" \};\s*\}/g,
+  `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
+)
+content = content.replaceAll(
+  /throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);/g,
+  `return { default: "" };`
+)
+
+// Ensure init_index_54s7pk0d finishes before init_index_0nvgrgam to prevent class extends undefined race condition
+content = content.replaceAll(
+  /await __promiseAll\(\[\s*init_index_0nvgrgam\(\),\s*init_index_54s7pk0d\(\)\s*\]\);/g,
+  `await init_index_54s7pk0d(); await init_index_0nvgrgam();`
+)
+content = content.replaceAll(
+  /var init_index_0nvgrgam = __esm\(async \(\) => \{/g,
+  `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
 )
 
 fs.writeFileSync(outputPath, content, "utf8")
