@@ -29,7 +29,7 @@ const CHANNEL = await (async () => {
   if (env.AGENTX_VERSION && !env.AGENTX_VERSION.startsWith("0.0.0-")) return "latest"
   return await $`git branch --show-current`.text().then((x) => x.trim())
 })()
-const IS_PREVIEW = CHANNEL !== "latest"
+const IS_PREVIEW = CHANNEL !== "latest" && CHANNEL !== "main" && CHANNEL !== "master"
 
 const VERSION = await (async () => {
   if (env.AGENTX_VERSION) return env.AGENTX_VERSION
