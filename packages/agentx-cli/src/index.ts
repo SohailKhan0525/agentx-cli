@@ -12,6 +12,59 @@ if (nodeMajor < 18) {
   process.exit(1)
 }
 
+import fs from "node:fs"
+import path from "node:path"
+import { readFile, writeFile, access } from "node:fs/promises"
+
+if (typeof (globalThis as any).Bun === "undefined") {
+  const BunPolyfill: any = {
+    version: "1.3.14",
+    env: process.env,
+    main: process.argv[1],
+    sleep: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
+    stringWidth: (str: string) => {
+      if (!str) return 0
+      const clean = str.replace(/\x1B\[[0-?]*[ -/]*[@-~]/g, "")
+      return clean.length
+    },
+    file: (filePath: string) => ({
+      name: filePath,
+      text: () => readFile(filePath, "utf8"),
+      json: async () => JSON.parse(await readFile(filePath, "utf8")),
+      arrayBuffer: async () => (await readFile(filePath)).buffer,
+      bytes: async () => new Uint8Array(await readFile(filePath)),
+      exists: () => access(filePath).then(() => true, () => false),
+      size: fs.existsSync(filePath) ? fs.statSync(filePath).size : 0,
+      type: "text/plain",
+    }),
+    write: (dest: string, data: any) => writeFile(dest, data, "utf8"),
+    nanoseconds: () => Number(process.hrtime.bigint()),
+    stdin: {
+      async text() {
+        if (process.stdin.isTTY) return ""
+        try {
+          return fs.readFileSync(0, "utf8")
+        } catch {
+          return ""
+        }
+      },
+    },
+    which: (bin: string) => {
+      const pathEnv = process.env.PATH || ""
+      const pathDirs = pathEnv.split(process.platform === "win32" ? ";" : ":")
+      const extensions = process.platform === "win32" ? [".exe", ".cmd", ".bat", ""] : [""]
+      for (const dir of pathDirs) {
+        for (const ext of extensions) {
+          const full = path.join(dir, bin + ext)
+          if (fs.existsSync(full)) return full
+        }
+      }
+      return null
+    },
+  }
+  ;(globalThis as any).Bun = BunPolyfill
+}
+
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import { RunCommand } from "./cli/cmd/run"

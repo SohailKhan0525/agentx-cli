@@ -56,6 +56,9 @@ const bunShimPlugin = {
     build.onResolve({ filter: /^jsonc-parser$/ }, () => ({
       path: require.resolve("jsonc-parser/lib/esm/main.js", { paths: [dir, path.resolve(dir, "../..")] }),
     }))
+    build.onResolve({ filter: /^bun-ffi-structs$/ }, () => ({
+      path: path.resolve(__dirname, "./bun-ffi-structs-shim.ts"),
+    }))
   },
 }
 
