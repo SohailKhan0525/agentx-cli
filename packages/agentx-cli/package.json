@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "1.21.5",
+  "version": "1.21.6",
   "name": "@agent-qofeno/agentx-cli",
   "description": "The AI agent that builds production-ready websites from your terminal",
   "type": "module",

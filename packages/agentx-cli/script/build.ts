@@ -213,18 +213,15 @@ function patchBundleFile(filePath: string, isEntry = false) {
 }`
   )
 
-  // Patch opentui platform unsupported checks without early return
+  // Patch resolveNativePackage to return the real opentui binary path located in dist/
   content = content.replaceAll(
-    /if \(!existsSync\d*\(targetLibPath\)\) \{\s*throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);\s*\}/g,
-    `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
-  )
-  content = content.replaceAll(
-    /if \(!existsSync\d*\(targetLibPath\)\) \{\s*return \{ default: "" \};\s*\}/g,
-    `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
-  )
-  content = content.replaceAll(
-    /throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);/g,
-    `return { default: "" };`
+    /async function resolveNativePackage\(\) \{[\s\S]*?^\}/gm,
+    `async function resolveNativePackage() {
+  const libName = process.platform === "win32" ? "opentui.dll" : process.platform === "darwin" ? "libopentui.dylib" : "libopentui.so";
+  const { fileURLToPath } = createRequire(import.meta.url)("node:url");
+  const libPath = fileURLToPath(new URL(libName, import.meta.url));
+  return { default: libPath };
+}`
   )
 
   // Ensure init_index_54s7pk0d finishes before init_index_0nvgrgam to prevent class extends undefined race condition
