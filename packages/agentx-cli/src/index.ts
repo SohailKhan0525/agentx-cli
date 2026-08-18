@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const [nodeMajor] = process.versions.node ? process.versions.node.split(".").map(Number) : [18]
-if (nodeMajor < 18) {
+const [nodeMajor] = process.versions.node ? process.versions.node.split(".").map(Number) : [22]
+if (nodeMajor < 22) {
   process.stderr.write(
-    "\n✗ AgentX requires Node.js 18 or higher.\n" +
+    "\n✗ AgentX requires Node.js 22 or higher (for built-in SQLite support).\n" +
       "  You are running: v" +
       process.versions.node +
       "\n" +
