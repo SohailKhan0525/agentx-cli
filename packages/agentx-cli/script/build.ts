@@ -125,6 +125,16 @@ function patchBundleFile(filePath: string, isEntry = false) {
   if (isEntry) {
     const warningSuppressor = `#!/usr/bin/env node
 (() => {
+  if (typeof Bun === "undefined" && !process.env.AGENTX_FORCE_NODE) {
+    try {
+      const { spawnSync } = require("node:child_process");
+      const check = spawnSync(process.platform === "win32" ? "where.exe" : "which", ["bun"], { stdio: "ignore" });
+      if (check.status === 0) {
+        const child = spawnSync("bun", [__filename, ...process.argv.slice(2)], { stdio: "inherit" });
+        process.exit(child.status ?? 0);
+      }
+    } catch {}
+  }
   const __orig = process.emitWarning;
   process.emitWarning = function(w, ...a) {
     if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning"))) return;
@@ -220,14 +230,44 @@ function patchBundleFile(filePath: string, isEntry = false) {
     `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
   )
 
-  // Convert static node:sqlite imports to dynamic require so warning suppressor intercepts them
+  // Convert static node:sqlite imports to dual runtime SQLite loader (bun:sqlite vs node:sqlite)
   content = content.replaceAll(
     'import { DatabaseSync } from "node:sqlite";',
-    'const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite");'
+    `const { DatabaseSync } = (() => {
+      try {
+        if (typeof Bun !== "undefined") {
+          const b = createRequire(import.meta.url)("bun:sqlite");
+          return { DatabaseSync: b.Database };
+        }
+        return createRequire(import.meta.url)("node:sqlite");
+      } catch {
+        try {
+          const b = createRequire(import.meta.url)("bun:sqlite");
+          return { DatabaseSync: b.Database };
+        } catch {
+          return createRequire(import.meta.url)("node:sqlite");
+        }
+      }
+    })();`
   )
   content = content.replaceAll(
     'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
-    'const { DatabaseSync: DatabaseSync2 } = createRequire(import.meta.url)("node:sqlite");'
+    `const { DatabaseSync: DatabaseSync2 } = (() => {
+      try {
+        if (typeof Bun !== "undefined") {
+          const b = createRequire(import.meta.url)("bun:sqlite");
+          return { DatabaseSync: b.Database };
+        }
+        return createRequire(import.meta.url)("node:sqlite");
+      } catch {
+        try {
+          const b = createRequire(import.meta.url)("bun:sqlite");
+          return { DatabaseSync: b.Database };
+        } catch {
+          return createRequire(import.meta.url)("node:sqlite");
+        }
+      }
+    })();`
   )
 
   fs.writeFileSync(filePath, content, "utf8")
