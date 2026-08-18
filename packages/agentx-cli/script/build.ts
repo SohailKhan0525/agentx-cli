@@ -96,8 +96,15 @@ const outputPath = path.resolve(dir, "dist/index.js")
 let content = fs.readFileSync(outputPath, "utf8")
 if (!content.startsWith("#!/usr/bin/env node")) {
   content = "#!/usr/bin/env node\n" + content
-  fs.writeFileSync(outputPath, content, "utf8")
 }
+
+// Patch inlined bun-ffi-structs FFI_LOAD_ERROR in pre-bundled @opentui/core
+content = content.replaceAll(
+  /throw new Error\(FFI_LOAD_ERROR[\s\S]*?\);/g,
+  `return { ptr(value) { if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset); return 0n; }, toArrayBuffer(pointer, offset, length) { return new ArrayBuffer(length ?? 0); } };`
+)
+
+fs.writeFileSync(outputPath, content, "utf8")
 
 // Make executable
 try {
