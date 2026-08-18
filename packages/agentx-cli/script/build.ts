@@ -122,8 +122,21 @@ if (!buildResult.success) {
 // Ensure shebang exists at top of output file
 const outputPath = path.resolve(dir, "dist/index.js")
 let content = fs.readFileSync(outputPath, "utf8")
-if (!content.startsWith("#!/usr/bin/env node")) {
-  content = "#!/usr/bin/env node\n" + content
+const warningSuppressor = `#!/usr/bin/env node
+(() => {
+  const __orig = process.emitWarning;
+  process.emitWarning = function(w, ...a) {
+    if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning"))) return;
+    if (w && typeof w === "object" && (w.name === "ExperimentalWarning" || (w.message && w.message.includes("SQLite")))) return;
+    if (a[0] === "ExperimentalWarning") return;
+    return Reflect.apply(__orig, process, [w, ...a]);
+  };
+})();
+`
+if (content.startsWith("#!/usr/bin/env node")) {
+  content = content.replace(/^#!\/usr\/bin\/env node\r?\n/, warningSuppressor)
+} else {
+  content = warningSuppressor + content
 }
 
 // Patch inlined bun-ffi-structs FFI_LOAD_ERROR in pre-bundled @opentui/core
@@ -154,6 +167,16 @@ content = content.replaceAll(
 content = content.replaceAll(
   /var init_index_0nvgrgam = __esm\(async \(\) => \{/g,
   `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
+)
+
+// Convert static node:sqlite imports to dynamic require so warning suppressor intercepts them
+content = content.replaceAll(
+  'import { DatabaseSync } from "node:sqlite";',
+  'const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite");'
+)
+content = content.replaceAll(
+  'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
+  'const { DatabaseSync: DatabaseSync2 } = createRequire(import.meta.url)("node:sqlite");'
 )
 
 fs.writeFileSync(outputPath, content, "utf8")

@@ -12,6 +12,16 @@ if (nodeMajor < 22) {
   process.exit(1)
 }
 
+// Suppress experimental SQLite / Node warnings
+const __origEmitWarning = process.emitWarning
+process.emitWarning = function (w: any, ...a: any[]) {
+  if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning"))) return
+  if (w && typeof w === "object" && (w.name === "ExperimentalWarning" || (w.message && w.message.includes("SQLite"))))
+    return
+  if (a[0] === "ExperimentalWarning") return
+  return Reflect.apply(__origEmitWarning, process, [w, ...a])
+}
+
 import fs from "node:fs"
 import path from "node:path"
 import { readFile, writeFile, access } from "node:fs/promises"
