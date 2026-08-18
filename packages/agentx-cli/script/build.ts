@@ -98,7 +98,7 @@ console.log(`Building Node.js bundle for ${pkg.name}@${Script.version}...`)
 
 const buildResult = await Bun.build({
   target: "node",
-  entrypoints: ["./src/index.ts"],
+  entrypoints: ["./src/index.ts", "./src/cli/tui/worker.ts"],
   outdir: "./dist",
   format: "esm",
   minify: false,
@@ -119,10 +119,11 @@ if (!buildResult.success) {
   process.exit(1)
 }
 
-// Ensure shebang exists at top of output file
-const outputPath = path.resolve(dir, "dist/index.js")
-let content = fs.readFileSync(outputPath, "utf8")
-const warningSuppressor = `#!/usr/bin/env node
+function patchBundleFile(filePath: string, isEntry = false) {
+  if (!fs.existsSync(filePath)) return
+  let content = fs.readFileSync(filePath, "utf8")
+  if (isEntry) {
+    const warningSuppressor = `#!/usr/bin/env node
 (() => {
   const __orig = process.emitWarning;
   process.emitWarning = function(w, ...a) {
@@ -133,58 +134,65 @@ const warningSuppressor = `#!/usr/bin/env node
   };
 })();
 `
-if (content.startsWith("#!/usr/bin/env node")) {
-  content = content.replace(/^#!\/usr\/bin\/env node\r?\n/, warningSuppressor)
-} else {
-  content = warningSuppressor + content
+    if (content.startsWith("#!/usr/bin/env node")) {
+      content = content.replace(/^#!\/usr\/bin\/env node\r?\n/, warningSuppressor)
+    } else {
+      content = warningSuppressor + content
+    }
+  }
+
+  // Patch inlined bun-ffi-structs FFI_LOAD_ERROR in pre-bundled @opentui/core
+  content = content.replaceAll(
+    /throw new Error\(FFI_LOAD_ERROR[\s\S]*?\);/g,
+    `return { ptr(value) { if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset); return 0n; }, toArrayBuffer(pointer, offset, length) { return new ArrayBuffer(length ?? 0); } };`
+  )
+
+  // Patch opentui platform unsupported checks without early return
+  content = content.replaceAll(
+    /if \(!existsSync\d*\(targetLibPath\)\) \{\s*throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);\s*\}/g,
+    `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
+  )
+  content = content.replaceAll(
+    /if \(!existsSync\d*\(targetLibPath\)\) \{\s*return \{ default: "" \};\s*\}/g,
+    `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
+  )
+  content = content.replaceAll(
+    /throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);/g,
+    `return { default: "" };`
+  )
+
+  // Ensure init_index_54s7pk0d finishes before init_index_0nvgrgam to prevent class extends undefined race condition
+  content = content.replaceAll(
+    /await __promiseAll\(\[\s*init_index_0nvgrgam\(\),\s*init_index_54s7pk0d\(\)\s*\]\);/g,
+    `await init_index_54s7pk0d(); await init_index_0nvgrgam();`
+  )
+  content = content.replaceAll(
+    /var init_index_0nvgrgam = __esm\(async \(\) => \{/g,
+    `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
+  )
+
+  // Convert static node:sqlite imports to dynamic require so warning suppressor intercepts them
+  content = content.replaceAll(
+    'import { DatabaseSync } from "node:sqlite";',
+    'const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite");'
+  )
+  content = content.replaceAll(
+    'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
+    'const { DatabaseSync: DatabaseSync2 } = createRequire(import.meta.url)("node:sqlite");'
+  )
+
+  fs.writeFileSync(filePath, content, "utf8")
 }
 
-// Patch inlined bun-ffi-structs FFI_LOAD_ERROR in pre-bundled @opentui/core
-content = content.replaceAll(
-  /throw new Error\(FFI_LOAD_ERROR[\s\S]*?\);/g,
-  `return { ptr(value) { if (ArrayBuffer.isView(value)) return BigInt(value.byteOffset); return 0n; }, toArrayBuffer(pointer, offset, length) { return new ArrayBuffer(length ?? 0); } };`
-)
-
-// Patch opentui platform unsupported checks without early return
-content = content.replaceAll(
-  /if \(!existsSync\d*\(targetLibPath\)\) \{\s*throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);\s*\}/g,
-  `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
-)
-content = content.replaceAll(
-  /if \(!existsSync\d*\(targetLibPath\)\) \{\s*return \{ default: "" \};\s*\}/g,
-  `if (!existsSync(targetLibPath)) { targetLibPath = null; }`
-)
-content = content.replaceAll(
-  /throw new Error\(`opentui is not supported on the current platform: \$\{process\.platform\}-\$\{process\.arch\}`\);/g,
-  `return { default: "" };`
-)
-
-// Ensure init_index_54s7pk0d finishes before init_index_0nvgrgam to prevent class extends undefined race condition
-content = content.replaceAll(
-  /await __promiseAll\(\[\s*init_index_0nvgrgam\(\),\s*init_index_54s7pk0d\(\)\s*\]\);/g,
-  `await init_index_54s7pk0d(); await init_index_0nvgrgam();`
-)
-content = content.replaceAll(
-  /var init_index_0nvgrgam = __esm\(async \(\) => \{/g,
-  `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
-)
-
-// Convert static node:sqlite imports to dynamic require so warning suppressor intercepts them
-content = content.replaceAll(
-  'import { DatabaseSync } from "node:sqlite";',
-  'const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite");'
-)
-content = content.replaceAll(
-  'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
-  'const { DatabaseSync: DatabaseSync2 } = createRequire(import.meta.url)("node:sqlite");'
-)
-
-fs.writeFileSync(outputPath, content, "utf8")
+// Patch index.js and all generated worker bundles
+patchBundleFile(path.resolve(dir, "dist/index.js"), true)
+patchBundleFile(path.resolve(dir, "dist/worker.js"), false)
+patchBundleFile(path.resolve(dir, "dist/cli/tui/worker.js"), false)
 
 // Make executable
 try {
-  fs.chmodSync(outputPath, 0o755)
+  fs.chmodSync(path.resolve(dir, "dist/index.js"), 0o755)
 } catch {}
 
-console.log(`✓ Node.js bundle successfully generated at ${outputPath}`)
+console.log(`✓ Node.js bundle successfully generated at ${path.resolve(dir, "dist/index.js")}`)
 

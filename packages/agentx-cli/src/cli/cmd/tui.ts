@@ -53,6 +53,8 @@ async function target() {
   if (typeof AGENTX_WORKER_PATH !== "undefined") return AGENTX_WORKER_PATH
   const dist = new URL("./cli/tui/worker.js", import.meta.url)
   if (await Filesystem.exists(fileURLToPath(dist))) return dist
+  const distFlat = new URL("./worker.js", import.meta.url)
+  if (await Filesystem.exists(fileURLToPath(distFlat))) return distFlat
   return new URL("../tui/worker.ts", import.meta.url)
 }
 
