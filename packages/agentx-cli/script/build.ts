@@ -127,19 +127,26 @@ function patchBundleFile(filePath: string, isEntry = false) {
 (() => {
   if (typeof Bun === "undefined" && !process.env.AGENTX_FORCE_NODE) {
     try {
-      const { spawnSync } = require("node:child_process");
-      const check = spawnSync(process.platform === "win32" ? "where.exe" : "which", ["bun"], { stdio: "ignore" });
-      if (check.status === 0) {
-        const child = spawnSync("bun", [__filename, ...process.argv.slice(2)], { stdio: "inherit" });
-        process.exit(child.status ?? 0);
+      const cp = process.getBuiltinModule ? process.getBuiltinModule("node:child_process") : null;
+      if (cp) {
+        const isWin = process.platform === "win32";
+        const check = cp.spawnSync(isWin ? "where.exe" : "which", ["bun"], { stdio: "ignore" });
+        if (check.status === 0) {
+          const entry = process.argv[1];
+          const child = cp.spawnSync(isWin ? "bun.cmd" : "bun", [entry, ...process.argv.slice(2)], {
+            shell: isWin,
+            stdio: "inherit"
+          });
+          process.exit(child.status ?? 0);
+        }
       }
     } catch {}
   }
   const __orig = process.emitWarning;
   process.emitWarning = function(w, ...a) {
-    if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning"))) return;
-    if (w && typeof w === "object" && (w.name === "ExperimentalWarning" || (w.message && w.message.includes("SQLite")))) return;
-    if (a[0] === "ExperimentalWarning") return;
+    if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning") || w.includes("DeprecationWarning"))) return;
+    if (w && typeof w === "object" && (w.name === "ExperimentalWarning" || w.name === "DeprecationWarning" || (w.message && w.message.includes("SQLite")))) return;
+    if (a[0] === "ExperimentalWarning" || a[0] === "DeprecationWarning") return;
     return Reflect.apply(__orig, process, [w, ...a]);
   };
 })();
