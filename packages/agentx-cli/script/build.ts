@@ -158,10 +158,14 @@ function patchBundleFile(filePath: string, isEntry = false) {
   let counter = 1;
   const dummySymbols = new Proxy({}, {
     get(target, prop) {
+      if (typeof prop !== "string") return () => 0;
       if (prop === "encodeUnicode") return (textBytes, len, outPtr, outLen, widthMethod) => 1;
-      if (prop === "createEventSink" || prop === "createRenderer" || prop === "createAudioEngine" || prop === "createNativeSpanFeed" || prop === "createSyntaxStyle" || prop === "createTextBuffer" || prop === "createEditBuffer") return (...args) => counter++;
-      if (prop === "getTerminalCapabilities") return (...args) => {};
-      return (...args) => 0;
+      if (prop === "getBufferWidth") return () => (process.stdout.columns || 80);
+      if (prop === "getBufferHeight") return () => (process.stdout.rows || 24);
+      if (prop === "getTerminalCapabilities" || prop.startsWith("set") || prop.startsWith("destroy") || prop.startsWith("clear") || prop.startsWith("reset") || prop.startsWith("sync")) {
+        return (...args) => {};
+      }
+      return (...args) => counter++;
     }
   });
   return {
@@ -186,7 +190,7 @@ function patchBundleFile(filePath: string, isEntry = false) {
     },
     suffix: process.platform === "win32" ? ".dll" : process.platform === "darwin" ? ".dylib" : ".so",
     toArrayBuffer(pointer, offset, length) {
-      return new ArrayBuffer(length ?? 0);
+      return new ArrayBuffer(length || 4096);
     }
   };
 }`
