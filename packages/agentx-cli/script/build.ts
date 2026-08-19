@@ -298,44 +298,75 @@ function patchBundleFile(filePath: string, isEntry = false) {
     `var init_index_0nvgrgam = __esm(async () => { await init_index_54s7pk0d();`
   )
 
+  // Prepend __BunDatabaseSync definition once at the top of the file
+  const bunDatabaseSyncDefinition = `var __BunDatabaseSync = (() => {
+  try {
+    if (typeof Bun !== "undefined") {
+      const b = createRequire(import.meta.url)("bun:sqlite");
+      class BunDatabaseSync extends b.Database {
+        constructor(filename, options) {
+          const opts = {};
+          if (options) {
+            if (options.readOnly || options.readonly) opts.readonly = true;
+            if (options.create !== undefined) opts.create = options.create;
+            if (options.readwrite !== undefined) opts.readwrite = options.readwrite;
+            if (options.safeIntegers !== undefined) opts.safeIntegers = options.safeIntegers;
+            if (options.strict !== undefined) opts.strict = options.strict;
+          }
+          super(filename, Object.keys(opts).length > 0 ? opts : undefined);
+        }
+        prepare(sql) {
+          const stmt = super.prepare(sql);
+          let returnArrays = false;
+          const origAll = stmt.all.bind(stmt);
+          const origGet = stmt.get.bind(stmt);
+          const origValues = stmt.values.bind(stmt);
+          stmt.setReadBigInts = function(val) {
+            if (typeof this.safeIntegers === "function") this.safeIntegers(Boolean(val));
+            return this;
+          };
+          stmt.setAllowBareNamedParameters = function() { return this; };
+          stmt.setReturnArrays = function(val) {
+            returnArrays = Boolean(val);
+            return this;
+          };
+          stmt.all = function(...args) {
+            if (returnArrays) return origValues(...args);
+            return origAll(...args);
+          };
+          stmt.get = function(...args) {
+            if (returnArrays) {
+              const rows = origValues(...args);
+              return rows && rows.length > 0 ? rows[0] : undefined;
+            }
+            return origGet(...args);
+          };
+          return stmt;
+        }
+      }
+      return BunDatabaseSync;
+    }
+  } catch {}
+  return null;
+})();
+`
+
+  // Insert __BunDatabaseSync definition after shebang (or at top)
+  if (content.startsWith("#!")) {
+    const newlineIndex = content.indexOf("\n")
+    content = content.slice(0, newlineIndex + 1) + bunDatabaseSyncDefinition + content.slice(newlineIndex + 1)
+  } else {
+    content = bunDatabaseSyncDefinition + content
+  }
+
   // Convert static node:sqlite imports to dual runtime SQLite loader (bun:sqlite vs node:sqlite)
   content = content.replaceAll(
     'import { DatabaseSync } from "node:sqlite";',
-    `const { DatabaseSync } = (() => {
-      try {
-        if (typeof Bun !== "undefined") {
-          const b = createRequire(import.meta.url)("bun:sqlite");
-          return { DatabaseSync: b.Database };
-        }
-        return createRequire(import.meta.url)("node:sqlite");
-      } catch {
-        try {
-          const b = createRequire(import.meta.url)("bun:sqlite");
-          return { DatabaseSync: b.Database };
-        } catch {
-          return createRequire(import.meta.url)("node:sqlite");
-        }
-      }
-    })();`
+    'const DatabaseSync = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
   )
   content = content.replaceAll(
     'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
-    `const { DatabaseSync: DatabaseSync2 } = (() => {
-      try {
-        if (typeof Bun !== "undefined") {
-          const b = createRequire(import.meta.url)("bun:sqlite");
-          return { DatabaseSync: b.Database };
-        }
-        return createRequire(import.meta.url)("node:sqlite");
-      } catch {
-        try {
-          const b = createRequire(import.meta.url)("bun:sqlite");
-          return { DatabaseSync: b.Database };
-        } catch {
-          return createRequire(import.meta.url)("node:sqlite");
-        }
-      }
-    })();`
+    'const DatabaseSync2 = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
   )
 
   fs.writeFileSync(filePath, content, "utf8")
