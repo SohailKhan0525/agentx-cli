@@ -16,6 +16,13 @@ import { WebFetchTool } from "./webfetch"
 import { WriteTool } from "./write"
 import { InvalidTool } from "./invalid"
 import { SkillTool } from "./skill"
+import { WebsiteScaffoldTool } from "./website_scaffold"
+import { RegistryReadTool } from "./registry_read"
+import { RegistryInjectTool } from "./registry_inject"
+import { QualityCheckTool } from "./quality_check"
+import { PlaywrightScreenshotTool } from "./playwright_screenshot"
+import { GithubPushTool } from "./github_push"
+import { DeployTargetTool } from "./deploy_target"
 import * as Tool from "./tool"
 import { Config } from "@/config/config"
 import { type ToolContext as PluginToolContext, type ToolDefinition } from "@agentx-cli/plugin"
@@ -104,6 +111,13 @@ const layer = Layer.effect(
     const greptool = yield* GrepTool
     const patchtool = yield* ApplyPatchTool
     const skilltool = yield* SkillTool
+    const scaffold = yield* WebsiteScaffoldTool
+    const registryRead = yield* RegistryReadTool
+    const registryInject = yield* RegistryInjectTool
+    const qualityCheck = yield* QualityCheckTool
+    const playwrightScreenshot = yield* PlaywrightScreenshotTool
+    const githubPush = yield* GithubPushTool
+    const deployTarget = yield* DeployTargetTool
     const agent = yield* Agent.Service
 
     const state = yield* InstanceState.make<State>(
@@ -211,6 +225,13 @@ const layer = Layer.effect(
           question: Tool.init(question),
           lsp: Tool.init(lsptool),
           plan: Tool.init(plan),
+          website_scaffold: Tool.init(scaffold),
+          registry_read: Tool.init(registryRead),
+          registry_inject: Tool.init(registryInject),
+          quality_check: Tool.init(qualityCheck),
+          playwright_screenshot: Tool.init(playwrightScreenshot),
+          github_push: Tool.init(githubPush),
+          deploy_target: Tool.init(deployTarget),
         })
 
         return {
@@ -230,6 +251,13 @@ const layer = Layer.effect(
             tool.search,
             tool.skill,
             tool.patch,
+            tool.website_scaffold,
+            tool.registry_read,
+            tool.registry_inject,
+            tool.quality_check,
+            tool.playwright_screenshot,
+            tool.github_push,
+            tool.deploy_target,
             ...(flags.experimentalLspTool ? [tool.lsp] : []),
             ...(flags.experimentalPlanMode && flags.client === "cli" ? [tool.plan] : []),
           ],

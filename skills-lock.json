@@ -37,6 +37,12 @@
       "skillPath": "skills/finishing-a-development-branch/SKILL.md",
       "computedHash": "4f571e7befb8b0946d9d7770232c818812412e9ab1dfb811f847edfba1fc6275"
     },
+    "frontend-ui-ux-wizard": {
+      "source": "sohailkhan0525/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-ui-ux-wizard/SKILL.md",
+      "computedHash": "7e3cb2818a09eb627aa5eef2282245b74154faee89f5bc9631626f21c29e73d2"
+    },
     "receiving-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -67,6 +73,12 @@
       "skillPath": "skills/test-driven-development/SKILL.md",
       "computedHash": "a4126a9c5f17be3c228aa9e5755898ade283448b86099f56f40852e8c14532be"
     },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": "skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "3f6368d4a9844ec800a94e803a6bc0b12bc12ff66699d91ad1fa70b9ce4f3be5"
+    },
     "using-git-worktrees": {
       "source": "obra/superpowers",
       "sourceType": "github",
@@ -96,18 +108,6 @@
       "sourceType": "github",
       "skillPath": "skills/writing-skills/SKILL.md",
       "computedHash": "5f255b9c0d50d6d7eafa41b245b9308799321c5222bc68b1be2499f50ed82713"
-    },
-    "ui-ux-pro-max": {
-      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
-      "sourceType": "github",
-      "skillPath": "skills/ui-ux-pro-max/SKILL.md",
-      "computedHash": "3f6368d4a9844ec800a94e803a6bc0b12bc12ff66699d91ad1fa70b9ce4f3be5"
-    },
-    "frontend-ui-ux-wizard": {
-      "source": "sohailkhan0525/skills",
-      "sourceType": "github",
-      "skillPath": "skills/frontend-ui-ux-wizard/SKILL.md",
-      "computedHash": "7e3cb2818a09eb627aa5eef2282245b74154faee89f5bc9631626f21c29e73d2"
     }
   }
 }
