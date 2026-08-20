@@ -149,6 +149,11 @@ function patchBundleFile(filePath: string, isEntry = false) {
   if (isEntry) {
     const warningSuppressor = `#!/usr/bin/env node
 (() => {
+  const [major] = (process.versions.node || "18").split(".").map(Number);
+  if (major < 18) {
+    process.stderr.write("AgentX requires Node.js 18+\\nhttps://nodejs.org\\n");
+    process.exit(1);
+  }
   if (typeof Bun === "undefined" && !process.env.AGENTX_FORCE_NODE) {
     try {
       const cp = process.getBuiltinModule ? process.getBuiltinModule("node:child_process") : null;

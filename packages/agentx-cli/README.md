@@ -1,62 +1,66 @@
-<p align="center">
-  <h1 align="center">@agent-qofeno/agentx-cli ⚡</h1>
-  <p align="center"><strong>The autonomous AI agent that builds production-ready websites from your terminal.</strong></p>
-</p>
+# AgentX
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm version" src="https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=flat-square&color=blue&label=npm" /></a>
-  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli?style=flat-square&color=success" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli/actions/workflows/publish.yml"><img alt="Build & Publish" src="https://img.shields.io/github/actions/workflow/status/SohailKhan0525/agentx-cli/publish.yml?style=flat-square&label=verified%20build" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/SohailKhan0525/agentx-cli?style=flat-square" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli"><img alt="GitHub stars" src="https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=flat-square&logo=github" /></a>
-</p>
+![npm](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli)
+![Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=social)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
 
----
+> The AI agent that builds production-ready websites from your terminal.
+> Describe your website. AgentX plans, builds, deploys, and ships it.
 
-## ⚡ Installation
+## Install
 
 ```bash
-# Global install
 npm install -g @agent-qofeno/agentx-cli
-
-# Instant execution with zero install
-npx @agent-qofeno/agentx-cli
 ```
 
----
+## Use
 
-## 🚀 Usage
-
-### 1. Interactive Terminal Session
 ```bash
 agentx
 ```
-Type your website vision in plain English:
-> *"Build a modern real-time SaaS portfolio for a design agency with Next.js 15, TailwindCSS, dark mode, Supabase auth, and Stripe billing."*
 
-### 2. Autonomous Inline Execution
-```bash
-agentx run "Build a landing page for an AI developer platform using TailwindCSS"
-```
+## What AgentX Does
 
-### 3. Web Dashboard
-```bash
-agentx web
-```
-*Starts local server and opens your browser interface.*
+Like Claude Code, but for building websites:
+- **Plans before acting** — writes an explicit plan and gets confirmation
+- **Reads your codebase** before making changes
+- **Uses tools for everything** — file reads, writes, commands, API calls
+- **Iterates until the build passes** — fixes its own TypeScript errors
+- **Deploys** — pushes to GitHub and deploys live
 
----
+## AI Providers
 
-## 🌟 Key Features
+- GitHub Copilot
+- ChatGPT (OpenAI)
+- Google (Gemini)
+- Anthropic (Claude)
+- Local Models: Ollama, LM Studio, Jan, GPT4All, llama.cpp, LocalAI
 
-* 🧠 **Autonomous Full-Stack Engineering**: Handles frontend, backend, database schemas, authentication, and deployment scripts.
-* ⚡ **Zero Placeholders**: Generates 100% complete, working code with real data models and functional UI components.
-* 🛠️ **Built-in Self-Healing**: Detects TypeScript and build errors automatically and fixes them autonomously before shipping.
-* 🌐 **5+ AI Providers**: Works with GitHub Copilot, OpenAI (`gpt-4o`), Google Gemini (`gemini-2.0-flash`), Anthropic (`claude-3-7-sonnet`), and Local Models (Ollama, LM Studio).
-* 🔒 **Signed Provenance & Zero Vulnerabilities**: Self-contained bundle published with cryptographic Sigstore provenance.
+## Supported Stacks
 
----
+- Next.js 14 (App Router)
+- React + Vite
+- Astro
+- Nuxt 3
 
-## 📄 License
+## Supported Services
 
-MIT © [SohailKhan0525](https://github.com/SohailKhan0525)
+- **Auth**: Clerk, Supabase Auth, Firebase Auth, NextAuth
+- **Database**: Supabase, PostgreSQL, MongoDB Atlas, PlanetScale, Appwrite, SQLite
+- **Payments**: Stripe, Lemon Squeezy
+- **Email**: Resend, SendGrid, Postmark
+- **Storage**: AWS S3, Cloudflare R2, Uploadthing
+- **Deployment**: Vercel, Netlify, Railway, Fly.io, Cloudflare Pages, Render
+- **Analytics & Observability**: PostHog, Sentry
+
+## Requirements
+
+Node.js 18+
+
+## Issues
+
+[github.com/SohailKhan0525/agentx-cli/issues](https://github.com/SohailKhan0525/agentx-cli/issues)
+
+## Star ⭐
+
+[github.com/SohailKhan0525/agentx-cli](https://github.com/SohailKhan0525/agentx-cli)

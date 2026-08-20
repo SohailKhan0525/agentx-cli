@@ -1,114 +1,66 @@
-<p align="center">
-  <h1 align="center">AgentX ⚡</h1>
-</p>
+# AgentX
 
-<p align="center"><strong>The autonomous AI agent that builds production-ready websites from your terminal.</strong></p>
+![npm](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli)
+![Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=social)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm version" src="https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=flat-square&color=blue&label=npm" /></a>
-  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm downloads" src="https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli?style=flat-square&color=success" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli/actions/workflows/publish.yml"><img alt="Build & Publish" src="https://img.shields.io/github/actions/workflow/status/SohailKhan0525/agentx-cli/publish.yml?style=flat-square&label=verified%20build" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/SohailKhan0525/agentx-cli?style=flat-square" /></a>
-  <a href="https://github.com/SohailKhan0525/agentx-cli/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=flat-square&logo=github" /></a>
-</p>
+> The AI agent that builds production-ready websites from your terminal.
+> Describe your website. AgentX plans, builds, deploys, and ships it.
 
-```
-    ___                    __  _  __
-   /   | ____ ____  ____  / /_| |/ /
-  / /| |/ __ `/ _ \/ __ \/ __/   / 
- / ___ / /_/ /  __/ / / / /_/   |  
-/_/  |_\__, /\___/_/ /_/\__/_/|_|  
-      /____/                       
-  The Autonomous Website Builder
-```
-
-<p align="center">
-  <b><a href="./docs/README.md">📖 Explore Full Documentation & Guides →</a></b>
-</p>
-
----
-
-## ⚡ Installation
+## Install
 
 ```bash
-# Global install (recommended)
 npm install -g @agent-qofeno/agentx-cli
-
-# Instant execution with zero install
-npx @agent-qofeno/agentx-cli
 ```
 
-> [!TIP]
-> Supports **Windows**, **macOS**, and **Linux** with Node.js ≥ 22.0 or Bun ≥ 1.2. Zero native compilation required.
+## Use
 
----
-
-## 🚀 Quickstart & Usage
-
-### 1. Interactive Terminal Assistant
 ```bash
 agentx
 ```
-Simply type your website prompt and hit **Enter**:
-> *"Build a modern real-time SaaS portfolio for a design agency with Next.js 15, TailwindCSS, dark mode, Supabase auth, and Stripe billing."*
 
-### 2. Direct Prompt Mode
-```bash
-agentx run "Create a minimalist developer blog using Astro and TailwindCSS"
-```
+## What AgentX Does
 
-### 3. Web UI Mode
-Prefer a browser dashboard with live visual previews?
-```bash
-agentx web
-```
-*Automatically starts a local server and opens your browser.*
+Like Claude Code, but for building websites:
+- **Plans before acting** — writes an explicit plan and gets confirmation
+- **Reads your codebase** before making changes
+- **Uses tools for everything** — file reads, writes, commands, API calls
+- **Iterates until the build passes** — fixes its own TypeScript errors
+- **Deploys** — pushes to GitHub and deploys live
 
----
+## AI Providers
 
-## 🧩 AgentX Ecosystem
+- GitHub Copilot
+- ChatGPT (OpenAI)
+- Google (Gemini)
+- Anthropic (Claude)
+- Local Models: Ollama, LM Studio, Jan, GPT4All, llama.cpp, LocalAI
 
-| Component | Package / Path | Description |
-| :--- | :--- | :--- |
-| **CLI** | [`@agent-qofeno/agentx-cli`](https://www.npmjs.com/package/@agent-qofeno/agentx-cli) | Terminal & TUI autonomous builder interface |
-| **Core Brain** | `packages/core` | Autonomous architecture planner, build healer & code generator |
-| **SDK** | `packages/sdk` | Embed AgentX programmatically into custom apps and bots |
-| **Plugins** | `packages/plugin` | Modular integrations (Supabase, Stripe, Tailwind, Figma) |
-| **Web UI** | `packages/ui` / `packages/server` | Browser-based interactive development dashboard |
+## Supported Stacks
 
----
+- Next.js 14 (App Router)
+- React + Vite
+- Astro
+- Nuxt 3
 
-## 🛠️ CLI Commands Cheat Sheet
+## Supported Services
 
-| Command | Description |
-| :--- | :--- |
-| `agentx` | Launch the interactive AgentX terminal session |
-| `agentx web` | Start the local server and open the browser web interface |
-| `agentx run [prompt]` | Run AgentX autonomously with an inline prompt |
-| `agentx models` | List all available cloud and local AI models |
-| `agentx providers` | Configure OpenAI, Anthropic, Gemini, Copilot, or Ollama API keys |
-| `agentx mcp` | Manage Model Context Protocol (MCP) integrations |
-| `agentx upgrade` | Check for updates and upgrade AgentX to the latest version |
+- **Auth**: Clerk, Supabase Auth, Firebase Auth, NextAuth
+- **Database**: Supabase, PostgreSQL, MongoDB Atlas, PlanetScale, Appwrite, SQLite
+- **Payments**: Stripe, Lemon Squeezy
+- **Email**: Resend, SendGrid, Postmark
+- **Storage**: AWS S3, Cloudflare R2, Uploadthing
+- **Deployment**: Vercel, Netlify, Railway, Fly.io, Cloudflare Pages, Render
+- **Analytics & Observability**: PostHog, Sentry
 
----
+## Requirements
 
-## 🤝 Contributing & Community
+Node.js 18+
 
-We welcome open-source contributions, feature requests, and bug reports!
+## Issues
 
-* 💡 **Have a feature idea or found a bug?** [Open an Issue](https://github.com/SohailKhan0525/agentx-cli/issues)
-* 🚀 **Want to contribute code?** Check out [`good first issue`](https://github.com/SohailKhan0525/agentx-cli/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) and submit a [Pull Request](https://github.com/SohailKhan0525/agentx-cli/pulls)!
+[github.com/SohailKhan0525/agentx-cli/issues](https://github.com/SohailKhan0525/agentx-cli/issues)
 
-### Development Setup
-```bash
-git clone https://github.com/SohailKhan0525/agentx-cli.git
-cd agentx-cli
-bun install
-bun run dev
-```
+## Star ⭐
 
----
-
-## 📄 License
-
-MIT © [SohailKhan0525](https://github.com/SohailKhan0525)
+[github.com/SohailKhan0525/agentx-cli](https://github.com/SohailKhan0525/agentx-cli)
