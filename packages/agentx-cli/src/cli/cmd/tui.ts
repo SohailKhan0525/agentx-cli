@@ -151,7 +151,19 @@ export const TuiThreadCommand = cmd({
     }
     const noReplay = args.replay === false || args.noReplay === true
 
-    if (args.mini || typeof Bun === "undefined") {
+    if (typeof Bun === "undefined" || process.platform === "win32") {
+      const { startNodeRepl } = await import("./repl")
+      await startNodeRepl({
+        directory: resolveThreadDirectory(args.project),
+        continue: args.continue,
+        session: args.session,
+        model: args.model,
+        agent: args.agent,
+      })
+      return
+    }
+
+    if (args.mini) {
       const { runMini } = await import("./run")
       await runMini({
         directory: resolveThreadDirectory(args.project),
