@@ -154,63 +154,6 @@ function patchBundleFile(filePath: string, isEntry = false) {
     process.stderr.write("AgentX requires Node.js 18+\\nhttps://nodejs.org\\n");
     process.exit(1);
   }
-  if (typeof Bun === "undefined" && !process.env.AGENTX_FORCE_NODE) {
-    try {
-      const cp = process.getBuiltinModule ? process.getBuiltinModule("node:child_process") : null;
-      const fs = process.getBuiltinModule ? process.getBuiltinModule("node:fs") : null;
-      const path = process.getBuiltinModule ? process.getBuiltinModule("node:path") : null;
-      if (cp && fs && path) {
-        const isWin = process.platform === "win32";
-        let bunBin = null;
-        if (isWin) {
-          try {
-            const check = cp.spawnSync("where.exe", ["bun.exe"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-            if (check.status === 0 && check.stdout) {
-              bunBin = check.stdout.split(/\\r?\\n/).find(p => p.toLowerCase().endsWith(".exe"));
-            }
-          } catch {}
-          if (!bunBin) {
-            const candidates = [
-              path.join(process.env.APPDATA || "", "npm/node_modules/bun/bin/bun.exe"),
-              path.join(process.env.USERPROFILE || "", ".bun/bin/bun.exe"),
-              path.join(process.env.LOCALAPPDATA || "", "Programs/bun/bun.exe"),
-              path.join(process.env.PROGRAMFILES || "C:\\\\Program Files", "bun/bun.exe"),
-            ];
-            for (const c of candidates) {
-              if (fs.existsSync(c)) { bunBin = c; break; }
-            }
-          }
-        } else {
-          try {
-            const check = cp.spawnSync("which", ["bun"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-            if (check.status === 0 && check.stdout) {
-              bunBin = check.stdout.trim().split("\\n")[0];
-            }
-          } catch {}
-          if (!bunBin) {
-            const home = process.env.HOME || "";
-            const candidates = [
-              path.join(home, ".bun/bin/bun"),
-              "/usr/local/bin/bun",
-              "/opt/homebrew/bin/bun"
-            ];
-            for (const c of candidates) {
-              if (fs.existsSync(c)) { bunBin = c; break; }
-            }
-          }
-        }
-
-        if (bunBin) {
-          const entry = process.argv[1];
-          const child = cp.spawnSync(bunBin, [entry, ...process.argv.slice(2)], {
-            stdio: "inherit",
-            windowsHide: false,
-          });
-          process.exit(child.status ?? 0);
-        }
-      }
-    } catch {}
-  }
   const __orig = process.emitWarning;
   process.emitWarning = function(w, ...a) {
     if (typeof w === "string" && (w.includes("SQLite") || w.includes("ExperimentalWarning") || w.includes("DeprecationWarning"))) return;
@@ -365,14 +308,15 @@ function patchBundleFile(filePath: string, isEntry = false) {
   }
 
   // Convert static node:sqlite imports to dual runtime SQLite loader (bun:sqlite vs node:sqlite)
-  content = content.replaceAll(
-    'import { DatabaseSync } from "node:sqlite";',
-    'const DatabaseSync = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
-  )
-  content = content.replaceAll(
-    'import { DatabaseSync as DatabaseSync2 } from "node:sqlite";',
-    'const DatabaseSync2 = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
-  )
+  if (content.includes('from "node:sqlite"')) {
+    content = content.replace(
+      /import \{ DatabaseSync \} from "node:sqlite";/g,
+      'const DatabaseSync = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
+    ).replace(
+      /import \{ DatabaseSync as DatabaseSync2 \} from "node:sqlite";/g,
+      'const DatabaseSync2 = (typeof Bun !== "undefined" && __BunDatabaseSync) ? __BunDatabaseSync : createRequire(import.meta.url)("node:sqlite").DatabaseSync;'
+    )
+  }
 
   fs.writeFileSync(filePath, content, "utf8")
 }
