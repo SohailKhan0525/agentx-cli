@@ -151,16 +151,7 @@ export const TuiThreadCommand = cmd({
     }
     const noReplay = args.replay === false || args.noReplay === true
 
-    if (args.mini) {
-      const network = ["--port", "--hostname", "--mdns", "--no-mdns", "--mdns-domain", "--cors"].find((option) =>
-        process.argv.some((arg) => arg === option || arg.startsWith(option + "=")),
-      )
-      if (network) {
-        UI.error(`${network} cannot be used with --mini`)
-        process.exitCode = 1
-        return
-      }
-
+    if (args.mini || typeof Bun === "undefined") {
       const { runMini } = await import("./run")
       await runMini({
         directory: resolveThreadDirectory(args.project),

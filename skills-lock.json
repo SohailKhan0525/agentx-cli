@@ -43,6 +43,12 @@
       "skillPath": "skills/frontend-ui-ux-wizard/SKILL.md",
       "computedHash": "7e3cb2818a09eb627aa5eef2282245b74154faee89f5bc9631626f21c29e73d2"
     },
+    "opentui": {
+      "source": "anomalyco/opentui",
+      "sourceType": "github",
+      "skillPath": "packages/web/src/content/SKILL.md",
+      "computedHash": "a98100e9f707df971542789b585a271319865a864f7f3f6fb1b307bfa96ebb59"
+    },
     "receiving-code-review": {
       "source": "obra/superpowers",
       "sourceType": "github",
