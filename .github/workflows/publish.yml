@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install system dependencies (Linux)
@@ -40,6 +40,7 @@ jobs:
       - name: Publish to GitHub Packages
         uses: actions/setup-node@v4
         with:
+          node-version: '22'
           registry-url: 'https://npm.pkg.github.com'
       - run: npm publish --workspace=packages/agentx --access public
         env:
