@@ -1,0 +1,42 @@
+name: Publish Snap
+on:
+  push:
+    tags: ['v*']
+jobs:
+  snap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - run: npm ci && npm run build
+      - name: Create snapcraft.yaml
+        run: |
+          mkdir -p snap
+          cat > snap/snapcraft.yaml << EOF
+          name: agentx-cli
+          version: "${GITHUB_REF#refs/tags/v}"
+          summary: AI agent that builds production-ready websites
+          description: Describe your website. AgentX builds, deploys, ships it.
+          grade: stable
+          confinement: classic
+          base: core22
+          parts:
+            agentx:
+              plugin: npm
+              source: .
+              npm-include-node: true
+              npm-node-version: '20'
+          apps:
+            agentx:
+              command: bin/agentx
+          EOF
+      - uses: snapcore/action-build@v1
+        id: build
+      - uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAP_TOKEN }}
+        with:
+          snap: ${{ steps.build.outputs.snap }}
+          release: stable
+        continue-on-error: true

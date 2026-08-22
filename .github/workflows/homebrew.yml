@@ -1,0 +1,50 @@
+name: Update Homebrew Tap
+on:
+  push:
+    tags: ['v*']
+jobs:
+  homebrew:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version
+        id: ver
+        run: echo "v=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Get SHA256
+        id: sha
+        run: |
+          URL="https://registry.npmjs.org/@agent-qofeno/agentx-cli/-/agentx-cli-${{ steps.ver.outputs.v }}.tgz"
+          SHA=$(curl -sL "$URL" | sha256sum | cut -d' ' -f1)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v4
+        with:
+          repository: SohailKhan0525/homebrew-agentx
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: tap
+
+      - name: Update formula
+        run: |
+          cat > tap/Formula/agentx.rb << EOF
+          class Agentx < Formula
+            desc "AI agent that builds production-ready websites from your terminal"
+            homepage "https://github.com/SohailKhan0525/agentx-cli"
+            url "https://registry.npmjs.org/@agent-qofeno/agentx-cli/-/agentx-cli-${{ steps.ver.outputs.v }}.tgz"
+            sha256 "${{ steps.sha.outputs.sha }}"
+            license "MIT"
+            depends_on "node"
+            def install
+              system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+              bin.install_symlink Dir["#{libexec}/bin/*"]
+            end
+            test do
+              system "#{bin}/agentx", "--version"
+            end
+          end
+          EOF
+          cd tap
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add Formula/agentx.rb
+          git commit -m "agentx ${{ steps.ver.outputs.v }}"
+          git push

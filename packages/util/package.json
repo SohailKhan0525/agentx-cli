@@ -1,20 +1,17 @@
 {
-  "name": "@opencode-ai/util",
+  "name": "@agentx-cli/util",
   "version": "1.4.3",
-  "private": true,
   "type": "module",
   "license": "MIT",
   "exports": {
-    "./*": "./src/*.ts"
-  },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
+    "./error": "./src/error.ts",
+    "./slug": "./src/slug.ts",
+    "./binary": "./src/binary.ts",
+    "./lazy": "./src/lazy.ts",
+    "./module": "./src/module.ts",
+    ".": "./src/index.ts"
   },
   "dependencies": {
-    "zod": "catalog:"
-  },
-  "devDependencies": {
-    "typescript": "catalog:",
-    "@types/bun": "catalog:"
+    "zod": "^3.25.76"
   }
 }

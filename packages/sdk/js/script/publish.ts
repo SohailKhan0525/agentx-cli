@@ -1,16 +1,17 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import { Script } from "@opencode-ai/script"
-import { $ } from "bun"
-import { fileURLToPath } from "url"
+import { Script } from "../../../script/src/index.ts"
+import fs from "node:fs/promises"
+import { readFileSync, writeFileSync } from "node:fs"
+import { execSync } from "node:child_process"
+import { fileURLToPath } from "node:url"
 
 const dir = fileURLToPath(new URL("..", import.meta.url))
 process.chdir(dir)
 
-const pkg = (await import("../package.json").then((m) => m.default)) as {
-  exports: Record<string, string | object>
-}
+const pkg = JSON.parse(readFileSync("package.json", "utf8"))
 const original = JSON.parse(JSON.stringify(pkg))
+
 function transformExports(exports: Record<string, string | object>) {
   for (const [key, value] of Object.entries(exports)) {
     if (typeof value === "object" && value !== null) {
@@ -24,8 +25,11 @@ function transformExports(exports: Record<string, string | object>) {
     }
   }
 }
+
 transformExports(pkg.exports)
-await Bun.write("package.json", JSON.stringify(pkg, null, 2))
-await $`bun pm pack`
-await $`npm publish *.tgz --tag ${Script.channel} --access public`
-await Bun.write("package.json", JSON.stringify(original, null, 2))
+writeFileSync("package.json", JSON.stringify(pkg, null, 2), "utf8")
+try {
+  execSync("npm pack", { stdio: "inherit" })
+} finally {
+  writeFileSync("package.json", JSON.stringify(original, null, 2), "utf8")
+}

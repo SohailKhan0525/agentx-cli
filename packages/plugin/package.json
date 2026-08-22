@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@opencode-ai/plugin",
+  "name": "@agentx-cli/plugin",
   "version": "1.4.3",
   "type": "module",
   "license": "MIT",
@@ -17,9 +17,9 @@
     "dist"
   ],
   "dependencies": {
-    "@opencode-ai/sdk": "workspace:*",
-    "effect": "catalog:",
-    "zod": "catalog:"
+    "@agentx-cli/sdk": "file:../sdk/js",
+    "effect": "4.0.0-beta.46",
+    "zod": "^3.25.76"
   },
   "peerDependencies": {
     "@opentui/core": ">=0.1.97",
@@ -36,9 +36,9 @@
   "devDependencies": {
     "@opentui/core": "0.1.97",
     "@opentui/solid": "0.1.97",
-    "@tsconfig/node22": "catalog:",
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "@typescript/native-preview": "catalog:"
+    "@tsconfig/node22": "22.0.2",
+    "@types/node": "22.13.9",
+    "typescript": "5.8.2",
+    "@typescript/native-preview": "7.0.0-dev.20251207.1"
   }
 }

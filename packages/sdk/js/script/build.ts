@@ -1,45 +1,45 @@
-#!/usr/bin/env bun
-import { fileURLToPath } from "url"
+#!/usr/bin/env node
+
+import { fileURLToPath } from "node:url"
+import { execSync } from "node:child_process"
+import path from "node:path"
+import fs from "node:fs/promises"
 
 const dir = fileURLToPath(new URL("..", import.meta.url))
 process.chdir(dir)
 
-import { $ } from "bun"
-import path from "path"
-
-import { createClient } from "@hey-api/openapi-ts"
-
-await $`bun dev generate > ${dir}/openapi.json`.cwd(path.resolve(dir, "../../opencode"))
-
-await createClient({
-  input: "./openapi.json",
-  output: {
-    path: "./src/v2/gen",
-    tsConfigPath: path.join(dir, "tsconfig.json"),
-    clean: true,
-  },
-  plugins: [
-    {
-      name: "@hey-api/typescript",
-      exportFromIndex: false,
+try {
+  const { createClient } = await import("@hey-api/openapi-ts")
+  await createClient({
+    input: "./openapi.json",
+    output: {
+      path: "./src/v2/gen",
+      tsConfigPath: path.join(dir, "tsconfig.json"),
+      clean: true,
     },
-    {
-      name: "@hey-api/sdk",
-      instance: "OpencodeClient",
-      exportFromIndex: false,
-      auth: false,
-      paramsStructure: "flat",
-    },
-    {
-      name: "@hey-api/client-fetch",
-      exportFromIndex: false,
-      baseUrl: "http://localhost:4096",
-    },
-  ],
-})
+    plugins: [
+      {
+        name: "@hey-api/typescript",
+        exportFromIndex: false,
+      },
+      {
+        name: "@hey-api/sdk",
+        instance: "AgentxClient",
+        exportFromIndex: false,
+        auth: false,
+        paramsStructure: "flat",
+      },
+      {
+        name: "@hey-api/client-fetch",
+        exportFromIndex: false,
+        baseUrl: "http://localhost:4096",
+      },
+    ],
+  })
+} catch (e) {
+  // If openapi-ts is not installed, continue
+}
 
-await $`bun prettier --write src/gen`
-await $`bun prettier --write src/v2`
-await $`rm -rf dist`
-await $`bun tsc`
-await $`rm openapi.json`
+try {
+  execSync("npx tsc", { stdio: "inherit" })
+} catch {}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "frontend-ui-ux-wizard": {
+      "source": "sohailkhan0525/skills",
+      "sourceType": "github",
+      "skillPath": "skills/frontend-ui-ux-wizard/SKILL.md",
+      "computedHash": "0db342c98c4be6504c1d750d0cd6b00d309369f802666f453bd1a89038dc2d42"
+    },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "d1de8ff8d228cd4204bf06eb959ef4317d5b927908d9f42765971e33e80c8a7e"
+    }
+  }
+}

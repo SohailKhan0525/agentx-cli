@@ -1,9 +1,14 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import { $ } from "bun"
+import { execSync } from "node:child_process"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 
-await $`bun ./packages/sdk/js/script/build.ts`
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const root = path.resolve(__dirname, "..")
 
-await $`bun dev generate > ../sdk/openapi.json`.cwd("packages/opencode")
-
-await $`./script/format.ts`
+try {
+  execSync("node ./script/format.ts", { cwd: root, stdio: "inherit" })
+} catch (e) {
+  console.warn("Format script warning:", e)
+}

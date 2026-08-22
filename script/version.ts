@@ -1,36 +1,33 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import { Script } from "@opencode-ai/script"
-import { $ } from "bun"
+import fs from "node:fs/promises"
+import { existsSync } from "node:fs"
+import { execSync } from "node:child_process"
+import { Script } from "../packages/script/src/index.ts"
 
 const output = [`version=${Script.version}`]
 
 if (!Script.preview) {
-  const sha = process.env.GITHUB_SHA ?? (await $`git rev-parse HEAD`.text()).trim()
-  await $`bun script/changelog.ts --to ${sha}`.cwd(process.cwd())
+  let sha = process.env.GITHUB_SHA || ""
+  if (!sha) {
+    try {
+      sha = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim()
+    } catch {}
+  }
   const file = `${process.cwd()}/UPCOMING_CHANGELOG.md`
-  const body = await Bun.file(file)
-    .text()
-    .catch(() => "No notable changes")
+  let body = "No notable changes"
+  if (existsSync(file)) {
+    body = await fs.readFile(file, "utf8").catch(() => "No notable changes")
+  }
   const dir = process.env.RUNNER_TEMP ?? "/tmp"
-  const notesFile = `${dir}/opencode-release-notes.txt`
-  await Bun.write(notesFile, body)
-  await $`gh release create v${Script.version} -d --title "v${Script.version}" --notes-file ${notesFile}`
-  const release = await $`gh release view v${Script.version} --json tagName,databaseId`.json()
-  output.push(`release=${release.databaseId}`)
-  output.push(`tag=${release.tagName}`)
-} else if (Script.channel === "beta") {
-  await $`gh release create v${Script.version} -d --title "v${Script.version}" --repo ${process.env.GH_REPO}`
-  const release =
-    await $`gh release view v${Script.version} --json tagName,databaseId --repo ${process.env.GH_REPO}`.json()
-  output.push(`release=${release.databaseId}`)
-  output.push(`tag=${release.tagName}`)
+  const notesFile = `${dir}/agentx-release-notes.txt`
+  await fs.writeFile(notesFile, body, "utf8").catch(() => {})
 }
 
-output.push(`repo=${process.env.GH_REPO}`)
+output.push(`repo=${process.env.GH_REPO || ""}`)
 
 if (process.env.GITHUB_OUTPUT) {
-  await Bun.write(process.env.GITHUB_OUTPUT, output.join("\n"))
+  await fs.writeFile(process.env.GITHUB_OUTPUT, output.join("\n"), "utf8").catch(() => {})
 }
 
 process.exit(0)

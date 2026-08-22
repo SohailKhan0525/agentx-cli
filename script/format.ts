@@ -1,5 +1,5 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
-import { $ } from "bun"
+import { execSync } from "node:child_process"
 
-await $`bun run prettier --ignore-unknown --write .`
+execSync("npx prettier --ignore-unknown --write .", { stdio: "inherit" })

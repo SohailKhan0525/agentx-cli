@@ -1,59 +1,49 @@
-import { $ } from "bun"
-import semver from "semver"
-import path from "path"
+import fs from "node:fs/promises"
+import { existsSync, readFileSync } from "node:fs"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
+import { execSync } from "node:child_process"
 
-const rootPkgPath = path.resolve(import.meta.dir, "../../../package.json")
-const rootPkg = await Bun.file(rootPkgPath).json()
-const expectedBunVersion = rootPkg.packageManager?.split("@")[1]
-
-if (!expectedBunVersion) {
-  throw new Error("packageManager field not found in root package.json")
-}
-
-// relax version requirement
-const expectedBunVersionRange = `^${expectedBunVersion}`
-
-if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
-  throw new Error(`This script requires bun@${expectedBunVersionRange}, but you are using bun@${process.versions.bun}`)
-}
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const rootPkgPath = path.resolve(__dirname, "../../../package.json")
+const rootPkg = existsSync(rootPkgPath) ? JSON.parse(readFileSync(rootPkgPath, "utf8")) : {}
 
 const env = {
-  OPENCODE_CHANNEL: process.env["OPENCODE_CHANNEL"],
-  OPENCODE_BUMP: process.env["OPENCODE_BUMP"],
-  OPENCODE_VERSION: process.env["OPENCODE_VERSION"],
-  OPENCODE_RELEASE: process.env["OPENCODE_RELEASE"],
+  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"],
+  AGENTX_BUMP: process.env["AGENTX_BUMP"],
+  AGENTX_VERSION: process.env["AGENTX_VERSION"],
+  AGENTX_RELEASE: process.env["AGENTX_RELEASE"],
 }
-const CHANNEL = await (async () => {
-  if (env.OPENCODE_CHANNEL) return env.OPENCODE_CHANNEL
-  if (env.OPENCODE_BUMP) return "latest"
-  if (env.OPENCODE_VERSION && !env.OPENCODE_VERSION.startsWith("0.0.0-")) return "latest"
-  return await $`git branch --show-current`.text().then((x) => x.trim())
-})()
-const IS_PREVIEW = CHANNEL !== "latest"
 
-const VERSION = await (async () => {
-  if (env.OPENCODE_VERSION) return env.OPENCODE_VERSION
-  if (IS_PREVIEW) return `0.0.0-${CHANNEL}-${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "")}`
-  const version = await fetch("https://registry.npmjs.org/opencode-ai/latest")
-    .then((res) => {
-      if (!res.ok) throw new Error(res.statusText)
-      return res.json()
-    })
-    .then((data: any) => data.version)
-  const [major, minor, patch] = version.split(".").map((x: string) => Number(x) || 0)
-  const t = env.OPENCODE_BUMP?.toLowerCase()
-  if (t === "major") return `${major + 1}.0.0`
-  if (t === "minor") return `${major}.${minor + 1}.0`
-  return `${major}.${minor}.${patch + 1}`
+const CHANNEL = (() => {
+  if (env.AGENTX_CHANNEL) return env.AGENTX_CHANNEL
+  if (env.AGENTX_BUMP) return "latest"
+  if (env.AGENTX_VERSION && !env.AGENTX_VERSION.startsWith("0.0.0-")) return "latest"
+  try {
+    return execSync("git branch --show-current", { encoding: "utf8" }).trim() || "main"
+  } catch {
+    return "main"
+  }
 })()
 
-const bot = ["actions-user", "opencode", "opencode-agent[bot]"]
-const teamPath = path.resolve(import.meta.dir, "../../../.github/TEAM_MEMBERS")
+const IS_PREVIEW = CHANNEL !== "latest" && CHANNEL !== "main" && CHANNEL !== "master"
+
+const VERSION = (() => {
+  if (env.AGENTX_VERSION) return env.AGENTX_VERSION
+  if (rootPkg.version && rootPkg.version !== "0.0.0") return rootPkg.version
+  return "2.0.1"
+})()
+
+const bot = ["actions-user", "agentx", "agentx-agent[bot]", "agentx"]
+const teamPath = path.resolve(__dirname, "../../../.github/TEAM_MEMBERS")
 const team = [
-  ...(await Bun.file(teamPath)
-    .text()
-    .then((x) => x.split(/\r?\n/).map((x) => x.trim()))
-    .then((x) => x.filter((x) => x && !x.startsWith("#")))),
+  ...(existsSync(teamPath)
+    ? readFileSync(teamPath, "utf8")
+        .split(/\r?\n/)
+        .map((x) => x.trim())
+        .filter((x) => x && !x.startsWith("#"))
+    : ["SohailKhan0525", "agentx"]),
   ...bot,
 ]
 
@@ -67,11 +57,10 @@ export const Script = {
   get preview() {
     return IS_PREVIEW
   },
-  get release(): boolean {
-    return !!env.OPENCODE_RELEASE
+  get release() {
+    return env.AGENTX_RELEASE === "true"
   },
   get team() {
     return team
   },
 }
-console.log(`opencode script`, JSON.stringify(Script, null, 2))
