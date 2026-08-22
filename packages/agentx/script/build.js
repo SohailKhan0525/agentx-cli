@@ -57,7 +57,7 @@ const __dirname = __agentx_dirname(__filename);
 `,
   },
   define: {
-    AGENTX_VERSION: JSON.stringify("2.0.1"),
+    AGENTX_VERSION: JSON.stringify("2.0.2"),
     AGENTX_CHANNEL: JSON.stringify("prod"),
   },
   plugins: [openTuiPlugin],
