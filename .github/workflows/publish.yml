@@ -18,7 +18,12 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
+      - name: Install system dependencies (Linux)
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libsecret-1-dev
+
+      - run: npm ci --ignore-scripts
       - run: npm run build
 
       - name: Verify build
@@ -30,6 +35,7 @@ jobs:
         run: npm publish --workspace=packages/agentx --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: true
 
       - name: Publish to GitHub Packages
         uses: actions/setup-node@v4
@@ -38,6 +44,7 @@ jobs:
       - run: npm publish --workspace=packages/agentx --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: Publish to JSR
         working-directory: packages/agentx
