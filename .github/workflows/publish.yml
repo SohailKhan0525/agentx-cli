@@ -9,6 +9,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -22,11 +23,11 @@ jobs:
 
       - name: Verify build
         run: |
-          head -1 dist/index.js | grep "#!/usr/bin/env node"
-          node dist/index.js --version
+          head -1 packages/agentx/dist/index.js | grep "#!/usr/bin/env node"
+          node packages/agentx/dist/index.js --version
 
       - name: Publish to NPM
-        run: npm publish --access public
+        run: npm publish --workspace=packages/agentx --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -34,11 +35,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           registry-url: 'https://npm.pkg.github.com'
-      - run: npm publish --access public
+      - run: npm publish --workspace=packages/agentx --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to JSR
+        working-directory: packages/agentx
         run: npx jsr publish --allow-dirty
         env:
           JSR_TOKEN: ${{ secrets.JSR_TOKEN }}

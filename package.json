@@ -16,7 +16,8 @@
     "packages/plugin",
     "packages/script",
     "packages/sdk/js",
-    "packages/ui"
+    "packages/ui",
+    "packages/util"
   ],
   "devDependencies": {
     "@actions/artifact": "5.0.1",
