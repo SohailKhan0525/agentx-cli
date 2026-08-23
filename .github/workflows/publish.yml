@@ -184,3 +184,33 @@ jobs:
           git commit -m "agentx ${{ steps.ver.outputs.v }}" || true
           git push
         continue-on-error: true
+
+  # ── 6. Create GitHub Release ────────────────────────
+  create-release:
+    needs: [publish-npm, publish-gpr, publish-jsr, publish-homebrew]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          gh release create "v${VERSION}" \
+            --title "AgentX v${VERSION}" \
+            --notes "## AgentX v${VERSION} Release
+
+- Claude Code inspired clean terminal UI
+- Pure Black & White design system with custom Ink components
+- Autonomous website builder agent brain
+- OS Secure credential storage via Keytar (Keychain / Credential Manager / Secret Service)
+- Multi-platform support: Windows, macOS, and Linux
+- Cross-platform path resolution and safe shell command execution
+
+### Install
+\`\`\`bash
+npm install -g @agent-qofeno/agentx-cli
+\`\`\`" \
+            --generate-notes || true
