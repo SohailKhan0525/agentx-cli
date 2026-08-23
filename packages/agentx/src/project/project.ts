@@ -430,7 +430,7 @@ export namespace Project {
       const removeSandbox = Effect.fn("Project.removeSandbox")(function* (id: ProjectID, directory: string) {
         const row = yield* db((d) => d.select().from(ProjectTable).where(eq(ProjectTable.id, id)).get())
         if (!row) throw new Error(`Project not found: ${id}`)
-        const sboxes = row.sandboxes.filter((s) => s !== directory)
+        const sboxes = row.sandboxes.filter((s: any) => s !== directory)
         const result = yield* db((d) =>
           d
             .update(ProjectTable)
@@ -483,7 +483,7 @@ export namespace Project {
         .select()
         .from(ProjectTable)
         .all()
-        .map((row) => fromRow(row)),
+        .map((row: any) => fromRow(row)),
     )
   }
 

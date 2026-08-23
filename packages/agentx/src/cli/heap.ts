@@ -9,7 +9,7 @@ const MINUTE = 60_000
 const LIMIT = 2 * 1024 * 1024 * 1024
 
 export namespace Heap {
-  let timer: Timer | undefined
+  let timer: ReturnType<typeof setInterval> | undefined
   let lock = false
   let armed = true
 

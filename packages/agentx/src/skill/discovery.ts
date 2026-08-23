@@ -82,14 +82,14 @@ export namespace Discovery {
           })
 
           const dirs = yield* Effect.forEach(
-            list,
-            (skill) =>
+            list as any[],
+            (skill: any) =>
               Effect.gen(function* () {
                 const root = path.join(cache, skill.name)
 
                 yield* Effect.forEach(
-                  skill.files,
-                  (file) => download(new URL(file, `${host}/${skill.name}/`).href, path.join(root, file)),
+                  skill.files as any[],
+                  (file: any) => download(new URL(file, `${host}/${skill.name}/`).href, path.join(root, file)),
                   {
                     concurrency: fileConcurrency,
                   },

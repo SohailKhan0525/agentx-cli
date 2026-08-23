@@ -130,7 +130,7 @@ This implementation follows the ACP specification v1:
 
 ```bash
 # Run ACP tests
-bun test test/acp.test.ts
+npm test
 
 # Test manually with stdio
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1}}' | agentx acp

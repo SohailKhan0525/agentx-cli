@@ -141,7 +141,7 @@ export namespace Plugin {
             get serverUrl(): URL {
               return Server.url ?? new URL("http://localhost:4096")
             },
-            $: undefined,
+            $: undefined as any,
           }
 
           for (const plugin of INTERNAL_PLUGINS) {

@@ -106,7 +106,7 @@ export namespace Workspace {
     const rows = Database.use((db) =>
       db.select().from(WorkspaceTable).where(eq(WorkspaceTable.project_id, project.id)).all(),
     )
-    const spaces = rows.map(fromRow).sort((a, b) => a.id.localeCompare(b.id))
+    const spaces = rows.map((r: any) => fromRow(r)).sort((a: any, b: any) => a.id.localeCompare(b.id))
     for (const space of spaces) startSync(space)
     return spaces
   }

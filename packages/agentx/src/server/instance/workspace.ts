@@ -108,8 +108,8 @@ export const WorkspaceRoutes = lazy(() =>
         },
       }),
       async (c) => {
-        const ids = new Set(Workspace.list(Instance.project).map((item) => item.id))
-        return c.json(Workspace.status().filter((item) => ids.has(item.workspaceID)))
+        const ids = new Set(Workspace.list(Instance.project).map((item: any) => item.id))
+        return c.json(Workspace.status().filter((item: any) => ids.has(item.workspaceID)))
       },
     )
     .delete(

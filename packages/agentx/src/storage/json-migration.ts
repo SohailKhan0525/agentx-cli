@@ -22,7 +22,7 @@ export namespace JsonMigration {
     progress?: (event: Progress) => void
   }
 
-  export async function run(db: SQLiteBunDatabase<any, any> | NodeSQLiteDatabase<any, any>, options?: Options) {
+  export async function run(db: any, options?: Options) {
     const storageDir = path.join(Global.Path.data, "storage")
 
     if (!existsSync(storageDir)) {

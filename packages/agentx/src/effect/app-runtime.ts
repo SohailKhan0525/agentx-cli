@@ -97,4 +97,4 @@ export const AppLayer = Layer.mergeAll(
   SessionShare.defaultLayer,
 ).pipe(Layer.provide(Observability.layer))
 
-export const AppRuntime = ManagedRuntime.make(AppLayer, { memoMap })
+export const AppRuntime = ManagedRuntime.make(AppLayer as any, { memoMap })

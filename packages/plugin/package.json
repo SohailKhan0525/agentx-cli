@@ -5,7 +5,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "typecheck": "tsgo --noEmit",
+    "typecheck": "tsc --noEmit",
     "build": "tsc"
   },
   "exports": {
@@ -21,24 +21,9 @@
     "effect": "4.0.0-beta.46",
     "zod": "^3.25.76"
   },
-  "peerDependencies": {
-    "@opentui/core": ">=0.1.97",
-    "@opentui/solid": ">=0.1.97"
-  },
-  "peerDependenciesMeta": {
-    "@opentui/core": {
-      "optional": true
-    },
-    "@opentui/solid": {
-      "optional": true
-    }
-  },
   "devDependencies": {
-    "@opentui/core": "0.1.97",
-    "@opentui/solid": "0.1.97",
     "@tsconfig/node22": "22.0.2",
     "@types/node": "22.13.9",
-    "typescript": "5.8.2",
-    "@typescript/native-preview": "7.0.0-dev.20251207.1"
+    "typescript": "5.8.2"
   }
 }

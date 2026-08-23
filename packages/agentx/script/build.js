@@ -2,39 +2,17 @@ import esbuild from "esbuild"
 import path from "path"
 import fs from "fs"
 
-const openTuiPlugin = {
-  name: "opentui-fix",
+const reactDevtoolsStubPlugin = {
+  name: "react-devtools-stub",
   setup(build) {
-    build.onResolve({ filter: /^(bun|bun:.*)$/ }, (args) => {
-      return { path: args.path, namespace: "bun-stub" }
+    build.onResolve({ filter: /^react-devtools-core$/ }, () => {
+      return { path: "react-devtools-core", namespace: "devtools-stub" }
     })
-    build.onLoad({ filter: /.*/, namespace: "bun-stub" }, () => {
+    build.onLoad({ filter: /.*/, namespace: "devtools-stub" }, () => {
       return {
-        contents: `
-          export default {};
-          export const ptr = () => 0;
-          export const toArrayBuffer = () => new ArrayBuffer(0);
-          export const JSCallback = class {};
-          export const CString = class {};
-          export const cc = {};
-          export const FFIType = {};
-          export const dlopen = () => ({ symbols: {} });
-          export const Database = class {};
-          export const plugin = () => {};
-        `,
+        contents: "export default {}; export const initialize = () => {}; export const connectToDevTools = () => {};",
         loader: "js",
       }
-    })
-    build.onResolve({ filter: /\.(scm|wasm)$/ }, (args) => {
-      return { path: args.path, namespace: "opentui-asset" }
-    })
-    build.onLoad({ filter: /.*/, namespace: "opentui-asset" }, () => {
-      return { contents: 'export default ""', loader: "js" }
-    })
-    build.onLoad({ filter: /@opentui[\\/]core/ }, async (args) => {
-      let contents = await fs.promises.readFile(args.path, "utf8")
-      contents = contents.replace(/with\s*\{\s*type:\s*["']file["']\s*\}/g, "")
-      return { contents, loader: "js" }
     })
   },
 }
@@ -46,23 +24,32 @@ await esbuild.build({
   target: "node18",
   outfile: "dist/index.js",
   format: "esm",
+  jsx: "transform",
   banner: {
-    js: `#!/usr/bin/env node
-import { createRequire as __agentx_createRequire } from "node:module";
-import { fileURLToPath as __agentx_fileURLToPath } from "node:url";
-import { dirname as __agentx_dirname } from "node:path";
+    js: `import { createRequire as __agentx_createRequire } from "node:module";
 const require = __agentx_createRequire(import.meta.url);
-const __filename = __agentx_fileURLToPath(import.meta.url);
-const __dirname = __agentx_dirname(__filename);
+
+(() => {
+  const [nodeMajor] = process.versions.node.split('.').map(Number);
+  if (nodeMajor < 18) {
+    process.stderr.write(
+      '\\nAgentX requires Node.js 18 or higher.\\n' +
+      'You are running: v' + process.versions.node + '\\n' +
+      'Download: https://nodejs.org\\n\\n'
+    );
+    process.exit(1);
+  }
+})();
 `,
   },
   define: {
-    AGENTX_VERSION: JSON.stringify("2.0.2"),
+    AGENTX_VERSION: JSON.stringify("2.0.3"),
     AGENTX_CHANNEL: JSON.stringify("prod"),
   },
-  plugins: [openTuiPlugin],
+  plugins: [reactDevtoolsStubPlugin],
   loader: {
     ".txt": "text",
+    ".wasm": "binary",
   },
   alias: {
     "@": path.resolve("src"),
@@ -77,10 +64,22 @@ const __dirname = __agentx_dirname(__filename);
     "keytar",
     "@parcel/watcher",
     "@lydell/node-pty",
-    "bun-pty",
     "ioredis",
     "better-sqlite3",
     "fsevents",
   ],
 })
+
+// Ensure yoga.wasm is copied to dist/
+const wasmCandidates = [
+  path.resolve("../../node_modules/yoga-wasm-web/dist/yoga.wasm"),
+  path.resolve("node_modules/yoga-wasm-web/dist/yoga.wasm"),
+]
+for (const cand of wasmCandidates) {
+  if (fs.existsSync(cand)) {
+    fs.copyFileSync(cand, path.resolve("dist/yoga.wasm"))
+    break
+  }
+}
+
 console.log("Build successful: dist/index.js")

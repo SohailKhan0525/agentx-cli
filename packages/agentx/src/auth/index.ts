@@ -65,9 +65,10 @@ export namespace Auth {
       const get = Effect.fn("Auth.get")(function* (providerID: string) {
         const item = (yield* all())[providerID]
         if (item && item.type === "api") {
-          const secureKey = yield* Effect.promise(() => getApiKey(providerID)).pipe(
-            Effect.catchAll(() => Effect.succeed(null)),
-          )
+          const secureKey = yield* Effect.tryPromise({
+            try: () => getApiKey(providerID),
+            catch: () => null,
+          })
           if (secureKey) {
             return { ...item, key: secureKey }
           }
@@ -78,7 +79,10 @@ export namespace Auth {
       const set = Effect.fn("Auth.set")(function* (key: string, info: Info) {
         const norm = key.replace(/\/+$/, "")
         if (info.type === "api" && info.key) {
-          yield* Effect.promise(() => saveApiKey(norm, info.key)).pipe(Effect.catchAll(() => Effect.void))
+          yield* Effect.tryPromise({
+            try: () => saveApiKey(norm, info.key),
+            catch: () => undefined,
+          })
         }
         const data = yield* all()
         if (norm !== key) delete data[key]
@@ -90,14 +94,17 @@ export namespace Auth {
 
       const remove = Effect.fn("Auth.remove")(function* (key: string) {
         const norm = key.replace(/\/+$/, "")
-        yield* Effect.promise(() => deleteApiKey(norm)).pipe(Effect.catchAll(() => Effect.void))
+        yield* Effect.tryPromise({
+          try: () => deleteApiKey(norm),
+          catch: () => undefined,
+        })
         const data = yield* all()
         delete data[key]
         delete data[norm]
         yield* fsys.writeJson(file, data, 0o600).pipe(Effect.mapError(fail("Failed to write auth data")))
       })
 
-      return Service.of({ get, all, set, remove })
+      return Service.of({ get, all, set, remove } as any)
     }),
   )
 

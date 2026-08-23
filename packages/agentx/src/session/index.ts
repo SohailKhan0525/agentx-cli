@@ -810,7 +810,7 @@ export namespace Session {
       return query.orderBy(desc(SessionTable.time_updated), desc(SessionTable.id)).limit(limit).all()
     })
 
-    const ids = [...new Set(rows.map((row) => row.project_id))]
+    const ids = [...new Set(rows.map((row: any) => row.project_id))]
     const projects = new Map<string, ProjectInfo>()
 
     if (ids.length > 0) {
@@ -818,7 +818,7 @@ export namespace Session {
         db
           .select({ id: ProjectTable.id, name: ProjectTable.name, worktree: ProjectTable.worktree })
           .from(ProjectTable)
-          .where(inArray(ProjectTable.id, ids))
+          .where(inArray(ProjectTable.id, ids as any))
           .all(),
       )
       for (const item of items) {

@@ -178,20 +178,20 @@ export namespace ShareNext {
           yield* watch(Session.Event.Updated, (evt) =>
             Effect.gen(function* () {
               const info = yield* session.get(evt.properties.sessionID)
-              yield* sync(info.id, [{ type: "session", data: info }])
+              yield* sync(info.id, [{ type: "session", data: info }] as any)
             }),
           )
           yield* watch(MessageV2.Event.Updated, (evt) =>
             Effect.gen(function* () {
               const info = evt.properties.info
-              yield* sync(info.sessionID, [{ type: "message", data: info }])
+              yield* sync(info.sessionID, [{ type: "message", data: info }] as any)
               if (info.role !== "user") return
               const model = yield* provider.getModel(info.model.providerID, info.model.modelID)
-              yield* sync(info.sessionID, [{ type: "model", data: [model] }])
+              yield* sync(info.sessionID, [{ type: "model", data: [model] }] as any)
             }),
           )
           yield* watch(MessageV2.Event.PartUpdated, (evt) =>
-            sync(evt.properties.part.sessionID, [{ type: "part", data: evt.properties.part }]),
+            sync(evt.properties.part.sessionID, [{ type: "part", data: evt.properties.part }] as any),
           )
           yield* watch(Session.Event.Diff, (evt) =>
             sync(evt.properties.sessionID, [{ type: "session_diff", data: evt.properties.diff }]),
@@ -275,7 +275,7 @@ export namespace ShareNext {
           ...messages.flatMap((item) => item.parts.map((part) => ({ type: "part" as const, data: part }))),
           { type: "session_diff", data: diffs },
           { type: "model", data: models },
-        ])
+        ] as any)
       })
 
       const init = Effect.fn("ShareNext.init")(function* () {

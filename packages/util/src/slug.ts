@@ -7,4 +7,8 @@ export namespace Slug {
     }
     return prefix ? `${prefix}-${res}` : res
   }
+
+  export function create(prefix?: string): string {
+    return make(prefix)
+  }
 }

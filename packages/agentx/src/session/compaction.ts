@@ -97,7 +97,7 @@ export namespace SessionCompaction {
 
         const msgs = yield* session
           .messages({ sessionID: input.sessionID })
-          .pipe(Effect.catchIf(NotFoundError.isInstance, () => Effect.succeed(undefined)))
+          .pipe(Effect.catchIf((e: any) => e?.name === "SessionNotFoundError" || (NotFoundError as any).isInstance?.(e), () => Effect.succeed(undefined)))
         if (!msgs) return
 
         let total = 0

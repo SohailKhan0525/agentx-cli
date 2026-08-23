@@ -305,7 +305,7 @@ export namespace SessionProcessor {
               if (
                 recentParts.length !== DOOM_LOOP_THRESHOLD ||
                 !recentParts.every(
-                  (part) =>
+                  (part: any) =>
                     part.type === "tool" &&
                     part.tool === value.toolName &&
                     part.state.status !== "pending" &&
@@ -517,7 +517,7 @@ export namespace SessionProcessor {
         const halt = Effect.fn("SessionProcessor.halt")(function* (e: unknown) {
           yield* slog.error("process", { error: errorMessage(e), stack: e instanceof Error ? e.stack : undefined })
           const error = parse(e)
-          if (MessageV2.ContextOverflowError.isInstance(error)) {
+          if (error?.name === "MessageContextOverflowError" || (MessageV2.ContextOverflowError as any).isInstance?.(error)) {
             ctx.needsCompaction = true
             yield* bus.publish(Session.Event.Error, { sessionID: ctx.sessionID, error })
             return
@@ -561,7 +561,7 @@ export namespace SessionProcessor {
               ),
               Effect.retry(
                 SessionRetry.policy({
-                  parse,
+                  parse: parse as any,
                   set: (info) =>
                     status.set(ctx.sessionID, {
                       type: "retry",

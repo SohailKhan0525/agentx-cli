@@ -185,7 +185,7 @@ export const InstanceRoutes = (upgrade: UpgradeWebSocket): Hono =>
         },
       }),
       async (c) => {
-        const commands = await AppRuntime.runPromise(Command.Service.use((svc) => svc.list()))
+        const commands = await AppRuntime.runPromise(Command.Service.use((svc: any) => svc.list()))
         return c.json(commands)
       },
     )

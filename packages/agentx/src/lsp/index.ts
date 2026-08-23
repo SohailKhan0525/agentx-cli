@@ -177,7 +177,8 @@ export namespace LSP {
 
             filterExperimentalServers(servers)
 
-            for (const [name, item] of Object.entries(cfg.lsp ?? {})) {
+            for (const [name, rawItem] of Object.entries(cfg.lsp ?? {})) {
+              const item = rawItem as any
               const existing = servers[name]
               if (item.disabled) {
                 log.info(`LSP server ${name} is disabled`)

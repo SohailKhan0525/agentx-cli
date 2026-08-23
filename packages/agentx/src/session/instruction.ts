@@ -227,7 +227,7 @@ export namespace Instruction {
           return results
         })
 
-        return Service.of({ clear, systemPaths, system, find, resolve })
+        return Service.of({ clear, systemPaths, system, find, resolve } as any)
       }),
     )
 

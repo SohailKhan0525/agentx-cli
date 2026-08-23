@@ -77,7 +77,7 @@ export const GrepTool = Tool.define(
                 return [
                   file,
                   info.mtime.pipe(
-                    Option.map((time) => time.getTime()),
+                    Option.map((time: any) => time.getTime()),
                     Option.getOrElse(() => 0),
                   ) ?? 0,
                 ] as const

@@ -174,6 +174,10 @@ export namespace Provider {
                   id: ModelID.make(name),
                   providerID: ProviderID.make("local"),
                   name: `${name} (${item.name})`,
+                  status: "active",
+                  options: {},
+                  headers: {},
+                  release_date: "2024-01-01",
                   api: {
                     id: name,
                     url: item.url,
@@ -183,11 +187,12 @@ export namespace Provider {
                     temperature: true,
                     reasoning: false,
                     attachment: false,
+                    interleaved: false,
                     toolcall: true,
-                    input: { text: true },
-                    output: { text: true },
+                    input: { text: true, audio: false, image: false, video: false, pdf: false },
+                    output: { text: true, audio: false, image: false, video: false, pdf: false },
                   },
-                  cost: { input: 0, output: 0 },
+                  cost: { cache: { read: 0, write: 0 }, input: 0, output: 0 },
                   limit: { context: 32768, output: 4096 },
                 }
               }
@@ -793,7 +798,7 @@ export namespace Provider {
             const chunkTimeout = options["chunkTimeout"]
             delete options["chunkTimeout"]
 
-            options["fetch"] = async (input: any, init?: BunFetchRequestInit) => {
+            options["fetch"] = async (input: any, init?: RequestInit) => {
               const fetchFn = customFetch ?? fetch
               const opts = init ?? {}
               const chunkAbortCtl =

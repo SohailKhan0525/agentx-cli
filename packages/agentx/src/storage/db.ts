@@ -45,7 +45,7 @@ export namespace Database {
 
   export type Transaction = SQLiteTransaction<"sync", void>
 
-  type Client = SQLiteBunDatabase
+  type Client = any
 
   type Journal = { sql: string; timestamp: number; name: string }[]
 
@@ -109,7 +109,7 @@ export namespace Database {
           item.sql = "select 1;"
         }
       }
-      migrate(db, entries)
+      migrate(db, entries as any)
     }
 
     return db

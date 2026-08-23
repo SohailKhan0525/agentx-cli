@@ -8,9 +8,7 @@ export const GenerateCommand = {
     for (const item of Object.values(specs.paths)) {
       for (const method of ["get", "post", "put", "delete", "patch"] as const) {
         const operation = item[method]
-        if (!operation?.operationId) continue
-        // @ts-expect-error
-        operation["x-codeSamples"] = [
+        ;(operation as any)["x-codeSamples"] = [
           {
             lang: "js",
             source: [

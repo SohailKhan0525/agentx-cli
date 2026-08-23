@@ -37,7 +37,7 @@ export namespace Skill {
     z.object({
       path: z.string(),
       message: z.string().optional(),
-      issues: z.custom<z.core.$ZodIssue[]>().optional(),
+      issues: z.custom<z.ZodIssue[]>().optional(),
     }),
   )
 
@@ -68,10 +68,8 @@ export namespace Skill {
       catch: (err) => err,
     }).pipe(
       Effect.catch(
-        Effect.fnUntraced(function* (err) {
-          const message = ConfigMarkdown.FrontmatterError.isInstance(err)
-            ? err.data.message
-            : `Failed to parse skill ${match}`
+        Effect.fnUntraced(function* (err: any) {
+          const message = err?.data?.message || (err instanceof Error ? err.message : `Failed to parse skill ${match}`)
           const { Session } = yield* Effect.promise(() => import("@/session"))
           yield* bus.publish(Session.Event.Error, { error: new NamedError.Unknown({ message }).toObject() })
           log.error("failed to load skill", { skill: match, err })

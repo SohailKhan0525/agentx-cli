@@ -70,7 +70,7 @@ export namespace Todo {
               .all(),
           ),
         )
-        return rows.map((row) => ({
+        return rows.map((row: any) => ({
           content: row.content,
           status: row.status,
           priority: row.priority,

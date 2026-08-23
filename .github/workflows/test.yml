@@ -5,34 +5,48 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node: ['22', '24']
+        node: ['18', '20', '22']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libsecret-1-dev
-      - run: npm ci --ignore-scripts
-      - run: npm run build
-      - name: Verify CLI starts
-        run: node packages/agentx/dist/index.js --version
-      - name: Verify no exe files
-        shell: bash
-        run: |
-          if find packages/agentx/dist -name "*.exe" 2>/dev/null | grep -q .; then
-            echo "ERROR: .exe found in dist" && exit 1
-          fi
-          echo "OK: No exe files"
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
       - name: Verify shebang
         shell: bash
         run: |
-          FIRST=$(head -1 packages/agentx/dist/index.js)
+          FIRST=$(head -1 dist/index.js)
           if [ "$FIRST" != "#!/usr/bin/env node" ]; then
-            echo "ERROR: Wrong shebang: $FIRST" && exit 1
+            echo "FAIL: Bad shebang: $FIRST"
+            exit 1
           fi
           echo "OK: Correct shebang"
+
+      - name: Verify no exe
+        shell: bash
+        run: |
+          if find dist -name "*.exe" 2>/dev/null | grep -q .; then
+            echo "FAIL: exe found in dist"
+            exit 1
+          fi
+          echo "OK: No exe files"
+
+      - name: Verify no Bun
+        shell: bash
+        run: |
+          if grep -q "from 'bun'\|Bun\." dist/index.js 2>/dev/null; then
+            echo "FAIL: Bun found in output"
+            exit 1
+          fi
+          echo "OK: No Bun references"
+
+      - name: Verify CLI starts
+        run: node dist/index.js --version

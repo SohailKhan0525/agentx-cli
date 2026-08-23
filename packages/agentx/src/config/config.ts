@@ -166,10 +166,8 @@ export namespace Config {
       dot: true,
       symlink: true,
     })) {
-      const md = await ConfigMarkdown.parse(item).catch(async (err) => {
-        const message = ConfigMarkdown.FrontmatterError.isInstance(err)
-          ? err.data.message
-          : `Failed to parse command ${item}`
+      const md = await ConfigMarkdown.parse(item).catch(async (err: any) => {
+        const message = err?.data?.message || (err instanceof Error ? err.message : `Failed to parse command ${item}`)
         const { Session } = await import("@/session")
         Bus.publish(Session.Event.Error, { error: new NamedError.Unknown({ message }).toObject() })
         log.error("failed to load command", { command: item, err })
@@ -205,10 +203,8 @@ export namespace Config {
       dot: true,
       symlink: true,
     })) {
-      const md = await ConfigMarkdown.parse(item).catch(async (err) => {
-        const message = ConfigMarkdown.FrontmatterError.isInstance(err)
-          ? err.data.message
-          : `Failed to parse agent ${item}`
+      const md = await ConfigMarkdown.parse(item).catch(async (err: any) => {
+        const message = err?.data?.message || (err instanceof Error ? err.message : `Failed to parse agent ${item}`)
         const { Session } = await import("@/session")
         Bus.publish(Session.Event.Error, { error: new NamedError.Unknown({ message }).toObject() })
         log.error("failed to load agent", { agent: item, err })
@@ -243,10 +239,8 @@ export namespace Config {
       dot: true,
       symlink: true,
     })) {
-      const md = await ConfigMarkdown.parse(item).catch(async (err) => {
-        const message = ConfigMarkdown.FrontmatterError.isInstance(err)
-          ? err.data.message
-          : `Failed to parse mode ${item}`
+      const md = await ConfigMarkdown.parse(item).catch(async (err: any) => {
+        const message = err?.data?.message || (err instanceof Error ? err.message : `Failed to parse mode ${item}`)
         const { Session } = await import("@/session")
         Bus.publish(Session.Event.Error, { error: new NamedError.Unknown({ message }).toObject() })
         log.error("failed to load mode", { mode: item, err })
@@ -1008,7 +1002,7 @@ export namespace Config {
             })
           },
           {
-            error: "For custom LSP servers, 'extensions' array is required.",
+            message: "For custom LSP servers, 'extensions' array is required.",
           },
         ),
       instructions: z.array(z.string()).optional().describe("Additional instruction files or patterns to include"),
@@ -1302,7 +1296,7 @@ export namespace Config {
           if (!hasIgnore) {
             yield* fs.writeFileString(
               gitignore,
-              ["node_modules", "package.json", "package-lock.json", "bun.lock", ".gitignore"].join("\n"),
+              ["node_modules", "package.json", "package-lock.json", "pnpm-lock.yaml", ".gitignore"].join("\n"),
             )
           }
 

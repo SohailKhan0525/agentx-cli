@@ -16,11 +16,30 @@ import type {
   Workspace,
   Config as SdkConfig,
 } from "@agentx-cli/sdk/v2"
-import type { CliRenderer, ParsedKey, RGBA, SlotMode } from "@opentui/core"
-import type { JSX, SolidPlugin } from "@opentui/solid"
 import type { Config as PluginConfig, PluginOptions } from "./index.js"
 
-export type { CliRenderer, SlotMode } from "@opentui/core"
+export interface ParsedKey {
+  name: string
+  ctrl?: boolean
+  meta?: boolean
+  shift?: boolean
+  super?: boolean
+}
+
+export type RGBA = [number, number, number, number] | string
+export type SlotMode = "replace" | "prepend" | "append"
+export type CliRenderer = any
+
+export namespace JSX {
+  export type Element = any
+}
+
+export interface SolidPlugin<Slots = any, Context = any> {
+  id?: string
+  name?: string
+  slots?: Slots
+}
+
 
 export type TuiRouteCurrent =
   | {

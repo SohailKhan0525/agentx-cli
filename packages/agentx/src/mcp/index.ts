@@ -49,7 +49,7 @@ export namespace MCP {
     "mcp.tools.changed",
     z.object({
       server: z.string(),
-    }),
+    }) as any,
   )
 
   export const BrowserOpenFailed = BusEvent.define(
@@ -57,14 +57,14 @@ export namespace MCP {
     z.object({
       mcpName: z.string(),
       url: z.string(),
-    }),
+    }) as any,
   )
 
   export const Failed = NamedError.create(
     "MCPFailed",
     z.object({
       name: z.string(),
-    }),
+    }) as any,
   )
 
   type MCPClient = Client

@@ -51,7 +51,7 @@ export namespace ConfigPaths {
     "ConfigInvalidError",
     z.object({
       path: z.string(),
-      issues: z.custom<z.core.$ZodIssue[]>().optional(),
+      issues: z.custom<z.ZodIssue[]>().optional(),
       message: z.string().optional(),
     }),
   )

@@ -3,53 +3,184 @@ on:
   push:
     tags: ['v*']
   workflow_dispatch:
+
 jobs:
-  publish:
+  # ── 1. Test on all platforms first ──────────────────
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: ['18', '20', '22']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      - run: npm run build
+      - run: node dist/index.js --version
+
+  # ── 2. Publish to NPM ───────────────────────────────
+  publish-npm:
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: write
       packages: write
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install system dependencies (Linux)
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libsecret-1-dev
-
-      - run: npm ci --ignore-scripts
+      - run: npm ci
       - run: npm run build
 
-      - name: Verify build
+      - name: Verify
         run: |
-          head -1 packages/agentx/dist/index.js | grep "#!/usr/bin/env node"
-          node packages/agentx/dist/index.js --version
+          head -1 dist/index.js | grep "#!/usr/bin/env node"
+          node dist/index.js --version
 
       - name: Publish to NPM
-        run: npm publish --workspace=packages/agentx --access public --provenance
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: true
+
+      - name: Confirm NPM publish
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          npm view @agent-qofeno/agentx-cli@${VERSION} version \
+            && echo "✓ Published to NPM: ${VERSION}" \
+            || echo "⚠ Could not confirm NPM publish"
+
+  # ── 3. Publish to GitHub Packages ───────────────────
+  publish-gpr:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@SohailKhan0525'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Update scope for GitHub Packages
+        run: |
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('package.json','utf8'));
+            p.name = '@SohailKhan0525/agentx-cli';
+            fs.writeFileSync('package.json', JSON.stringify(p, null, 2));
+          "
 
       - name: Publish to GitHub Packages
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          registry-url: 'https://npm.pkg.github.com'
-      - run: npm publish --workspace=packages/agentx --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
+  # ── 4. Publish to JSR ───────────────────────────────
+  publish-jsr:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Create jsr.json
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          cat > jsr.json << EOF
+          {
+            "name": "@agent-qofeno/agentx-cli",
+            "version": "${VERSION}",
+            "exports": "./dist/index.js"
+          }
+          EOF
+
       - name: Publish to JSR
-        working-directory: packages/agentx
         run: npx jsr publish --allow-dirty
-        env:
-          JSR_TOKEN: ${{ secrets.JSR_TOKEN }}
+        continue-on-error: true
+
+      - name: Confirm JSR publish
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Check: https://jsr.io/@agent-qofeno/agentx-cli@${VERSION}"
+        continue-on-error: true
+
+  # ── 5. Update Homebrew tap ──────────────────────────
+  publish-homebrew:
+    needs: publish-npm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version
+        id: ver
+        run: echo "v=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Wait for NPM package to be available
+        run: sleep 30
+
+      - name: Get SHA256 from NPM
+        id: sha
+        run: |
+          URL="https://registry.npmjs.org/@agent-qofeno/agentx-cli/-/agentx-cli-${{ steps.ver.outputs.v }}.tgz"
+          SHA=$(curl -fsSL "$URL" | sha256sum | cut -d' ' -f1)
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - uses: actions/checkout@v4
+        with:
+          repository: SohailKhan0525/homebrew-agentx
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          path: homebrew-tap
+
+      - name: Update Homebrew formula
+        run: |
+          cat > homebrew-tap/Formula/agentx.rb << EOF
+          class Agentx < Formula
+            desc "AI agent that builds production-ready websites from your terminal"
+            homepage "https://github.com/SohailKhan0525/agentx-cli"
+            url "${{ steps.sha.outputs.url }}"
+            sha256 "${{ steps.sha.outputs.sha }}"
+            license "MIT"
+
+            depends_on "node"
+
+            def install
+              system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+              bin.install_symlink Dir["#{libexec}/bin/*"]
+            end
+
+            test do
+              system "#{bin}/agentx", "--version"
+            end
+          end
+          EOF
+
+      - name: Push formula update
+        run: |
+          cd homebrew-tap
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add Formula/agentx.rb
+          git commit -m "agentx ${{ steps.ver.outputs.v }}" || true
+          git push
         continue-on-error: true

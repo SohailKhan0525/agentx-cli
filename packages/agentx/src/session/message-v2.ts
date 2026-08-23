@@ -698,7 +698,7 @@ export namespace MessageV2 {
         if (
           msg.info.error &&
           !(
-            MessageV2.AbortedError.isInstance(msg.info.error) &&
+            ((MessageV2.AbortedError as any).isInstance?.(msg.info.error) || msg.info.error?.name === "MessageAbortedError") &&
             msg.parts.some((part) => part.type !== "step-start" && part.type !== "reasoning")
           )
         ) {
@@ -710,16 +710,15 @@ export namespace MessageV2 {
           parts: [],
         }
         for (const part of msg.parts) {
-          if (part.type === "text")
+          if (part.type === "text" && !part.synthetic) {
             assistantMessage.parts.push({
               type: "text",
               text: part.text,
-              ...(differentModel ? {} : { providerMetadata: part.metadata }),
             })
-          if (part.type === "step-start")
-            assistantMessage.parts.push({
-              type: "step-start",
-            })
+          }
+          if (part.type === "reasoning" && differentModel) {
+            continue
+          }
           if (part.type === "tool") {
             toolNames.add(part.tool)
             if (part.state.status === "completed") {
@@ -728,10 +727,10 @@ export namespace MessageV2 {
 
               // For providers that don't support media in tool results, extract media files
               // (images, PDFs) to be sent as a separate user message
-              const mediaAttachments = attachments.filter((a) => isMedia(a.mime))
-              const nonMediaAttachments = attachments.filter((a) => !isMedia(a.mime))
+              const mediaAttachments = attachments.filter((a: any) => isMedia(a.mime))
+              const nonMediaAttachments = attachments.filter((a: any) => !isMedia(a.mime))
               if (!supportsMediaInToolResults && mediaAttachments.length > 0) {
-                media.push(...mediaAttachments)
+                media.push(...(mediaAttachments as any))
               }
               const finalAttachments = supportsMediaInToolResults ? attachments : nonMediaAttachments
 
@@ -900,7 +899,7 @@ export namespace MessageV2 {
       db.select().from(PartTable).where(eq(PartTable.message_id, message_id)).orderBy(PartTable.id).all(),
     )
     return rows.map(
-      (row) =>
+      (row: any) =>
         ({
           ...row.data,
           id: row.id,
@@ -959,30 +958,30 @@ export namespace MessageV2 {
             cause: e,
           },
         ).toObject()
-      case MessageV2.OutputLengthError.isInstance(e):
-        return e
-      case LoadAPIKeyError.isInstance(e):
+      case (MessageV2.OutputLengthError as any).isInstance?.(e) || (e as any)?.name === "MessageOutputLengthError":
+        return e as any
+      case (LoadAPIKeyError as any).isInstance?.(e) || (e as any)?.name === "LoadAPIKeyError":
         return new MessageV2.AuthError(
           {
             providerID: ctx.providerID,
-            message: e.message,
+            message: (e as any).message,
           },
           { cause: e },
         ).toObject()
-      case (e as SystemError)?.code === "ECONNRESET":
+      case (e as any)?.code === "ECONNRESET":
         return new MessageV2.APIError(
           {
             message: "Connection reset by server",
             isRetryable: true,
             metadata: {
-              code: (e as SystemError).code ?? "",
-              syscall: (e as SystemError).syscall ?? "",
-              message: (e as SystemError).message ?? "",
+              code: (e as any).code ?? "",
+              syscall: (e as any).syscall ?? "",
+              message: (e as any).message ?? "",
             },
           },
           { cause: e },
         ).toObject()
-      case e instanceof Error && (e as FetchDecompressionError).code === "ZlibError":
+      case e instanceof Error && (e as any).code === "ZlibError":
         if (ctx.aborted) {
           return new MessageV2.AbortedError({ message: e.message }, { cause: e }).toObject()
         }

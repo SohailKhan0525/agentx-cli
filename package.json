@@ -1,11 +1,23 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "agentx",
-  "description": "AI-powered development tool",
-  "private": true,
+  "name": "@agent-qofeno/agentx-cli",
+  "version": "2.0.3",
+  "description": "The AI agent that builds production-ready websites from your terminal",
+  "bin": {
+    "agentx": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "type": "module",
   "scripts": {
-    "build": "npm run --prefix packages/agentx build",
+    "build": "npm run --prefix packages/agentx build && node -e \"const fs=require('fs'); if(!fs.existsSync('dist')) fs.mkdirSync('dist'); fs.copyFileSync('packages/agentx/dist/index.js', 'dist/index.js'); if(fs.existsSync('packages/agentx/dist/yoga.wasm')) fs.copyFileSync('packages/agentx/dist/yoga.wasm', 'dist/yoga.wasm');\"",
     "prepublishOnly": "npm run build",
     "dev": "node packages/agentx/dist/index.js",
     "typecheck": "tsc --noEmit",

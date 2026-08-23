@@ -188,4 +188,17 @@ export namespace Command {
     Layer.provide(MCP.defaultLayer),
     Layer.provide(Skill.defaultLayer),
   )
+
+  export async function exists(cmd: string): Promise<boolean> {
+    try {
+      const { execa } = await import("execa")
+      await execa(process.platform === "win32" ? "where" : "which", [cmd])
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  export const commandExists = exists
 }
+export const commandExists = Command.exists

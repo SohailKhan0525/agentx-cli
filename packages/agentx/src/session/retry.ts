@@ -54,11 +54,11 @@ export namespace SessionRetry {
 
   export function retryable(error: Err) {
     // context overflow errors should not be retried
-    if (MessageV2.ContextOverflowError.isInstance(error)) return undefined
-    if (MessageV2.APIError.isInstance(error)) {
+    if ((MessageV2.ContextOverflowError as any).isInstance?.(error) || error?.name === "MessageContextOverflowError") return undefined
+    if ((MessageV2.APIError as any).isInstance?.(error) || error?.name === "APIError") {
       if (!error.data.isRetryable) return undefined
       if (error.data.responseBody?.includes("FreeUsageLimitError")) return GO_UPSELL_MESSAGE
-      return error.data.message.includes("Overloaded") ? "Provider is overloaded" : error.data.message
+      return error.data.message?.includes("Overloaded") ? "Provider is overloaded" : error.data.message
     }
 
     // Check for rate limit patterns in plain text error messages
@@ -111,7 +111,7 @@ export namespace SessionRetry {
         const message = retryable(error)
         if (!message) return Cause.done(meta.attempt)
         return Effect.gen(function* () {
-          const wait = delay(meta.attempt, MessageV2.APIError.isInstance(error) ? error : undefined)
+          const wait = delay(meta.attempt, ((MessageV2.APIError as any).isInstance?.(error) || error?.name === "APIError") ? error : undefined)
           const now = yield* Clock.currentTimeMillis
           yield* opts.set({ attempt: meta.attempt, message, next: now + wait })
           return [meta.attempt, Duration.millis(wait)] as [number, Duration.Duration]

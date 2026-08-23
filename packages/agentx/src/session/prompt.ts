@@ -247,7 +247,7 @@ export namespace SessionPrompt {
 
         const assistantMessage = input.messages.findLast((msg) => msg.info.role === "assistant")
         if (input.agent.name !== "plan" && assistantMessage?.info.agent === "plan") {
-          const plan = Session.plan(input.session)
+          const plan = Session.plan(input.session as any)
           if (!(yield* fsys.existsSafe(plan))) return input.messages
           const part = yield* sessions.updatePart({
             id: PartID.ascending(),
@@ -264,7 +264,7 @@ export namespace SessionPrompt {
 
         if (input.agent.name !== "plan" || assistantMessage?.info.agent === "plan") return input.messages
 
-        const plan = Session.plan(input.session)
+        const plan = Session.plan(input.session as any)
         const exists = yield* fsys.existsSafe(plan)
         if (!exists) yield* fsys.ensureDir(path.dirname(plan)).pipe(Effect.catch(Effect.die))
         const part = yield* sessions.updatePart({
@@ -398,7 +398,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           providerID: input.model.providerID,
           agent: input.agent,
         })) {
-          const schema = ProviderTransform.schema(input.model, z.toJSONSchema(item.parameters))
+          const schema = ProviderTransform.schema(input.model, (z as any).toJSONSchema ? (z as any).toJSONSchema(item.parameters) : (item.parameters as any))
           tools[item.id] = tool({
             id: item.id as any,
             description: item.description,
@@ -641,7 +641,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             ),
           )
 
-        const attachments = result?.attachments?.map((attachment) => ({
+        const attachments = (result as any)?.attachments?.map((attachment: any) => ({
           ...attachment,
           id: PartID.ascending(),
           sessionID,
@@ -893,13 +893,13 @@ NOTE: At any point in time through this workflow you should feel free to ask the
       ) {
         const exit = yield* provider.getModel(providerID, modelID).pipe(Effect.exit)
         if (Exit.isSuccess(exit)) return exit.value
-        const err = Cause.squash(exit.cause)
-        if (Provider.ModelNotFoundError.isInstance(err)) {
-          const hint = err.data.suggestions?.length ? ` Did you mean: ${err.data.suggestions.join(", ")}?` : ""
+        const err: any = Cause.squash(exit.cause)
+        if ((Provider.ModelNotFoundError as any).isInstance?.(err) || err?.name === "ProviderModelNotFoundError") {
+          const hint = err?.data?.suggestions?.length ? ` Did you mean: ${err.data.suggestions.join(", ")}?` : ""
           yield* bus.publish(Session.Event.Error, {
             sessionID,
             error: new NamedError.Unknown({
-              message: `Model not found: ${err.data.providerID}/${err.data.modelID}.${hint}`,
+              message: `Model not found: ${err?.data?.providerID}/${err?.data?.modelID}.${hint}`,
             }).toObject(),
           })
         }
@@ -929,7 +929,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           !input.variant && ag.variant && same
             ? yield* provider.getModel(model.providerID, model.modelID).pipe(Effect.catchDefect(() => Effect.void))
             : undefined
-        const variant = input.variant ?? (ag.variant && full?.variants?.[ag.variant] ? ag.variant : undefined)
+        const variant = input.variant ?? (ag.variant && (full as any)?.variants?.[ag.variant] ? ag.variant : undefined)
 
         const info: MessageV2.User = {
           id: input.messageID ?? MessageID.ascending(),
@@ -1383,7 +1383,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
               lastFinished.summary !== true &&
               (yield* compaction.isOverflow({ tokens: lastFinished.tokens, model }))
             ) {
-              yield* compaction.create({ sessionID, agent: lastUser.agent, model: lastUser.model, auto: true })
+              yield* compaction.create({ sessionID, agent: lastUser.agent, model: lastUser.model as any, auto: true })
               continue
             }
 
@@ -1512,7 +1512,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
                 yield* compaction.create({
                   sessionID,
                   agent: lastUser.agent,
-                  model: lastUser.model,
+                  model: lastUser.model as any,
                   auto: true,
                   overflow: !handle.message.finish,
                 })
@@ -1544,7 +1544,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         yield* elog.info("command", { sessionID: input.sessionID, command: input.command, agent: input.agent })
         const cmd = yield* commands.get(input.command)
         if (!cmd) {
-          const available = (yield* commands.list()).map((c) => c.name)
+          const available = (yield* commands.list()).map((c: any) => c.name)
           const hint = available.length ? ` Available commands: ${available.join(", ")}` : ""
           const error = new NamedError.Unknown({ message: `Command not found: "${input.command}".${hint}` })
           yield* bus.publish(Session.Event.Error, { sessionID: input.sessionID, error: error.toObject() })
@@ -1563,7 +1563,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
           if (value > last) last = value
         }
 
-        const withArgs = templateCommand.replaceAll(placeholderRegex, (_, index) => {
+        const withArgs = templateCommand.replaceAll(placeholderRegex, (_: any, index: any) => {
           const position = Number(index)
           const argIndex = position - 1
           if (argIndex >= args.length) return ""
@@ -1667,7 +1667,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
         prompt,
         loop,
         shell,
-        command,
+        command: command as any,
         resolvePromptParts,
       })
     }),
@@ -1703,7 +1703,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
       ),
     ),
   )
-  const { runPromise } = makeRuntime(Service, defaultLayer)
+  const { runPromise } = makeRuntime(Service, defaultLayer as any)
 
   export const PromptInput = z.object({
     sessionID: SessionID.zod,

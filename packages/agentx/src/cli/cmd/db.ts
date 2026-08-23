@@ -28,9 +28,9 @@ const QueryCommand = cmd({
   handler: async (args: { query?: string; format: string }) => {
     const query = args.query as string | undefined
     if (query) {
-      const db = new BunDatabase(Database.Path, { readonly: true })
+      const db = Database.Client()
       try {
-        const result = db.query(query).all() as Record<string, unknown>[]
+        const result = (db as any).prepare ? (db as any).prepare(query).all() : (db as any).query(query).all()
         if (args.format === "json") {
           console.log(JSON.stringify(result, null, 2))
         } else if (result.length > 0) {
@@ -44,7 +44,7 @@ const QueryCommand = cmd({
         UI.error(errorMessage(err))
         process.exit(1)
       }
-      db.close()
+      Database.close()
       return
     }
     const child = spawn("sqlite3", [Database.Path], {

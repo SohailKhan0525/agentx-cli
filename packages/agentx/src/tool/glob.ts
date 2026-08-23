@@ -51,7 +51,7 @@ export const GlobTool = Tool.define(
                 const info = yield* fs.stat(full).pipe(Effect.catch(() => Effect.succeed(undefined)))
                 const mtime =
                   info?.mtime.pipe(
-                    Option.map((d) => d.getTime()),
+                    Option.map((d: any) => d.getTime()),
                     Option.getOrElse(() => 0),
                   ) ?? 0
                 return { path: full, mtime }

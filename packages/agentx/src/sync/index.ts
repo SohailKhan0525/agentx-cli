@@ -13,11 +13,11 @@ export namespace SyncEvent {
     type: string
     version: number
     aggregate: string
-    schema: z.ZodObject
+    schema: ZodObject<any>
 
     // This is temporary and only exists for compatibility with bus
     // event definitions
-    properties: z.ZodObject
+    properties: ZodObject<any>
   }
 
   export type Event<Def extends Definition = Definition> = {
@@ -74,7 +74,7 @@ export namespace SyncEvent {
     Type extends string,
     Agg extends string,
     Schema extends ZodObject<Record<Agg, z.ZodType<string>>>,
-    BusSchema extends ZodObject = Schema,
+    BusSchema extends ZodObject<any> = Schema,
   >(input: { type: Type; version: number; aggregate: Agg; schema: Schema; busSchema?: BusSchema }) {
     if (frozen) {
       throw new Error("Error defining sync event: sync system has been frozen")
