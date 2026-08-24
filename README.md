@@ -6,18 +6,19 @@
 
 **The autonomous AI agent that builds production-ready websites from your terminal.**
 
-[![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
-[![npm downloads](https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
-[![JSR Score](https://img.shields.io/badge/JSR-100%25-000000?style=for-the-badge&logo=deno&labelColor=18181b)](https://jsr.io/@agent-qofeno/agentx-cli)
-[![GitHub Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=for-the-badge&logo=github&color=000000&labelColor=18181b)](https://github.com/SohailKhan0525/agentx-cli)
-[![License](https://img.shields.io/badge/license-MIT-000000?style=for-the-badge&logo=opensourceinitiative&labelColor=18181b)](./LICENSE)
-[![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-000000?style=for-the-badge&logo=linux&labelColor=18181b)](#multi-platform-support)
+[![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&logoColor=white&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![npm downloads](https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&logoColor=white&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![JSR Score](https://img.shields.io/badge/JSR-100%25-000000?style=for-the-badge&logo=deno&logoColor=white&labelColor=18181b)](https://jsr.io/@agent-qofeno/agentx-cli)
+[![Font Awesome](https://img.shields.io/badge/Font_Awesome-Icons-000000?style=for-the-badge&logo=fontawesome&logoColor=white&labelColor=18181b)](https://fontawesome.com)
+[![GitHub Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=for-the-badge&logo=github&logoColor=white&color=000000&labelColor=18181b)](https://github.com/SohailKhan0525/agentx-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=18181b)](./LICENSE)
+[![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-000000?style=for-the-badge&logo=linux&logoColor=white&labelColor=18181b)](#multi-platform-support)
 
 <p align="center">
-  <a href="https://sohailkhan0525.github.io/agentx-docs/"><b>Documentation</b></a> •
-  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><b>npm Package</b></a> •
-  <a href="https://github.com/SohailKhan0525/homebrew-agentx"><b>Homebrew Tap</b></a> •
-  <a href="https://jsr.io/@agent-qofeno/agentx-cli"><b>JSR Registry</b></a>
+  <a href="https://sohailkhan0525.github.io/agentx-docs/"><b><img src="https://img.shields.io/badge/Docs-Live-000000?style=flat-square&logo=docusaurus&logoColor=white" /></b></a> •
+  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><b><img src="https://img.shields.io/badge/npm-Package-000000?style=flat-square&logo=npm&logoColor=white" /></b></a> •
+  <a href="https://github.com/SohailKhan0525/homebrew-agentx"><b><img src="https://img.shields.io/badge/Homebrew-Tap-000000?style=flat-square&logo=homebrew&logoColor=white" /></b></a> •
+  <a href="https://jsr.io/@agent-qofeno/agentx-cli"><b><img src="https://img.shields.io/badge/JSR-Registry-000000?style=flat-square&logo=deno&logoColor=white" /></b></a>
 </p>
 
 </div>
@@ -29,11 +30,11 @@
 **AgentX** is a terminal-based autonomous AI agent designed from the ground up to plan, code, test, and ship complete, production-grade web applications in minutes.
 
 Unlike standard code-completion assistants, AgentX operates like a senior full-stack developer:
-1. **Plans Before Acting**: Writes an explicit multi-step blueprint and verifies requirements before touching code.
-2. **Reads Before Editing**: Analyzes your workspace structure, dependencies, and syntax trees before modifying files.
-3. **Uses Real Tools**: Executes shell commands, resolves dependencies, and applies unified diffs in real-time.
-4. **Iterates Until Green**: Automatically detects and fixes TypeScript errors, lint warnings, and build failures until the project compiles cleanly.
-5. **Ships Live**: Generates deployment configurations for Vercel, Netlify, Railway, or Fly.io and initializes git tracking.
+1. **<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/compass-drafting.svg" width="16" height="16" /> Plans Before Acting**: Writes an explicit multi-step blueprint and verifies requirements before touching code.
+2. **<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/book-open.svg" width="16" height="16" /> Reads Before Editing**: Analyzes your workspace structure, dependencies, and syntax trees before modifying files.
+3. **<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/wrench.svg" width="16" height="16" /> Uses Real Tools**: Executes shell commands, resolves dependencies, and applies unified diffs in real-time.
+4. **<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/rotate.svg" width="16" height="16" /> Iterates Until Green**: Automatically detects and fixes TypeScript errors, lint warnings, and build failures until the project compiles cleanly.
+5. **<img src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/rocket.svg" width="16" height="16" /> Ships Live**: Generates deployment configurations for Vercel, Netlify, Railway, or Fly.io and initializes git tracking.
 
 ---
 

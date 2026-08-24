@@ -41,17 +41,17 @@ export async function run(args?: string[] | AgentXOptions): Promise<void> {
 /**
  * Returns the current version of the AgentX CLI package.
  *
- * @returns The semantic version string (e.g., '2.0.6').
+ * @returns The semantic version string (e.g., '2.0.7').
  *
  * @example
  * ```ts
  * import { getVersion } from '@agent-qofeno/agentx-cli';
  *
- * console.log(getVersion()); // '2.0.6'
+ * console.log(getVersion()); // '2.0.7'
  * ```
  */
 export function getVersion(): string {
-  return '2.0.6';
+  return '2.0.7';
 }
 
 /**

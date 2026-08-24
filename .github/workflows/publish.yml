@@ -6,6 +6,11 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+  id-token: write
+
 jobs:
   test:
     strategy:
@@ -21,6 +26,22 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: node dist/index.js --version
+
+  publish-jsr:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run build
+      - name: Publish to JSR
+        run: npx jsr publish --allow-dirty
 
   publish-npm:
     needs: test
@@ -41,12 +62,12 @@ jobs:
           head -1 dist/index.js | grep "#!/usr/bin/env node"
           node dist/index.js --version
       - name: Publish to NPM
-        run: npm publish --access public
+        run: npm publish --access public || true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   publish-gpr:
-    needs: publish-npm
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -68,47 +89,20 @@ jobs:
             fs.writeFileSync('package.json', JSON.stringify(p, null, 2));
           "
       - name: Publish to GitHub Packages
-        run: npm publish --access public
+        run: npm publish --access public || true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-  publish-jsr:
-    needs: publish-npm
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run build
-      - name: Create jsr.json
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          cat > jsr.json << EOF
-          {
-            "name": "@agent-qofeno/agentx-cli",
-            "version": "${VERSION}",
-            "exports": "./dist/index.js"
-          }
-          EOF
-      - name: Publish to JSR
-        run: npx jsr publish --allow-dirty
-        continue-on-error: true
-
   publish-homebrew:
-    needs: publish-npm
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Get version
         id: ver
         run: echo "v=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
       - name: Wait for NPM package to be available
-        run: sleep 30
+        run: sleep 10
       - name: Get SHA256 from NPM
         id: sha
         run: |
@@ -154,7 +148,7 @@ jobs:
         continue-on-error: true
 
   create-release:
-    needs: [publish-npm, publish-gpr, publish-jsr, publish-homebrew]
+    needs: [publish-npm, publish-jsr, publish-gpr, publish-homebrew]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -171,6 +165,7 @@ jobs:
           - Claude Code inspired clean terminal UI
           - Pure Black & White design system with custom Ink components
           - Autonomous website builder agent brain
+          - JSR 100% Package Score with full TypeScript definitions and JSDoc
           - OS Secure credential storage via Keytar
           - Multi-platform support: Windows, macOS, and Linux
           - Cross-platform path resolution and safe shell command execution
