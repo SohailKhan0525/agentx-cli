@@ -51,7 +51,7 @@ export async function run(args?: string[] | AgentXOptions): Promise<void> {
  * ```
  */
 export function getVersion(): string {
-  return '2.0.9';
+  return '2.1.0';
 }
 
 /**

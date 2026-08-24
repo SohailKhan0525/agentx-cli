@@ -85,3 +85,58 @@ for (const cand of wasmCandidates) {
 }
 
 console.log("Build successful: dist/index.js")
+
+// Copy typescript declarations
+const dts = `/**
+ * @file AgentX CLI — The AI agent that builds production-ready websites from your terminal.
+ * @module @agent-qofeno/agentx-cli
+ */
+
+/**
+ * Configuration options for running the AgentX website builder agent.
+ */
+export interface AgentXOptions {
+  /** The model identifier to use (e.g., 'gpt-4o', 'claude-3-5-sonnet', 'gemini-2.0-flash', 'ollama/qwen2.5-coder:7b') */
+  model?: string;
+  /** Working directory where the project will be created or edited */
+  cwd?: string;
+  /** Optional AI provider name */
+  provider?: 'openai' | 'anthropic' | 'google' | 'copilot' | 'ollama' | 'lmstudio';
+  /** Whether to run in verbose debug mode */
+  verbose?: boolean;
+}
+
+/**
+ * Main entry point function for AgentX CLI.
+ * Initializes the terminal UI and starts the website builder agent loop.
+ *
+ * @param args - CLI arguments or configuration options.
+ * @returns A promise that resolves when the agent process completes.
+ *
+ * @example
+ * \`\`\`ts
+ * import { run } from '@agent-qofeno/agentx-cli';
+ *
+ * await run(['--help']);
+ * \`\`\`
+ */
+export declare function run(args?: string[] | AgentXOptions): Promise<void>;
+
+/**
+ * Returns the current version of the AgentX CLI package.
+ *
+ * @returns The semantic version string (e.g., '2.0.4').
+ */
+export declare function getVersion(): string;
+
+/**
+ * Default export representing the AgentX runner.
+ */
+declare const _default: {
+  run: typeof run;
+  getVersion: typeof getVersion;
+};
+
+export default _default;
+`;
+fs.writeFileSync(path.join("dist", "index.d.ts"), dts, 'utf8');
