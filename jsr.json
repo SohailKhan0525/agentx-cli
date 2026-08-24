@@ -1,11 +1,15 @@
 {
   "name": "@agent-qofeno/agentx-cli",
   "version": "2.0.6",
-  "description": "The AI agent that builds production-ready websites from your terminal",
+  "description": "The autonomous AI agent that builds complete, production-ready websites from your terminal",
   "license": "MIT",
-  "exports": "./dist/index.d.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./dist/index.d.ts"
+  },
   "publish": {
     "include": [
+      "index.ts",
       "dist/index.js",
       "dist/index.d.ts",
       "dist/yoga.wasm",
