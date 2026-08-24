@@ -2,7 +2,8 @@ name: Publish AgentX
 
 on:
   push:
-    tags: ['v*']
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -29,29 +30,20 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-
       - run: npm ci
       - run: npm run build
-
       - name: Verify
         run: |
           head -1 dist/index.js | grep "#!/usr/bin/env node"
           node dist/index.js --version
-
       - name: Publish to NPM
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Confirm NPM publish
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          npm view @agent-qofeno/agentx-cli@${VERSION} version && echo "Published to NPM: ${VERSION}" || echo "Could not confirm NPM publish"
 
   publish-gpr:
     needs: publish-npm
@@ -60,16 +52,13 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@SohailKhan0525'
-
       - run: npm ci
       - run: npm run build
-
       - name: Update scope for GitHub Packages
         run: |
           node -e "
@@ -78,7 +67,6 @@ jobs:
             p.name = '@SohailKhan0525/agentx-cli';
             fs.writeFileSync('package.json', JSON.stringify(p, null, 2));
           "
-
       - name: Publish to GitHub Packages
         run: npm publish --access public
         env:
@@ -96,10 +84,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - run: npm ci
       - run: npm run build
-
       - name: Create jsr.json
         run: |
           VERSION=$(node -p "require('./package.json').version")
@@ -110,7 +96,6 @@ jobs:
             "exports": "./dist/index.js"
           }
           EOF
-
       - name: Publish to JSR
         run: npx jsr publish --allow-dirty
         continue-on-error: true
@@ -122,10 +107,8 @@ jobs:
       - name: Get version
         id: ver
         run: echo "v=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
-
       - name: Wait for NPM package to be available
         run: sleep 30
-
       - name: Get SHA256 from NPM
         id: sha
         run: |
@@ -133,13 +116,11 @@ jobs:
           SHA=$(curl -fsSL "$URL" | sha256sum | cut -d' ' -f1)
           echo "sha=$SHA" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
-
       - uses: actions/checkout@v4
         with:
           repository: SohailKhan0525/homebrew-agentx
           token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
           path: homebrew-tap
-
       - name: Update Homebrew formula
         run: |
           cat > homebrew-tap/Formula/agentx.rb << EOF
@@ -162,7 +143,6 @@ jobs:
             end
           end
           EOF
-
       - name: Push formula update
         run: |
           cd homebrew-tap
@@ -185,19 +165,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          gh release create "v${VERSION}" \
-            --title "AgentX v${VERSION}" \
-            --notes "## AgentX v${VERSION} Release
+          cat << 'EOF' > release_notes.md
+          ## AgentX Release
 
-- Claude Code inspired clean terminal UI
-- Pure Black & White design system with custom Ink components
-- Autonomous website builder agent brain
-- OS Secure credential storage via Keytar (Keychain / Credential Manager / Secret Service)
-- Multi-platform support: Windows, macOS, and Linux
-- Cross-platform path resolution and safe shell command execution
+          - Claude Code inspired clean terminal UI
+          - Pure Black & White design system with custom Ink components
+          - Autonomous website builder agent brain
+          - OS Secure credential storage via Keytar
+          - Multi-platform support: Windows, macOS, and Linux
+          - Cross-platform path resolution and safe shell command execution
 
-### Install
-\`\`\`bash
-npm install -g @agent-qofeno/agentx-cli
-\`\`\`" \
-            --generate-notes || true
+          ### Install
+          ```bash
+          npm install -g @agent-qofeno/agentx-cli
+          ```
+          EOF
+          gh release create "v${VERSION}" --title "AgentX v${VERSION}" --notes-file release_notes.md || true
