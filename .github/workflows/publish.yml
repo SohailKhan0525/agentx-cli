@@ -10,6 +10,7 @@ permissions:
   contents: write
   packages: write
   id-token: write
+  attestations: write
 
 jobs:
   test:
@@ -40,7 +41,7 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build
-      - name: Publish to JSR
+      - name: Publish to JSR with OIDC Provenance
         run: npx jsr publish --allow-dirty
 
   publish-npm:
@@ -49,6 +50,7 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -61,8 +63,8 @@ jobs:
         run: |
           head -1 dist/index.js | grep "#!/usr/bin/env node"
           node dist/index.js --version
-      - name: Publish to NPM
-        run: npm publish --access public || true
+      - name: Publish to NPM with Provenance
+        run: npm publish --access public --provenance || true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -70,6 +72,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -80,16 +83,18 @@ jobs:
           scope: '@SohailKhan0525'
       - run: npm ci
       - run: npm run build
-      - name: Update scope for GitHub Packages
+      - name: Configure package name for GPR
         run: |
           node -e "
             const fs = require('fs');
             const p = JSON.parse(fs.readFileSync('package.json','utf8'));
             p.name = '@SohailKhan0525/agentx-cli';
+            p.repository = { type: 'git', url: 'git+https://github.com/SohailKhan0525/agentx-cli.git' };
+            p.publishConfig = { registry: 'https://npm.pkg.github.com' };
             fs.writeFileSync('package.json', JSON.stringify(p, null, 2));
           "
       - name: Publish to GitHub Packages
-        run: npm publish --access public || true
+        run: npm publish || true
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
@@ -152,27 +157,39 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
-      - name: Create Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release Tarballs & Checksums
         run: |
           VERSION=$(node -p "require('./package.json').version")
+          npm pack
+          sha256sum *.tgz > SHA256SUMS
           cat << 'EOF' > release_notes.md
           ## AgentX Release
 
-          - Claude Code inspired clean terminal UI
-          - Pure Black & White design system with custom Ink components
-          - Autonomous website builder agent brain
-          - JSR 100% Package Score with full TypeScript definitions and JSDoc
-          - OS Secure credential storage via Keytar
-          - Multi-platform support: Windows, macOS, and Linux
-          - Cross-platform path resolution and safe shell command execution
+          - **Terminal UI**: Monochromatic Ink layout inspired by Claude Code
+          - **Agent Brain**: Autonomous website builder engine
+          - **Provenance**: Cryptographically signed build attestations
+          - **Multiplatform**: Tested on Windows, macOS, and Linux runners
+          - **JSR 100% Score**: Complete TypeScript definitions with full JSDoc
 
           ### Install
           ```bash
+          # npm
           npm install -g @agent-qofeno/agentx-cli
+
+          # Homebrew
+          brew tap SohailKhan0525/agentx && brew install agentx
+
+          # JSR
+          npx jsr add @agent-qofeno/agentx-cli
+
+          # GitHub Packages
+          npm install -g @SohailKhan0525/agentx-cli --registry https://npm.pkg.github.com
           ```
           EOF
-          gh release create "v${VERSION}" --title "AgentX v${VERSION}" --notes-file release_notes.md || true
+          gh release create "v${VERSION}" *.tgz SHA256SUMS --title "AgentX v${VERSION}" --notes-file release_notes.md || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
