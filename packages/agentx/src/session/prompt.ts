@@ -1316,7 +1316,7 @@ NOTE: At any point in time through this workflow you should feel free to ask the
             let lastUser: MessageV2.User | undefined
             let lastAssistant: MessageV2.Assistant | undefined
             let lastFinished: MessageV2.Assistant | undefined
-            let tasks: (MessageV2.CompactionPart | MessageV2.SubtaskPart)[] = []
+            const tasks: (MessageV2.CompactionPart | MessageV2.SubtaskPart)[] = []
             for (let i = msgs.length - 1; i >= 0; i--) {
               const msg = msgs[i]
               if (!lastUser && msg.info.role === "user") lastUser = msg.info

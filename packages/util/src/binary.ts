@@ -4,7 +4,8 @@ export namespace Binary {
     let high = arr.length - 1
     while (low <= high) {
       const mid = Math.floor((low + high) / 2)
-      const diff = cmp(arr[mid], target)
+      const item = arr[mid]!
+      const diff = cmp(item, target)
       if (diff === 0) return mid
       if (diff < 0) low = mid + 1
       else high = mid - 1

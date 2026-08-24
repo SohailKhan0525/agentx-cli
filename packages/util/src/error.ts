@@ -1,7 +1,7 @@
 import z from "zod"
 
 export class NamedError extends Error {
-  name: string
+  override name: string
   data: any
 
   constructor(name: string, data: any) {

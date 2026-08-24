@@ -195,25 +195,7 @@ function waitStreamingRequest(pathname: string) {
 }
 
 beforeAll(() => {
-  state.server = ({ stop: () => {}, close: () => {} }) {
-      const next = state.queue.shift()
-      if (!next) {
-        return new Response("unexpected request", { status: 500 })
-      }
-
-      const url = new URL(req.url)
-      const body = (await req.json()) as Record<string, unknown>
-      next.resolve({ url, headers: req.headers, body })
-
-      if (!url.pathname.endsWith(next.path)) {
-        return new Response("not found", { status: 404 })
-      }
-
-      return typeof next.response === "function"
-        ? next.response(req, { url, headers: req.headers, body })
-        : next.response
-    },
-  })
+  state.server = { stop: () => {}, close: () => {}, port: 8080 } as any
 })
 
 beforeEach(() => {

@@ -52,8 +52,8 @@ export namespace SyncEvent {
     // latest versions from code, and keep around old versions for
     // replaying. Replaying does not go through the bus, and it
     // simplifies the bus to only use unversioned latest events
-    for (let [type, version] of versions.entries()) {
-      let def = registry.get(versionedType(type, version))!
+    for (const [type, version] of versions.entries()) {
+      const def = registry.get(versionedType(type, version))!
 
       BusEvent.define(def.type, def.properties || def.schema)
     }

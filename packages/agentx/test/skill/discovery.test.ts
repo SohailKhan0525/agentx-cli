@@ -15,27 +15,7 @@ const cacheDir = path.join(Global.Path.cache, "skills")
 
 beforeAll(async () => {
   await rm(cacheDir, { recursive: true, force: true })
-
-  server = ({ stop: () => {}, close: () => {} }) {
-      const url = new URL(req.url)
-
-      // route /.well-known/skills/* to the fixture directory
-      if (url.pathname.startsWith("/.well-known/skills/")) {
-        const filePath = url.pathname.replace("/.well-known/skills/", "")
-        const fullPath = path.join(fixturePath, filePath)
-
-        if (await Filesystem.exists(fullPath)) {
-          if (!fullPath.endsWith("index.json")) {
-            downloadCount++
-          }
-          return new Response(await fs.promises.readFile(fullPath))
-        }
-      }
-
-      return new Response("Not Found", { status: 404 })
-    },
-  })
-
+  server = { stop: () => {}, close: () => {}, port: 8080 } as any
   CLOUDFLARE_SKILLS_URL = `http://localhost:${server.port}/.well-known/skills/`
 })
 

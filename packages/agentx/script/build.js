@@ -2,6 +2,8 @@ import esbuild from "esbuild"
 import path from "path"
 import fs from "fs"
 
+const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"))
+
 const reactDevtoolsStubPlugin = {
   name: "react-devtools-stub",
   setup(build) {
@@ -43,7 +45,7 @@ const require = __agentx_createRequire(import.meta.url);
 `,
   },
   define: {
-    AGENTX_VERSION: JSON.stringify("2.0.3"),
+    AGENTX_VERSION: JSON.stringify(pkg.version),
     AGENTX_CHANNEL: JSON.stringify("prod"),
   },
   plugins: [reactDevtoolsStubPlugin],
