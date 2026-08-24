@@ -9,6 +9,11 @@
 > The AI agent that builds production-ready websites from your terminal.
 > Describe your website. AgentX plans, builds, deploys, and ships it.
 
+## Documentation
+
+https://SohailKhan0525.github.io/agentx-docs/  
+*(agentx.js.org — pending js.org subdomain approval)*
+
 ## Install
 
 ### npm
@@ -48,7 +53,7 @@ Next.js 14 · React + Vite · Astro · Nuxt 3
 
 ## Security
 
-Keys stored in OS secure storage. Never plain text.
+Keys stored in OS secure storage. Never in plain text.
 
 ## Requirements
 
@@ -56,8 +61,8 @@ Node.js 18+
 
 ## Issues
 
-github.com/SohailKhan0525/agentx-cli/issues
+https://github.com/SohailKhan0525/agentx-cli/issues
 
 ## Star ⭐
 
-github.com/SohailKhan0525/agentx-cli
+https://github.com/SohailKhan0525/agentx-cli
