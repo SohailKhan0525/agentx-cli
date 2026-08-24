@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - run: node dist/index.js --version
 
@@ -39,7 +39,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - name: Publish to JSR with OIDC Provenance
         run: npx jsr publish --allow-dirty
@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - name: Verify
         run: |
@@ -81,7 +81,7 @@ jobs:
           node-version: '20'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@SohailKhan0525'
-      - run: npm ci
+      - run: npm ci --ignore-scripts
       - run: npm run build
       - name: Configure package name for GPR
         run: |
@@ -171,8 +171,9 @@ jobs:
 
           - **Terminal UI**: Monochromatic Ink layout inspired by Claude Code
           - **Agent Brain**: Autonomous website builder engine
-          - **Provenance**: Cryptographically signed build attestations
-          - **Multiplatform**: Tested on Windows, macOS, and Linux runners
+          - **FontAwesome 6 Icons**: Vector iconography across documentation and badges
+          - **Provenance**: Cryptographically signed build attestations on npm, JSR, and GitHub
+          - **Multiplatform**: Validated on Windows, macOS, and Linux runners
           - **JSR 100% Score**: Complete TypeScript definitions with full JSDoc
 
           ### Install
