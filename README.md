@@ -9,7 +9,6 @@
 [![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&logoColor=white&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
 [![npm downloads](https://img.shields.io/npm/dm/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&logoColor=white&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
 [![JSR Score](https://img.shields.io/badge/JSR-100%25-000000?style=for-the-badge&logo=deno&logoColor=white&labelColor=18181b)](https://jsr.io/@agent-qofeno/agentx-cli)
-[![Font Awesome](https://img.shields.io/badge/Font_Awesome-Icons-000000?style=for-the-badge&logo=fontawesome&logoColor=white&labelColor=18181b)](https://fontawesome.com)
 [![GitHub Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=for-the-badge&logo=github&logoColor=white&color=000000&labelColor=18181b)](https://github.com/SohailKhan0525/agentx-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=opensourceinitiative&logoColor=white&labelColor=18181b)](./LICENSE)
 [![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-000000?style=for-the-badge&logo=linux&logoColor=white&labelColor=18181b)](#multi-platform-support)
