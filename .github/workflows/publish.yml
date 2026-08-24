@@ -1,11 +1,11 @@
 name: Publish AgentX
+
 on:
   push:
     tags: ['v*']
   workflow_dispatch:
 
 jobs:
-  # ── 1. Test on all platforms first ──────────────────
   test:
     strategy:
       matrix:
@@ -21,7 +21,6 @@ jobs:
       - run: npm run build
       - run: node dist/index.js --version
 
-  # ── 2. Publish to NPM ───────────────────────────────
   publish-npm:
     needs: test
     runs-on: ubuntu-latest
@@ -52,11 +51,8 @@ jobs:
       - name: Confirm NPM publish
         run: |
           VERSION=$(node -p "require('./package.json').version")
-          npm view @agent-qofeno/agentx-cli@${VERSION} version \
-            && echo "✓ Published to NPM: ${VERSION}" \
-            || echo "⚠ Could not confirm NPM publish"
+          npm view @agent-qofeno/agentx-cli@${VERSION} version && echo "Published to NPM: ${VERSION}" || echo "Could not confirm NPM publish"
 
-  # ── 3. Publish to GitHub Packages ───────────────────
   publish-gpr:
     needs: publish-npm
     runs-on: ubuntu-latest
@@ -89,7 +85,6 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-  # ── 4. Publish to JSR ───────────────────────────────
   publish-jsr:
     needs: publish-npm
     runs-on: ubuntu-latest
@@ -120,13 +115,6 @@ jobs:
         run: npx jsr publish --allow-dirty
         continue-on-error: true
 
-      - name: Confirm JSR publish
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "Check: https://jsr.io/@agent-qofeno/agentx-cli@${VERSION}"
-        continue-on-error: true
-
-  # ── 5. Update Homebrew tap ──────────────────────────
   publish-homebrew:
     needs: publish-npm
     runs-on: ubuntu-latest
@@ -185,7 +173,6 @@ jobs:
           git push
         continue-on-error: true
 
-  # ── 6. Create GitHub Release ────────────────────────
   create-release:
     needs: [publish-npm, publish-gpr, publish-jsr, publish-homebrew]
     runs-on: ubuntu-latest

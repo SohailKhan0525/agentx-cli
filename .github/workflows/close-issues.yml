@@ -1,24 +1,22 @@
-name: close-issues
+name: Close Stale Issues
 
 on:
   schedule:
     - cron: "0 2 * * *" # Daily at 2:00 AM
   workflow_dispatch:
 
+permissions:
+  issues: write
+  pull-requests: write
+
 jobs:
-  close:
+  stale:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: oven-sh/setup-bun@v2
+      - uses: actions/stale@v9
         with:
-          bun-version: latest
-
-      - name: Close stale issues
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: bun script/github/close-issues.ts
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: 'This issue has been automatically marked as stale because it has not had recent activity.'
+          stale-issue-label: 'stale'
+          days-before-stale: 60
+          days-before-close: 7
