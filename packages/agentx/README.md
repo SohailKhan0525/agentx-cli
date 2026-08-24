@@ -1,63 +1,36 @@
-# AgentX
+# @agent-qofeno/agentx-cli
 
-![npm](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli)
-![Stars](https://img.shields.io/github/stars/SohailKhan0525/agentx-cli?style=social)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
-![License](https://img.shields.io/github/license/SohailKhan0525/agentx-cli)
-![Node](https://img.shields.io/node/v/@agent-qofeno/agentx-cli)
+Core CLI binary and interactive terminal interface for AgentX.
 
-> The AI agent that builds production-ready websites from your terminal.
-> Describe your website. AgentX plans, builds, deploys, and ships it.
+[![npm version](https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=for-the-badge&logo=npm&color=000000&labelColor=18181b)](https://www.npmjs.com/package/@agent-qofeno/agentx-cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&logo=opensourceinitiative&labelColor=18181b)](../../LICENSE)
 
-## Install
+## Overview
 
-### npm
+This package houses the AgentX terminal user interface (built with React and Ink), the multi-model agent reasoning loop, tool execution engines, and OS keychain adapters.
+
+## Installation
+
 ```bash
 npm install -g @agent-qofeno/agentx-cli
 ```
 
-### Homebrew (macOS/Linux)
-```bash
-brew tap SohailKhan0525/agentx
-brew install agentx
+## Programmatic Usage
+
+```typescript
+import { run, getVersion } from '@agent-qofeno/agentx-cli';
+
+console.log('Running AgentX v' + getVersion());
+await run({
+  model: 'gpt-4o',
+  provider: 'openai',
+  cwd: process.cwd()
+});
 ```
 
-### GitHub Packages
-```bash
-npm install -g @SohailKhan0525/agentx-cli --registry https://npm.pkg.github.com
-```
+## Features
 
-### JSR
-```bash
-npx jsr add @agent-qofeno/agentx-cli
-```
-
-## Use
-
-```bash
-agentx
-```
-
-## AI Providers
-
-GitHub Copilot · ChatGPT · Google Gemini · Anthropic Claude · Local Models
-
-## Supported Stacks
-
-Next.js 14 · React + Vite · Astro · Nuxt 3
-
-## Security
-
-Keys stored in OS secure storage. Never plain text.
-
-## Requirements
-
-Node.js 18+
-
-## Issues
-
-github.com/SohailKhan0525/agentx-cli/issues
-
-## Star ⭐
-
-github.com/SohailKhan0525/agentx-cli
+- **Ink Terminal UI**: Pure monochromatic layout inspired by Claude Code.
+- **Autonomous Agent Brain**: Automated planning, file editing, and command execution.
+- **Secure Keytar Vault**: Native OS credential management.
+- **Multi-Model Provider Architecture**: OpenAI, Anthropic, Google Gemini, GitHub Copilot, and Ollama.

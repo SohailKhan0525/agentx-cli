@@ -9,7 +9,7 @@ if (nodeMajor < 18) {
 declare const AGENTX_VERSION: string | undefined
 
 if (process.argv.includes('-v') || process.argv.includes('--version')) {
-  const version = typeof AGENTX_VERSION !== 'undefined' ? AGENTX_VERSION : '2.0.5'
+  const version = typeof AGENTX_VERSION !== 'undefined' ? AGENTX_VERSION : '2.0.6'
   console.log(version)
   process.exit(0)
 }
