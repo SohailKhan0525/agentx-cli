@@ -109,7 +109,7 @@ describe("OpencodePlugin", () => {
         inputs: {},
       })
       expect(attempt.url).toBe(
-        "https://github.com/SohailKhan0525/agentx-cli/device?user_code=user&client_id=opencode-cli",
+        "https://github.com/console/device?user_code=user&client_id=opencode-cli",
       )
     }),
   )
