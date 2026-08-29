@@ -18,6 +18,6 @@ describe("authFromToken", () => {
 
 describe("authTokenFromCredentials", () => {
   test("encodes credentials with the default username", () => {
-    expect(authTokenFromCredentials({ password: "secret" })).toBe(btoa("opencode:secret"))
+    expect(authTokenFromCredentials({ password: "secret" })).toBe(btoa("agentx:secret"))
   })
 })
