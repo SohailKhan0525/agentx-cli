@@ -7,6 +7,9 @@
     "storybook": "storybook dev -p 6006",
     "build": "storybook build"
   },
+  "dependencies": {
+    "solid-js": "catalog:"
+  },
   "devDependencies": {
     "@tailwindcss/vite": "catalog:",
     "@agent-qofeno/session-ui": "workspace:*",
