@@ -19,6 +19,7 @@ import { TuiKeybind } from "./config/keybind"
 
 export const LEADER_TOKEN = "leader"
 export const AGENTX_BASE_MODE = "base"
+export const OPENCODE_BASE_MODE = AGENTX_BASE_MODE
 export const COMMAND_PALETTE_COMMAND = "command.palette.show"
 
 const AGENTX_MODE_KEY = "opencode.mode"
