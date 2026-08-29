@@ -108,9 +108,7 @@ describe("OpencodePlugin", () => {
         methodID: Integration.MethodID.make("device"),
         inputs: {},
       })
-      expect(attempt.url).toBe(
-        "https://github.com/console/device?user_code=user&client_id=opencode-cli",
-      )
+      expect(attempt.url).toBe("https://github.com/console/device?user_code=user&client_id=opencode-cli")
     }),
   )
 
