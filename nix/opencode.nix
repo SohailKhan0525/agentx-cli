@@ -14,7 +14,7 @@
   node_modules ? callPackage ./node-modules.nix { },
 }:
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "opencode";
+  pname = "agentx";
   inherit (node_modules) version src;
   inherit node_modules;
 
@@ -52,7 +52,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   buildPhase = ''
     runHook preBuild
 
-    cd ./packages/opencode
+    cd ./packages/agentx
     bun --bun ./script/build.ts --single --skip-install
     bun --bun ./script/schema.ts schema.json
 
@@ -62,10 +62,10 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    install -Dm755 dist/opencode-*/bin/opencode $out/bin/opencode
-    install -Dm644 schema.json $out/share/opencode/schema.json
+    install -Dm755 dist/agentx-*/bin/agentx $out/bin/agentx
+    install -Dm644 schema.json $out/share/agentx/schema.json
 
-    wrapProgram $out/bin/opencode \
+    wrapProgram $out/bin/agentx \
       --prefix PATH : ${
         lib.makeBinPath (
           [
@@ -81,9 +81,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   postInstall = lib.optionalString (stdenvNoCC.buildPlatform.canExecute stdenvNoCC.hostPlatform) ''
     # trick yargs into also generating zsh completions
-    installShellCompletion --cmd opencode \
-      --bash <($out/bin/opencode completion) \
-      --zsh <(SHELL=/bin/zsh $out/bin/opencode completion)
+    installShellCompletion --cmd agentx \
+      --bash <($out/bin/agentx completion) \
+      --zsh <(SHELL=/bin/zsh $out/bin/agentx completion)
   '';
 
   nativeInstallCheckInputs = [
@@ -95,15 +95,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   versionCheckProgramArg = "--version";
 
   passthru = {
-    jsonschema = "${placeholder "out"}/share/opencode/schema.json";
+    jsonschema = "${placeholder "out"}/share/agentx/schema.json";
     env = finalAttrs.env;
   };
 
   meta = {
-    description = "The open source coding agent";
-    homepage = "https://opencode.ai";
+    description = "The AI coding agent built for the terminal";
+    homepage = "https://github.com/SohailKhan0525/agentx-cli";
     license = lib.licenses.mit;
-    mainProgram = "opencode";
+    mainProgram = "agentx";
     inherit (node_modules.meta) platforms;
   };
 })

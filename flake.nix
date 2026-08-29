@@ -39,12 +39,14 @@
             };
           in
           rec {
-            opencode = final.callPackage ./nix/opencode.nix {
+            agentx = final.callPackage ./nix/opencode.nix {
               inherit node_modules;
             };
-            opencode-desktop = final.callPackage ./nix/desktop.nix {
-              inherit opencode;
+            opencode = agentx;
+            agentx-desktop = final.callPackage ./nix/desktop.nix {
+              opencode = agentx;
             };
+            opencode-desktop = agentx-desktop;
           };
       };
 
@@ -56,13 +58,15 @@
           };
         in
         rec {
-          default = opencode;
-          opencode = pkgs.callPackage ./nix/opencode.nix {
+          default = agentx;
+          agentx = pkgs.callPackage ./nix/opencode.nix {
             inherit node_modules;
           };
-          opencode-desktop = pkgs.callPackage ./nix/desktop.nix {
-            inherit opencode;
+          opencode = agentx;
+          agentx-desktop = pkgs.callPackage ./nix/desktop.nix {
+            opencode = agentx;
           };
+          opencode-desktop = agentx-desktop;
           # Updater derivation with fakeHash - build fails and reveals correct hash
           node_modules_updater = node_modules.override {
             hash = pkgs.lib.fakeHash;
