@@ -10,13 +10,9 @@
   <a href="https://github.com/SohailKhan0525/agentx-cli"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
 </p>
 
-```text
-     _    ____ _____ _   _ _______  __    ____ ___  ____  _____
-    / \  / ___| ____| \ | |_   _\ \/ /   / ___/ _ \|  _ \| ____|
-   / _ \| |  _|  _| |  \| | | |  \  /   | |  | | | | | | |  _|
-  / ___ \ |_| | |___| |\  | | |  /  \   | |__| |_| | |_| | |___
- /_/   \_\____|_____|_| \_| |_| /_/\_\   \____\___/|____/|_____|
-```
+<p align="center">
+  <img src="screenshot-uk.png" alt="AgentX Code" width="600" />
+</p>
 
 ---
 
@@ -83,9 +79,7 @@ AgentX Code includes a first-class **Local AI Engine** with zero setup friction.
 
   Within the interactive chat session, type:
 
-  ```text
-  /local-model
-  ```
+  
 
 ---
 
@@ -129,4 +123,4 @@ agentx providers
 
 AgentX Code is licensed under the [MIT License](LICENSE).
 
-_Attribution_: AgentX Code is built upon the open-source foundation of OpenCode. AgentX Code is an independent product maintained by [Sohail Khan](https://github.com/SohailKhan0525/agentx-cli) and is not affiliated with the upstream OpenCode project.
+_Attribution_: AgentX Code is built upon the open-source foundation of AgentX Code. AgentX Code is an independent product maintained by [Sohail Khan](https://github.com/SohailKhan0525/agentx-cli) and is not affiliated with the upstream AgentX Code project.

@@ -1,16 +1,13 @@
 <p align="center">
   <a href="https://github.com/SohailKhan0525/agentx-cli">
-    <picture>
-      <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
-      <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
-    </picture>
+    <p align="center">
+  <img src="screenshot-uk.png" alt="AgentX Code" width="600" />
+</p>
   </a>
 </p>
 <p align="center">오픈 소스 AI 코딩 에이전트.</p>
 <p align="center">
-  <a href="https://github.com/SohailKhan0525/agentx-cli/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
+  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm" src="https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=flat-square" /></a>
   <a href="https://github.com/SohailKhan0525/agentx-cli/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/SohailKhan0525/agentx-cli/publish.yml?style=flat-square&branch=dev" /></a>
 </p>
 
@@ -39,7 +36,7 @@
   <a href="README.vi.md">Tiếng Việt</a>
 </p>
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://github.com/SohailKhan0525/agentx-cli)
+[![AgentX Code Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://github.com/SohailKhan0525/agentx-cli)
 
 ---
 
@@ -50,15 +47,15 @@
 curl -fsSL https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/install | bash
 
 # 패키지 매니저
-npm i -g opencode-ai@latest        # bun/pnpm/yarn 도 가능
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install SohailKhan0525/tap/opencode # macOS 및 Linux (권장, 항상 최신)
-brew install opencode              # macOS 및 Linux (공식 brew formula, 업데이트 빈도 낮음)
-sudo pacman -S opencode            # Arch Linux (Stable)
-paru -S opencode-bin               # Arch Linux (Latest from AUR)
-mise use -g opencode               # 어떤 OS든
-nix run nixpkgs#opencode           # 또는 github:SohailKhan0525/agentx-cli 로 최신 dev 브랜치
+npm i -g agentx-ai@latest        # bun/pnpm/yarn 도 가능
+scoop install agentx             # Windows
+choco install agentx             # Windows
+brew install SohailKhan0525/tap/agentx # macOS 및 Linux (권장, 항상 최신)
+brew install agentx              # macOS 및 Linux (공식 brew formula, 업데이트 빈도 낮음)
+sudo pacman -S agentx            # Arch Linux (Stable)
+paru -S agentx-bin               # Arch Linux (Latest from AUR)
+mise use -g agentx               # 어떤 OS든
+nix run nixpkgs#agentx           # 또는 github:SohailKhan0525/agentx-cli 로 최신 dev 브랜치
 ```
 
 > [!TIP]
@@ -66,20 +63,20 @@ nix run nixpkgs#opencode           # 또는 github:SohailKhan0525/agentx-cli 로
 
 ### 데스크톱 앱 (BETA)
 
-OpenCode 는 데스크톱 앱으로도 제공됩니다. [releases page](https://github.com/SohailKhan0525/agentx-cli/releases) 에서 직접 다운로드하거나 [github.com/SohailKhan0525/agentx-cli/download](https://github.com/SohailKhan0525/agentx-cli/download) 를 이용하세요.
+AgentX Code 는 데스크톱 앱으로도 제공됩니다. [releases page](https://github.com/SohailKhan0525/agentx-cli/releases) 에서 직접 다운로드하거나 [github.com/SohailKhan0525/agentx-cli/download](https://github.com/SohailKhan0525/agentx-cli/download) 를 이용하세요.
 
 | 플랫폼                | 다운로드                           |
 | --------------------- | ---------------------------------- |
-| macOS (Apple Silicon) | `opencode-desktop-mac-arm64.dmg`   |
-| macOS (Intel)         | `opencode-desktop-mac-x64.dmg`     |
-| Windows               | `opencode-desktop-windows-x64.exe` |
+| macOS (Apple Silicon) | `agentx-desktop-mac-arm64.dmg`   |
+| macOS (Intel)         | `agentx-desktop-mac-x64.dmg`     |
+| Windows               | `agentx-desktop-windows-x64.exe` |
 | Linux                 | `.deb`, `.rpm`, 또는 AppImage      |
 
 ```bash
 # macOS (Homebrew)
-brew install --cask opencode-desktop
+brew install --cask agentx-desktop
 # Windows (Scoop)
-scoop bucket add extras; scoop install extras/opencode-desktop
+scoop bucket add extras; scoop install extras/agentx-desktop
 ```
 
 #### 설치 디렉터리
@@ -89,7 +86,7 @@ scoop bucket add extras; scoop install extras/opencode-desktop
 1. `$OPENCODE_INSTALL_DIR` - 사용자 지정 설치 디렉터리
 2. `$XDG_BIN_DIR` - XDG Base Directory Specification 준수 경로
 3. `$HOME/bin` - 표준 사용자 바이너리 디렉터리 (존재하거나 생성 가능할 경우)
-4. `$HOME/.opencode/bin` - 기본 폴백
+4. `$HOME/.agentx/bin` - 기본 폴백
 
 ```bash
 # 예시
@@ -99,7 +96,7 @@ XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://raw.githubusercontent.com/Sohail
 
 ### Agents
 
-OpenCode 에는 내장 에이전트 2개가 있으며 `Tab` 키로 전환할 수 있습니다.
+AgentX Code 에는 내장 에이전트 2개가 있으며 `Tab` 키로 전환할 수 있습니다.
 
 - **build** - 기본값, 개발 작업을 위한 전체 권한 에이전트
 - **plan** - 분석 및 코드 탐색을 위한 읽기 전용 에이전트
@@ -114,16 +111,16 @@ OpenCode 에는 내장 에이전트 2개가 있으며 `Tab` 키로 전환할 수
 
 ### 문서
 
-OpenCode 설정에 대한 자세한 내용은 [**문서**](https://github.com/SohailKhan0525/agentx-cli/docs) 를 참고하세요.
+AgentX Code 설정에 대한 자세한 내용은 [**문서**](https://github.com/SohailKhan0525/agentx-cli/docs) 를 참고하세요.
 
 ### 기여하기
 
-OpenCode 에 기여하고 싶다면, Pull Request 를 제출하기 전에 [contributing docs](./CONTRIBUTING.md) 를 읽어주세요.
+AgentX Code 에 기여하고 싶다면, Pull Request 를 제출하기 전에 [contributing docs](./CONTRIBUTING.md) 를 읽어주세요.
 
-### OpenCode 기반으로 만들기
+### AgentX Code 기반으로 만들기
 
-OpenCode 와 관련된 프로젝트를 진행하면서 이름에 "opencode"(예: "opencode-dashboard" 또는 "opencode-mobile") 를 포함한다면, README 에 해당 프로젝트가 OpenCode 팀이 만든 것이 아니며 어떤 방식으로도 우리와 제휴되어 있지 않다는 점을 명시해 주세요.
+AgentX Code 와 관련된 프로젝트를 진행하면서 이름에 "agentx"(예: "agentx-dashboard" 또는 "agentx-mobile") 를 포함한다면, README 에 해당 프로젝트가 AgentX Code 팀이 만든 것이 아니며 어떤 방식으로도 우리와 제휴되어 있지 않다는 점을 명시해 주세요.
 
 ---
 
-**커뮤니티에 참여하기** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+**커뮤니티에 참여하기** [Discord](https://discord.gg/agentx) | [X.com](https://x.com/agentx)

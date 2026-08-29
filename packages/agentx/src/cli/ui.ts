@@ -3,18 +3,18 @@ import { Schema } from "effect"
 import { logo as glyphs } from "./logo"
 
 const wordmark = [
-  "     _    ____ _____ _   _ _______  __    ____ ___  ____  _____ ",
-  "    / \\  / ___| ____| \\ | |_   _\\ \\/ /   / ___/ _ \\|  _ \\| ____|",
-  "   / _ \\| |  _|  _| |  \\| | | |  \\  /   | |  | | | | | | |  _|  ",
-  "  / ___ \\ |_| | |___| |\\  | | |  /  \\   | |__| |_| | |_| | |___ ",
-  " /_/   \\_\\____|_____|_| \\_| |_| /_/\\_\\   \\____\\___/|____/|_____| ",
+  "      ▄▄████▄▄        █████   ██████  ███████ ███    ██ ████████ ██   ██    ██████   ██████  ██████  ███████ ",
+  "    ▄██████████▄     ██   ██ ██       ██      ████   ██    ██     ██ ██    ██       ██    ██ ██   ██ ██      ",
+  "  ▄██████████████▄   ███████ ██   ███ █████   ██ ██  ██    ██      ███     ██       ██    ██ ██   ██ █████   ",
+  " ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀  ██   ██ ██    ██ ██      ██  ██ ██    ██     ██ ██    ██       ██    ██ ██   ██ ██      ",
+  "     ██      ██      ██   ██  ██████  ███████ ██   ████    ██    ██   ██    ██████   ██████  ██████  ███████ ",
 ]
 
 export class CancelledError extends Schema.TaggedErrorClass<CancelledError>()("UICancelledError", {}) {}
 
 export const Style = {
-  TEXT_HIGHLIGHT: "\x1b[96m",
-  TEXT_HIGHLIGHT_BOLD: "\x1b[96m\x1b[1m",
+  TEXT_HIGHLIGHT: "\x1b[38;2;255;230;0m",
+  TEXT_HIGHLIGHT_BOLD: "\x1b[38;2;255;230;0m\x1b[1m",
   TEXT_DIM: "\x1b[90m",
   TEXT_DIM_BOLD: "\x1b[90m\x1b[1m",
   TEXT_NORMAL: "\x1b[0m",
@@ -62,16 +62,16 @@ export function logo(pad?: string) {
 
   const result: string[] = []
   const reset = "\x1b[0m"
-  const cyan = "\x1b[96m"
+  const yellow = "\x1b[38;2;255;230;0m"
   const bold = "\x1b[1m"
-  const gap = "   "
+  const gap = "  "
 
   glyphs.left.forEach((row, index) => {
     if (pad) result.push(pad)
-    result.push(`${cyan}${row}${reset}`)
+    result.push(`${yellow}${row}${reset}`)
     result.push(gap)
     const other = glyphs.right[index] ?? ""
-    result.push(`${bold}${other}${reset}`)
+    result.push(`${yellow}${bold}${other}${reset}`)
     result.push(EOL)
   })
   return result.join("").trimEnd()

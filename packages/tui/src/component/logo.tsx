@@ -3,7 +3,7 @@ import { For, type JSX } from "solid-js"
 import { tint, useTheme } from "../context/theme"
 import { logo } from "../logo"
 
-const CYAN = RGBA.fromHex("#00e5ff")
+const YELLOW = RGBA.fromHex("#ffe600")
 
 export function Logo() {
   const { theme } = useTheme()
@@ -53,8 +53,8 @@ export function Logo() {
       <For each={logo.left}>
         {(line, index) => (
           <box flexDirection="row" gap={1}>
-            <box flexDirection="row">{renderLine(line, CYAN, true)}</box>
-            <box flexDirection="row">{renderLine(logo.right[index()], theme.text, true)}</box>
+            <box flexDirection="row">{renderLine(line, YELLOW, true)}</box>
+            <box flexDirection="row">{renderLine(logo.right[index()], YELLOW, true)}</box>
           </box>
         )}
       </For>

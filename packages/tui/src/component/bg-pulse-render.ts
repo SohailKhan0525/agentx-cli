@@ -123,7 +123,7 @@ function sameRgb(a: Rgb, b: Rgb) {
 export class GoUpsellArtPainter {
   private panelRgb: Rgb = [0, 0, 0]
   private primaryRgb: Rgb = [255, 255, 255]
-  private logoBaseRgb: Rgb = [180, 180, 180]
+  private logoBaseRgb: Rgb = [255, 230, 0]
   private elapsed = 0
   private distances = new Float32Array(0)
   private edgeFalloff = new Float32Array(0)

@@ -1,29 +1,14 @@
-const logo = {
-  left: [
-    "     _    ____ _____ _   _ _______  __",
-    "    / \\  / ___| ____| \\ | |_   _\\ \\/ /",
-    "   / _ \\| |  _|  _| |  \\| | | |  \\  / ",
-    "  / ___ \\ |_| | |___| |\\  | | |  /  \\ ",
-    " /_/   \\_\\____|_____|_| \\_| |_| /_/\\_\\",
-  ],
-  right: [
-    "   ____ ___  ____  _____ ",
-    "  / ___/ _ \\|  _ \\| ____|",
-    " | |  | | | | | | |  _|  ",
-    " | |__| |_| | |_| | |___ ",
-    "  \\____\\___/|____/|_____| ",
-  ],
-}
+import { logo } from "../logo"
 
 const reset = "\x1b[0m"
 const bold = "\x1b[1m"
 const dim = "\x1b[90m"
-const cyan = "\x1b[96m"
+const yellow = "\x1b[38;2;255;230;0m"
 
 function wordmark(pad = "") {
   return logo.left.map((line, index) => {
     const right = logo.right[index] ?? ""
-    return `${pad}${cyan}${line}${reset} ${bold}${right}${reset}`
+    return `${pad}${yellow}${line}${reset} ${yellow}${bold}${right}${reset}`
   })
 }
 
