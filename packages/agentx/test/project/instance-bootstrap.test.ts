@@ -48,15 +48,14 @@ const bootstrapFixture = Effect.gen(function* () {
       ].join("\n"),
     ),
   )
-  yield* Effect.promise(() =>
-    Bun.write(
-      path.join(dir, "opencode.json"),
-      JSON.stringify({
-        $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json",
-        plugin: [pathToFileURL(pluginFile).href],
-      }),
-    ),
-  )
+  const cfg = JSON.stringify({
+    $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json",
+    plugin: [pathToFileURL(pluginFile).href],
+  })
+  yield* Effect.promise(async () => {
+    await Bun.write(path.join(dir, "agentx.json"), cfg)
+    await Bun.write(path.join(dir, "opencode.json"), cfg)
+  })
   return { directory: dir, marker }
 })
 

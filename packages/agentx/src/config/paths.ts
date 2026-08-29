@@ -14,7 +14,7 @@ export const files = Effect.fn("ConfigPaths.projectFiles")(function* (
 ) {
   const afs = yield* FSUtil.Service
   return (yield* afs.up({
-    targets: [`${name}.jsonc`, `${name}.json`],
+    targets: [`${name}.jsonc`, `${name}.json`, "agentx.jsonc", "agentx.json", "opencode.jsonc", "opencode.json"],
     start: directory,
     stop: worktree,
   })).toReversed()
@@ -26,13 +26,13 @@ export const directories = Effect.fn("ConfigPaths.directories")(function* (direc
     Global.Path.config,
     ...(!Flag.AGENTX_DISABLE_PROJECT_CONFIG
       ? yield* afs.up({
-          targets: [".opencode"],
+          targets: [".agentx", ".opencode"],
           start: directory,
           stop: worktree,
         })
       : []),
     ...(yield* afs.up({
-      targets: [".opencode"],
+      targets: [".agentx", ".opencode"],
       start: Global.Path.home,
       stop: Global.Path.home,
     })),
