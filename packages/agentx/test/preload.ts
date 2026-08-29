@@ -12,25 +12,17 @@ await fs.mkdir(dir, { recursive: true })
 afterAll(async () => {
   try {
     const { AppRuntime } = await import("../src/effect/app-runtime")
-    await Promise.race([AppRuntime.dispose(), sleep(400)]).catch(() => {})
+    await Promise.race([AppRuntime.dispose(), sleep(50)]).catch(() => {})
   } catch {
     // ignore
   }
 
-  const busy = (error: unknown) =>
-    typeof error === "object" && error !== null && "code" in error && error.code === "EBUSY"
-  const rm = async (left: number): Promise<void> => {
-    Bun.gc(true)
-    await sleep(20)
-    return fs.rm(dir, { recursive: true, force: true }).catch((error) => {
-      if (process.platform === "win32") return
-      if (!busy(error)) throw error
-      if (left <= 1) throw error
-      return rm(left - 1)
-    })
+  Bun.gc(true)
+  try {
+    await fs.rm(dir, { recursive: true, force: true }).catch(() => {})
+  } catch {
+    // ignore
   }
-
-  await rm(5)
 })
 
 process.env["XDG_DATA_HOME"] = path.join(dir, "share")
