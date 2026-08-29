@@ -1,6 +1,6 @@
-@import "@opencode-ai/ui/styles/tailwind";
-@import "@opencode-ai/session-ui/styles";
-@import "@opencode-ai/ui/v2/styles/tailwind.css";
+@import "@agent-qofeno/ui/styles/tailwind";
+@import "@agent-qofeno/session-ui/styles";
+@import "@agent-qofeno/ui/v2/styles/tailwind.css";
 @import "tw-animate-css";
 
 @font-face {
