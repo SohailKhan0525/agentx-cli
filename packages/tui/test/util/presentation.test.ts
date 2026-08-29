@@ -6,4 +6,3 @@ test("formats session continuation summary", () => {
   expect(epilogue).toContain("A session")
   expect(epilogue).toContain("agentx -s ses_123")
 })
-

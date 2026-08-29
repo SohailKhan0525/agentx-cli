@@ -268,7 +268,11 @@ export async function installWslOpencode(version: string, distro: string, opts?:
   return runInteractiveCommand(
     resolveSystem32Command("wsl.exe"),
     wslArgs(
-      ["bash", "-lc", `curl -fsSL https://github.com/SohailKhan0525/agentx-cli/install | bash -s -- --version ${shellEscape(version)}`],
+      [
+        "bash",
+        "-lc",
+        `curl -fsSL https://github.com/SohailKhan0525/agentx-cli/install | bash -s -- --version ${shellEscape(version)}`,
+      ],
       distro,
     ),
     withTimeout(opts, DEFAULT_WSL_INSTALL_TIMEOUT_MS),

@@ -72,7 +72,9 @@ export function formatLocalModelSummary(result: LocalModelCommandResult): string
   for (const rec of recommendations.slice(0, 5)) {
     const fitBadge = rec.fitsInVram ? "🔥 GPU VRAM" : rec.fitsInRam ? "⚡ CPU RAM" : "⚠️ High Memory"
     lines.push(`  • [Score: ${rec.score}/100 | ${fitBadge}] ${rec.name} (${rec.sizeGb} GB)`)
-    lines.push(`    Category: ${rec.category.toUpperCase()} | Context: ${rec.contextLength.toLocaleString()} tokens | Quant: ${rec.quantization}`)
+    lines.push(
+      `    Category: ${rec.category.toUpperCase()} | Context: ${rec.contextLength.toLocaleString()} tokens | Quant: ${rec.quantization}`,
+    )
     lines.push(`    ${rec.description}`)
     lines.push(`    Fit: ${rec.scoreExplanation}`)
     lines.push("")

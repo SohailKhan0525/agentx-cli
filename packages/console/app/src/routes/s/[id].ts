@@ -6,7 +6,10 @@ async function handler(evt: APIEvent) {
   const req = evt.request.clone()
   const url = new URL(req.url)
   const locale = localeFromRequest(req)
-  const host = Resource.App.stage === "production" ? "docs.github.com/SohailKhan0525/agentx-cli" : "docs.github.com/SohailKhan0525/agentx-cli"
+  const host =
+    Resource.App.stage === "production"
+      ? "docs.github.com/SohailKhan0525/agentx-cli"
+      : "docs.github.com/SohailKhan0525/agentx-cli"
   const targetUrl = `https://${host}${docs(locale, `/docs${url.pathname}`)}${url.search}`
 
   const headers = new Headers(req.headers)

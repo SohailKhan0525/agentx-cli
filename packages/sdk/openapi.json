@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "opencode",
+    "title": "agentx",
     "version": "1.0.0",
     "description": "opencode api"
   },
@@ -311,7 +311,7 @@
             }
           }
         },
-        "description": "Get health information about the OpenCode server.",
+        "description": "Get health information about the agentx server.",
         "summary": "Get health",
         "x-codeSamples": [
           {
@@ -855,7 +855,7 @@
             }
           }
         },
-        "description": "Get experimental features enabled on the OpenCode server.",
+        "description": "Get experimental features enabled on the agentx server.",
         "summary": "Get experimental capabilities",
         "x-codeSamples": [
           {

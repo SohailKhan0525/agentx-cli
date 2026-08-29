@@ -80,7 +80,9 @@ export function addServerViewModel(input: {
   const existingServerDistros = new Set((state?.servers ?? []).map((item) => item.config.distro))
   const addableInstalledDistros = visibleInstalledDistros.filter((item) => !existingServerDistros.has(item.name))
   const selectedDistro = addServerSelectedDistro(input.selectedDistro, visibleInstalledDistros, addableInstalledDistros)
-  const opencodeCheck = selectedDistro ? ((state?.agentxChecks ?? state?.opencodeChecks)?.[selectedDistro] ?? null) : null
+  const opencodeCheck = selectedDistro
+    ? ((state?.agentxChecks ?? state?.opencodeChecks)?.[selectedDistro] ?? null)
+    : null
   const installableDistros = addServerInstallableDistros(visibleInstalledDistros, visibleOnlineDistros)
   const filteredInstallableDistros = addServerFilteredInstallableDistros(installableDistros, input.catalogSearch)
   const catalogTarget = addServerCatalogTarget(input.catalogTarget, filteredInstallableDistros)
@@ -239,7 +241,7 @@ function addServerSelectedDistroSettled(state: WslServersState | undefined, sele
   if (installed?.version === 1) return false
   if (!state?.distroProbes[selectedDistro]) return false
   if (!wslDistroReady(state, selectedDistro)) return true
-  return !((state.agentxChecks ?? state.opencodeChecks)?.[selectedDistro])
+  return !(state.agentxChecks ?? state.opencodeChecks)?.[selectedDistro]
 }
 
 function wslDistroReady(state: WslServersState | undefined, distro: string) {

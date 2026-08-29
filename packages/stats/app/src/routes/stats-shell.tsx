@@ -252,7 +252,11 @@ export function Footer(props: {
     <footer data-component="footer">
       <Show when={bridge()}>{(link) => <SectionBridge label={link().label} href={link().href} />}</Show>
       <div data-slot="footer-grid">
-        <a data-slot="footer-mark" href="https://github.com/SohailKhan0525/agentx-cli" aria-label={i18n.t("footer.homeAria")}>
+        <a
+          data-slot="footer-mark"
+          href="https://github.com/SohailKhan0525/agentx-cli"
+          aria-label={i18n.t("footer.homeAria")}
+        >
           <OpenCodeMark />
         </a>
         <FooterColumn title={i18n.t("footer.modelData")} links={modelStats} localHref={localHref} />

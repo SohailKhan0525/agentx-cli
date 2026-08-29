@@ -21,7 +21,11 @@ describe("server action referer", () => {
           }),
         ).headers.get("referer"),
       ),
-    ).toEqual(["https://github.com/SohailKhan0525/agentx-cli", "https://github.com/SohailKhan0525/agentx-cli", "https://github.com/SohailKhan0525/agentx-cli"])
+    ).toEqual([
+      "https://github.com/SohailKhan0525/agentx-cli",
+      "https://github.com/SohailKhan0525/agentx-cli",
+      "https://github.com/SohailKhan0525/agentx-cli",
+    ])
   })
 
   test("does not change other routes", () => {

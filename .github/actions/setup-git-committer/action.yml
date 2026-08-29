@@ -43,4 +43,3 @@ runs:
         token="${{ steps.apptoken.outputs.token || github.token }}"
         git remote set-url origin https://x-access-token:${token}@github.com/${{ github.repository }}
       shell: bash
-

@@ -168,7 +168,8 @@ describe("installation", () => {
       testLayer(
         () => jsonResponse({}), // HTTP not used for tap formula
         (cmd, args) => {
-          if (cmd === "brew" && args.includes("SohailKhan0525/tap/opencode") && args.includes("--formula")) return "opencode"
+          if (cmd === "brew" && args.includes("SohailKhan0525/tap/opencode") && args.includes("--formula"))
+            return "opencode"
           if (cmd === "brew" && args.includes("--json=v2")) return brewInfoJson
           return ""
         },

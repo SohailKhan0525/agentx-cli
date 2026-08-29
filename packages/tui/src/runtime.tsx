@@ -5,6 +5,11 @@ export function abbreviateHome(input: string, home: string) {
   const isPosix = input.startsWith("/")
   const relative = isPosix ? path.posix.relative(home, input) : path.relative(home, input)
   if (relative === "") return "~"
-  if (relative === ".." || relative.startsWith(".." + (isPosix ? "/" : path.sep)) || (isPosix ? path.posix.isAbsolute(relative) : path.isAbsolute(relative))) return input
+  if (
+    relative === ".." ||
+    relative.startsWith(".." + (isPosix ? "/" : path.sep)) ||
+    (isPosix ? path.posix.isAbsolute(relative) : path.isAbsolute(relative))
+  )
+    return input
   return "~" + (isPosix ? "/" : path.sep) + relative
 }

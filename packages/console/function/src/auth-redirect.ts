@@ -13,6 +13,7 @@ export const isAllowedAuthorizationRedirect = (clientID: string, redirectURI: st
   }
   return (
     redirect.protocol === "https:" &&
-    (redirect.hostname === "github.com/SohailKhan0525/agentx-cli" || redirect.hostname.endsWith(".github.com/SohailKhan0525/agentx-cli"))
+    (redirect.hostname === "github.com/SohailKhan0525/agentx-cli" ||
+      redirect.hostname.endsWith(".github.com/SohailKhan0525/agentx-cli"))
   )
 }

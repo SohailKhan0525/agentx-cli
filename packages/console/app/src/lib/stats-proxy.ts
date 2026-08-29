@@ -12,7 +12,10 @@ export async function statsProxy(evt: APIEvent) {
 
   const targetUrl = new URL(req.url)
   targetUrl.protocol = "https:"
-  targetUrl.hostname = Resource.App.stage === "production" ? "github.com/SohailKhan0525/agentx-cli" : "stats.github.com/SohailKhan0525/agentx-cli"
+  targetUrl.hostname =
+    Resource.App.stage === "production"
+      ? "github.com/SohailKhan0525/agentx-cli"
+      : "stats.github.com/SohailKhan0525/agentx-cli"
   targetUrl.port = ""
 
   if (

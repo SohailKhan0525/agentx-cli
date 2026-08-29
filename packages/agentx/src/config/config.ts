@@ -244,7 +244,10 @@ const layer = Layer.effect(
       yield* Effect.promise(() => resolveLoadedPlugins(data, options.path))
       if (!data.$schema) {
         data.$schema = "https://github.com/SohailKhan0525/agentx-cli/config.json"
-        const updated = text.replace(/^\s*\{/, '{\n  "$schema": "https://github.com/SohailKhan0525/agentx-cli/config.json",')
+        const updated = text.replace(
+          /^\s*\{/,
+          '{\n  "$schema": "https://github.com/SohailKhan0525/agentx-cli/config.json",',
+        )
         yield* fs.writeFileString(options.path, updated).pipe(Effect.catch(() => Effect.void))
       }
       return data
@@ -265,7 +268,10 @@ const layer = Layer.effect(
         const file = globalConfigFile()
         if (!existsSync(file)) {
           yield* fs
-            .writeWithDirs(file, JSON.stringify({ $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json" }, null, 2))
+            .writeWithDirs(
+              file,
+              JSON.stringify({ $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json" }, null, 2),
+            )
             .pipe(Effect.catch(() => Effect.void))
         }
       }

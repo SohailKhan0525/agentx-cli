@@ -140,7 +140,11 @@ export async function discoverLocalRuntimes(): Promise<LocalRuntimeInfo[]> {
   return Promise.all(probePromises)
 }
 
-export async function checkModelHealth(endpoint: string, modelName: string, runtime: LocalRuntimeInfo["type"]): Promise<{
+export async function checkModelHealth(
+  endpoint: string,
+  modelName: string,
+  runtime: LocalRuntimeInfo["type"],
+): Promise<{
   healthy: boolean
   latencyMs: number
   error?: string

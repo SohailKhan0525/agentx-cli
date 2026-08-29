@@ -59,7 +59,9 @@ describe("cli.error", () => {
 
     const formatted = FormatError(error)
 
-    expect(formatted).toContain("Could not reach POST https://console.github.com/SohailKhan0525/agentx-cli/auth/device/code.")
+    expect(formatted).toContain(
+      "Could not reach POST https://console.github.com/SohailKhan0525/agentx-cli/auth/device/code.",
+    )
     expect(formatted).toContain("This failed before the server returned an HTTP response.")
     expect(formatted).toContain("Check your network, proxy, or VPN configuration and try again.")
   })

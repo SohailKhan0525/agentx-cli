@@ -322,7 +322,9 @@ export const githubInstall = Effect.fn("Cli.github.install")(function* () {
         s.stop("Installed GitHub app")
 
         async function getInstallation() {
-          return await fetch(`https://api.github.com/repos/SohailKhan0525/agentx-cli/get_github_app_installation?owner=${app.owner}&repo=${app.repo}`)
+          return await fetch(
+            `https://api.github.com/repos/SohailKhan0525/agentx-cli/get_github_app_installation?owner=${app.owner}&repo=${app.repo}`,
+          )
             .then((res) => res.json())
             .then((data) => data.installation)
         }
@@ -428,7 +430,9 @@ export const githubRun = Effect.fn("Cli.github.run")(function* (args: { event?: 
         ? (payload as IssueCommentEvent | IssuesEvent).issue.number
         : (payload as PullRequestEvent | PullRequestReviewCommentEvent).pull_request.number
     const runUrl = `/${owner}/${repo}/actions/runs/${runId}`
-    const shareBaseUrl = isMock ? "https://github.com/SohailKhan0525/agentx-cli" : "https://github.com/SohailKhan0525/agentx-cli"
+    const shareBaseUrl = isMock
+      ? "https://github.com/SohailKhan0525/agentx-cli"
+      : "https://github.com/SohailKhan0525/agentx-cli"
 
     let appToken: string
     let octoRest: Octokit

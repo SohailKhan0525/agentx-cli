@@ -275,7 +275,10 @@ export default function Enterprise() {
               </li>
               <li>
                 <Faq question={i18n.t("enterprise.faq.q5")}>
-                  {i18n.t("enterprise.faq.a5.before")} <a href="https://trust.github.com/SohailKhan0525/agentx-cli">trust.github.com/SohailKhan0525/agentx-cli</a>{" "}
+                  {i18n.t("enterprise.faq.a5.before")}{" "}
+                  <a href="https://trust.github.com/SohailKhan0525/agentx-cli">
+                    trust.github.com/SohailKhan0525/agentx-cli
+                  </a>{" "}
                   {i18n.t("enterprise.faq.a5.after")}
                 </Faq>
               </li>

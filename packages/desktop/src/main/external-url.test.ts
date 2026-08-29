@@ -10,7 +10,9 @@ describe("external URLs", () => {
   })
 
   test("opens mail links externally", () => {
-    expect(resolveExternalURL("mailto:hello@github.com/SohailKhan0525/agentx-cli")).toBe("mailto:hello@github.com/SohailKhan0525/agentx-cli")
+    expect(resolveExternalURL("mailto:hello@github.com/SohailKhan0525/agentx-cli")).toBe(
+      "mailto:hello@github.com/SohailKhan0525/agentx-cli",
+    )
   })
 
   test("rejects file URLs and unsupported protocols", () => {

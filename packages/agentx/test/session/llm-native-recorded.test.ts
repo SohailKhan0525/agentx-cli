@@ -28,7 +28,8 @@ import { LayerNodePlatform } from "@agent-qofeno/core/effect/app-node-platform"
 
 const FIXTURES_DIR = path.join(import.meta.dir, "../fixtures/recordings")
 
-const zenURL = (connection: string) => `https://console.github.com/SohailKhan0525/agentx-cli/proxy/connections/${connection}/v1`
+const zenURL = (connection: string) =>
+  `https://console.github.com/SohailKhan0525/agentx-cli/proxy/connections/${connection}/v1`
 
 const replayOpenAIOAuth = {
   type: "oauth",
@@ -291,7 +292,10 @@ const writeConfig = (directory: string, scenario: RecordedScenario, model: Model
   Effect.promise(() =>
     Bun.write(
       path.join(directory, "opencode.json"),
-      JSON.stringify({ $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json", ...scenario.config(model) }),
+      JSON.stringify({
+        $schema: "https://github.com/SohailKhan0525/agentx-cli/config.json",
+        ...scenario.config(model),
+      }),
     ),
   )
 

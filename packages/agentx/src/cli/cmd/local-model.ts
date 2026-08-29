@@ -30,7 +30,9 @@ export const LocalModelCommand = effectCmd({
         }),
       )
       if (res.success) {
-        UI.println(`\n${UI.Style.TEXT_SUCCESS_BOLD}Successfully installed and verified ${args.model}!${UI.Style.TEXT_NORMAL}`)
+        UI.println(
+          `\n${UI.Style.TEXT_SUCCESS_BOLD}Successfully installed and verified ${args.model}!${UI.Style.TEXT_NORMAL}`,
+        )
       } else {
         UI.println(`\n${UI.Style.TEXT_DANGER_BOLD}Installation failed: ${res.error}${UI.Style.TEXT_NORMAL}`)
       }

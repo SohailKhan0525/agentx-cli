@@ -11,10 +11,10 @@
 </p>
 
 ```text
-     _    ____ _____ _   _ _______  __    ____ ___  ____  _____ 
+     _    ____ _____ _   _ _______  __    ____ ___  ____  _____
     / \  / ___| ____| \ | |_   _\ \/ /   / ___/ _ \|  _ \| ____|
-   / _ \| |  _|  _| |  \| | | |  \  /   | |  | | | | | | |  _|  
-  / ___ \ |_| | |___| |\  | | |  /  \   | |__| |_| | |_| | |___ 
+   / _ \| |  _|  _| |  \| | | |  \  /   | |  | | | | | | |  _|
+  / ___ \ |_| | |___| |\  | | |  /  \   | |__| |_| | |_| | |___
  /_/   \_\____|_____|_| \_| |_| /_/\_\   \____\___/|____/|_____|
 ```
 
@@ -72,6 +72,7 @@ AgentX Code includes a first-class **Local AI Engine** with zero setup friction.
   - **llama.cpp server** (`http://127.0.0.1:8080`)
   - **vLLM** (`http://127.0.0.1:8000`)
 - **Interactive Slash Command**:
+
   ```bash
   # Check hardware profile & recommended models
   agentx local-model
@@ -79,7 +80,9 @@ AgentX Code includes a first-class **Local AI Engine** with zero setup friction.
   # Install and verify a model with streaming progress & healthcheck
   agentx local-model install qwen2.5-coder:7b
   ```
+
   Within the interactive chat session, type:
+
   ```text
   /local-model
   ```
@@ -105,6 +108,7 @@ AgentX Code supports industry-standard Bring-Your-Own-Key (BYOK) cloud providers
 - **OpenRouter**
 
 Configure any provider with:
+
 ```bash
 agentx providers
 ```
@@ -125,4 +129,4 @@ agentx providers
 
 AgentX Code is licensed under the [MIT License](LICENSE).
 
-*Attribution*: AgentX Code is built upon the open-source foundation of OpenCode. AgentX Code is an independent product maintained by [Sohail Khan](https://github.com/SohailKhan0525/agentx-cli) and is not affiliated with the upstream OpenCode project.
+_Attribution_: AgentX Code is built upon the open-source foundation of OpenCode. AgentX Code is an independent product maintained by [Sohail Khan](https://github.com/SohailKhan0525/agentx-cli) and is not affiliated with the upstream OpenCode project.

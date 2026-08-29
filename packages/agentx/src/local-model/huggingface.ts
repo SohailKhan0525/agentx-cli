@@ -159,7 +159,10 @@ const CURATED_MODELS: ModelDef[] = [
   },
 ]
 
-export function computeModelScore(model: ModelDef, hardware: HardwareProfile): {
+export function computeModelScore(
+  model: ModelDef,
+  hardware: HardwareProfile,
+): {
   score: number
   fitsInVram: boolean
   fitsInRam: boolean

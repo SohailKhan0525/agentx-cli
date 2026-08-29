@@ -78,7 +78,9 @@ describe("HttpApi CORS", () => {
       )
 
       expect(response.status).toBe(401)
-      expect(response.headers.get("access-control-allow-origin")).toBe("https://app.github.com/SohailKhan0525/agentx-cli")
+      expect(response.headers.get("access-control-allow-origin")).toBe(
+        "https://app.github.com/SohailKhan0525/agentx-cli",
+      )
     }),
   )
 

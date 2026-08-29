@@ -34,9 +34,7 @@ export const Flag = {
   AGENTX_DISABLE_FFF: fff === undefined ? process.platform === "win32" : truthy("AGENTX_DISABLE_FFF"),
 
   // Experimental
-  AGENTX_EXPERIMENTAL_FILEWATCHER: Config.boolean("AGENTX_EXPERIMENTAL_FILEWATCHER").pipe(
-    Config.withDefault(false),
-  ),
+  AGENTX_EXPERIMENTAL_FILEWATCHER: Config.boolean("AGENTX_EXPERIMENTAL_FILEWATCHER").pipe(Config.withDefault(false)),
   AGENTX_EXPERIMENTAL_DISABLE_FILEWATCHER: Config.boolean("AGENTX_EXPERIMENTAL_DISABLE_FILEWATCHER").pipe(
     Config.withDefault(false),
   ),

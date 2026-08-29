@@ -279,7 +279,11 @@ export const DESKTOP_MENU: DesktopMenu[] = [
     id: "help",
     labelKey: "desktop.menu.help",
     items: [
-      { type: "item", labelKey: "desktop.menu.documentation", href: "https://github.com/SohailKhan0525/agentx-cli/docs" },
+      {
+        type: "item",
+        labelKey: "desktop.menu.documentation",
+        href: "https://github.com/SohailKhan0525/agentx-cli/docs",
+      },
       { type: "item", labelKey: "desktop.menu.supportForum", href: "https://discord.com/invite/opencode" },
       { type: "item", labelKey: "desktop.menu.exportLogs", command: "logs.export" },
       { type: "separator" },

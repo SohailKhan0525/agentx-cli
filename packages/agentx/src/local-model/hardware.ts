@@ -34,10 +34,14 @@ function detectGpu(platform: NodeJS.Platform): {
 } {
   // 1. Try NVIDIA via nvidia-smi (cross-platform: Linux, Windows)
   try {
-    const smi = childProcess.spawnSync("nvidia-smi", ["--query-gpu=gpu_name,memory.total", "--format=csv,noheader,nounits"], {
-      encoding: "utf8",
-      timeout: 2000,
-    })
+    const smi = childProcess.spawnSync(
+      "nvidia-smi",
+      ["--query-gpu=gpu_name,memory.total", "--format=csv,noheader,nounits"],
+      {
+        encoding: "utf8",
+        timeout: 2000,
+      },
+    )
     if (smi.status === 0 && smi.stdout) {
       const line = smi.stdout.trim().split("\n")[0]
       if (line) {
@@ -75,11 +79,15 @@ function detectGpu(platform: NodeJS.Platform): {
   // 3. Windows WMI / wmic detection (fast, low latency)
   if (platform === "win32") {
     try {
-      const wmic = childProcess.spawnSync("wmic", ["path", "win32_VideoController", "get", "name,adapterram", "/value"], {
-        encoding: "utf8",
-        timeout: 800,
-        windowsHide: true,
-      })
+      const wmic = childProcess.spawnSync(
+        "wmic",
+        ["path", "win32_VideoController", "get", "name,adapterram", "/value"],
+        {
+          encoding: "utf8",
+          timeout: 800,
+          windowsHide: true,
+        },
+      )
       if (wmic.status === 0 && wmic.stdout) {
         const text = wmic.stdout
         const nameMatch = text.match(/Name=(.+)/i)
@@ -110,7 +118,8 @@ function detectGpu(platform: NodeJS.Platform): {
     try {
       const lspci = childProcess.spawnSync("lspci", [], { encoding: "utf8", timeout: 2000 })
       if (lspci.status === 0 && lspci.stdout) {
-        const match = lspci.stdout.match(/VGA compatible controller:\s*(.+)/i) || lspci.stdout.match(/3D controller:\s*(.+)/i)
+        const match =
+          lspci.stdout.match(/VGA compatible controller:\s*(.+)/i) || lspci.stdout.match(/3D controller:\s*(.+)/i)
         if (match && match[1]) {
           const name = match[1].trim()
           let vendor: "nvidia" | "apple" | "amd" | "intel" | "unknown" = "unknown"
@@ -146,4 +155,3 @@ function detectFreeDisk(platform: NodeJS.Platform): number {
   }
   return 50 // Default assumption 50 GB free
 }
-

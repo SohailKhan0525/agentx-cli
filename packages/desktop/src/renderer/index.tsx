@@ -402,11 +402,7 @@ function DesktopRoot(props: { windowState: DesktopWindowState }) {
       <Show when={ready()} fallback={<LoadingSplash />}>
         <Show when={effectiveDefaultServer()} keyed>
           {(key) => (
-            <AppInterface
-              defaultServer={key}
-              servers={servers()}
-              router={router}
-            >
+            <AppInterface defaultServer={key} servers={servers()} router={router}>
               <Inner />
             </AppInterface>
           )}
