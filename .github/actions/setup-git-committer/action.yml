@@ -18,7 +18,7 @@ runs:
   using: "composite"
   steps:
     - name: Create app token
-      if: inputs.opencode-app-id != '' && inputs.opencode-app-secret != ''
+      if: inputs.opencode-app-id != '' && inputs.opencode-app-secret != '' && contains(inputs.opencode-app-secret, 'BEGIN')
       id: apptoken
       uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
       with:
