@@ -3,11 +3,11 @@
  */
 export const config = {
   // Base URL
-  baseUrl: "https://opencode.ai",
+  baseUrl: "https://github.com/SohailKhan0525/agentx-cli",
 
   // GitHub
   github: {
-    repoUrl: "https://github.com/anomalyco/opencode",
+    repoUrl: "https://github.com/SohailKhan0525/agentx-cli",
     starsFormatted: {
       compact: "195K",
       full: "195,000",

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencode.ai/tui.json",
+  "$schema": "https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/tui.json",
   "plugin": [
     [
       "./plugins/tui-smoke.tsx",

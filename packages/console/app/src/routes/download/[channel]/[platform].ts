@@ -1,5 +1,5 @@
 import type { APIEvent } from "@solidjs/start"
-import { waitUntil } from "@opencode-ai/console-resource"
+import { waitUntil } from "@agent-qofeno/console-resource"
 import type { DownloadPlatform } from "../types"
 
 const prodAssetNames: Record<string, string> = {
@@ -32,7 +32,7 @@ export async function GET({ params: { platform, channel } }: APIEvent) {
   if (!assetName) return new Response(null, { status: 404 })
 
   const latest = await fetch(
-    `https://github.com/anomalyco/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`,
+    `https://github.com/SohailKhan0525/${channel === "stable" ? "opencode" : "opencode-beta"}/releases/latest/download/${assetName}`,
     { redirect: "manual" },
   )
   const location = latest.headers.get("location")

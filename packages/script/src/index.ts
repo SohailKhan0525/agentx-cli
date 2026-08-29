@@ -18,14 +18,14 @@ if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
 }
 
 const env = {
-  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"] || process.env["OPENCODE_CHANNEL"],
-  AGENTX_BUMP: process.env["AGENTX_BUMP"] || process.env["OPENCODE_BUMP"],
-  AGENTX_VERSION: process.env["AGENTX_VERSION"] || process.env["OPENCODE_VERSION"],
-  AGENTX_RELEASE: process.env["AGENTX_RELEASE"] || process.env["OPENCODE_RELEASE"],
-  OPENCODE_CHANNEL: process.env["OPENCODE_CHANNEL"],
-  OPENCODE_BUMP: process.env["OPENCODE_BUMP"],
-  OPENCODE_VERSION: process.env["OPENCODE_VERSION"],
-  OPENCODE_RELEASE: process.env["OPENCODE_RELEASE"],
+  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"] || process.env["AGENTX_CHANNEL"],
+  AGENTX_BUMP: process.env["AGENTX_BUMP"] || process.env["AGENTX_BUMP"],
+  AGENTX_VERSION: process.env["AGENTX_VERSION"] || process.env["AGENTX_VERSION"],
+  AGENTX_RELEASE: process.env["AGENTX_RELEASE"] || process.env["AGENTX_RELEASE"],
+  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"],
+  AGENTX_BUMP: process.env["AGENTX_BUMP"],
+  AGENTX_VERSION: process.env["AGENTX_VERSION"],
+  AGENTX_RELEASE: process.env["AGENTX_RELEASE"],
 }
 const CHANNEL = await (async () => {
   if (env.AGENTX_CHANNEL) return env.AGENTX_CHANNEL
@@ -55,7 +55,7 @@ const VERSION = await (async () => {
   return `${major}.${minor}.${patch + 1}`
 })()
 
-const bot = ["actions-user", "agentx", "agentx-code", "opencode", "opencode-agent[bot]"]
+const bot = ["actions-user", "agentx", "agentx-code", "agentx", "opencode-agent[bot]"]
 const teamPath = path.resolve(import.meta.dir, "../../../.github/TEAM_MEMBERS")
 const team = [
   ...(await Bun.file(teamPath)

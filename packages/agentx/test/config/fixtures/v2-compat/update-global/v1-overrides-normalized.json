@@ -1,0 +1,19 @@
+{
+  "$schema": "https://github.com/SohailKhan0525/agentx-cli/config.json",
+  "mcp": {
+    "modern": {
+      "enabled": false
+    }
+  },
+  "snapshot": false,
+  "permission": {
+    "read": "deny"
+  },
+  "agent": {
+    "reviewer": {
+      "disable": true,
+      "options": {},
+      "permission": {}
+    }
+  }
+}

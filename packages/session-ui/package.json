@@ -1,5 +1,5 @@
 {
-  "name": "@opencode-ai/session-ui",
+  "name": "@agent-qofeno/session-ui",
   "version": "3.0.0",
   "private": true,
   "type": "module",
@@ -38,10 +38,10 @@
   },
   "dependencies": {
     "@kobalte/core": "catalog:",
-    "@opencode-ai/client": "file:../app/vendor/opencode-ai-client-1.17.13-v2.tgz",
-    "@opencode-ai/core": "workspace:*",
-    "@opencode-ai/sdk": "workspace:*",
-    "@opencode-ai/ui": "workspace:*",
+    "@agent-qofeno/client": "file:../app/vendor/opencode-ai-client-1.17.13-v2.tgz",
+    "@agent-qofeno/core": "workspace:*",
+    "@agent-qofeno/sdk": "workspace:*",
+    "@agent-qofeno/ui": "workspace:*",
     "@pierre/diffs": "catalog:",
     "@shikijs/stream": "catalog:",
     "@shikijs/transformers": "3.9.2",

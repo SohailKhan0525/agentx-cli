@@ -1,5 +1,5 @@
 {
-  "$schema": "https://opencode.ai/theme.json",
+  "$schema": "https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/packages/ui/src/theme/desktop-theme.schema.json",
   "defs": {
     "nightOwlBg": "#011627",
     "nightOwlFg": "#d6deeb",

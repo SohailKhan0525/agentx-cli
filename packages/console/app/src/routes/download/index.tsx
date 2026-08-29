@@ -120,10 +120,10 @@ export default function Download() {
             <div data-component="section-content">
               <button
                 data-component="cli-row"
-                onClick={handleCopyClick("curl -fsSL https://opencode.ai/install | bash")}
+                onClick={handleCopyClick("curl -fsSL https://raw.githubusercontent.com/SohailKhan0525/agentx-cli/main/install | bash")}
               >
                 <code>
-                  curl -fsSL https://<strong>opencode.ai/install</strong> | bash
+                  curl -fsSL https://<strong>github.com/SohailKhan0525/agentx-cli/install</strong> | bash
                 </code>
                 <CopyStatus />
               </button>
@@ -139,9 +139,9 @@ export default function Download() {
                 </code>
                 <CopyStatus />
               </button>
-              <button data-component="cli-row" onClick={handleCopyClick("brew install anomalyco/tap/opencode")}>
+              <button data-component="cli-row" onClick={handleCopyClick("brew install SohailKhan0525/tap/opencode")}>
                 <code>
-                  brew install <strong>anomalyco/tap/opencode</strong>
+                  brew install <strong>SohailKhan0525/tap/opencode</strong>
                 </code>
                 <CopyStatus />
               </button>

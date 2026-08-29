@@ -1,11 +1,11 @@
 {
-  "name": "@opencode-ai/ui",
+  "name": "@agent-qofeno/ui",
   "version": "3.0.0",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anomalyco/opencode.git",
+    "url": "git+https://github.com/SohailKhan0525/agentx-cli.git",
     "directory": "packages/ui"
   },
   "publishConfig": {

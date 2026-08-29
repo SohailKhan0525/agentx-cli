@@ -3,18 +3,18 @@ import fs from "fs/promises"
 import { describe, expect } from "bun:test"
 import { Effect, Layer, Schema } from "effect"
 import { FastCheck } from "effect/testing"
-import { Config } from "@opencode-ai/core/config"
-import { ConfigProvider } from "@opencode-ai/core/config/provider"
-import { AppNodeBuilder } from "@opencode-ai/core/effect/app-node-builder"
-import { LayerNode } from "@opencode-ai/core/effect/layer-node"
-import { ConfigMigrateV1 } from "@opencode-ai/core/v1/config/migrate"
-import { ConfigV1 } from "@opencode-ai/core/v1/config/config"
-import { FSUtil } from "@opencode-ai/core/fs-util"
-import { Global } from "@opencode-ai/core/global"
-import { Location } from "@opencode-ai/core/location"
-import { Policy } from "@opencode-ai/core/policy"
-import { Project } from "@opencode-ai/core/project"
-import { AbsolutePath } from "@opencode-ai/core/schema"
+import { Config } from "@agent-qofeno/core/config"
+import { ConfigProvider } from "@agent-qofeno/core/config/provider"
+import { AppNodeBuilder } from "@agent-qofeno/core/effect/app-node-builder"
+import { LayerNode } from "@agent-qofeno/core/effect/layer-node"
+import { ConfigMigrateV1 } from "@agent-qofeno/core/v1/config/migrate"
+import { ConfigV1 } from "@agent-qofeno/core/v1/config/config"
+import { FSUtil } from "@agent-qofeno/core/fs-util"
+import { Global } from "@agent-qofeno/core/global"
+import { Location } from "@agent-qofeno/core/location"
+import { Policy } from "@agent-qofeno/core/policy"
+import { Project } from "@agent-qofeno/core/project"
+import { AbsolutePath } from "@agent-qofeno/core/schema"
 import { location } from "../fixture/location"
 import { tmpdir } from "../fixture/tmpdir"
 import { testEffect } from "../lib/effect"
@@ -724,7 +724,7 @@ describe("Config", () => {
     ),
   )
 
-  it.live("loads global, ancestor, and .opencode configuration up to the project boundary", () =>
+  it.live("loads global, ancestor, and .agentx configuration up to the project boundary", () =>
     Effect.acquireRelease(
       Effect.promise(() => tmpdir()),
       (tmp) => Effect.promise(() => tmp[Symbol.asyncDispose]()),
@@ -738,17 +738,17 @@ describe("Config", () => {
           yield* Effect.promise(async () => {
             await fs.mkdir(global, { recursive: true })
             await fs.mkdir(directory, { recursive: true })
-            await fs.mkdir(path.join(root, ".opencode"), { recursive: true })
-            await fs.mkdir(path.join(directory, ".opencode"), { recursive: true })
+            await fs.mkdir(path.join(root, ".agentx"), { recursive: true })
+            await fs.mkdir(path.join(directory, ".agentx"), { recursive: true })
             await Promise.all([
               fs.writeFile(path.join(tmp.path, "opencode.json"), JSON.stringify({ $schema: "outside" })),
               fs.writeFile(path.join(global, "opencode.json"), JSON.stringify({ $schema: "global" })),
               fs.writeFile(path.join(root, "opencode.json"), JSON.stringify({ $schema: "root" })),
               fs.writeFile(path.join(parent, "opencode.jsonc"), JSON.stringify({ $schema: "parent" })),
               fs.writeFile(path.join(directory, "opencode.json"), JSON.stringify({ $schema: "directory" })),
-              fs.writeFile(path.join(root, ".opencode", "opencode.json"), JSON.stringify({ $schema: "root-dot" })),
+              fs.writeFile(path.join(root, ".agentx", "opencode.json"), JSON.stringify({ $schema: "root-dot" })),
               fs.writeFile(
-                path.join(directory, ".opencode", "opencode.jsonc"),
+                path.join(directory, ".agentx", "opencode.jsonc"),
                 JSON.stringify({ $schema: "directory-dot" }),
               ),
             ])
@@ -761,8 +761,8 @@ describe("Config", () => {
 
             expect(entries.filter((entry) => entry.type === "directory").map((entry) => entry.path)).toEqual([
               AbsolutePath.make(global),
-              AbsolutePath.make(path.join(root, ".opencode")),
-              AbsolutePath.make(path.join(directory, ".opencode")),
+              AbsolutePath.make(path.join(root, ".agentx")),
+              AbsolutePath.make(path.join(directory, ".agentx")),
             ])
             expect(documents.map((document) => document.info.$schema)).toEqual([
               "global",
@@ -779,9 +779,9 @@ describe("Config", () => {
               "parent",
               "directory",
               "root-dot",
-              AbsolutePath.make(path.join(root, ".opencode")),
+              AbsolutePath.make(path.join(root, ".agentx")),
               "directory-dot",
-              AbsolutePath.make(path.join(directory, ".opencode")),
+              AbsolutePath.make(path.join(directory, ".agentx")),
             ])
           }).pipe(
             Effect.provide(

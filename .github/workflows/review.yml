@@ -32,7 +32,7 @@ jobs:
       - uses: ./.github/actions/setup-bun
 
       - name: Install opencode
-        run: curl -fsSL https://opencode.ai/install | bash
+        run: npm install -g @agent-qofeno/agentx@latest
 
       - name: Get PR details
         id: pr-details

@@ -7,16 +7,16 @@ import { THEME_OPENAUTH } from "@openauthjs/openauth/ui/theme"
 import { GithubProvider } from "@openauthjs/openauth/provider/github"
 import { GoogleOidcProvider } from "@openauthjs/openauth/provider/google"
 import { CloudflareStorage } from "@openauthjs/openauth/storage/cloudflare"
-import { Account } from "@opencode-ai/console-core/account.js"
-import { Workspace } from "@opencode-ai/console-core/workspace.js"
-import { Actor } from "@opencode-ai/console-core/actor.js"
-import { Resource } from "@opencode-ai/console-resource"
-import { User } from "@opencode-ai/console-core/user.js"
-import { and, Database, eq, isNull, or } from "@opencode-ai/console-core/drizzle/index.js"
-import { WorkspaceTable } from "@opencode-ai/console-core/schema/workspace.sql.js"
-import { UserTable } from "@opencode-ai/console-core/schema/user.sql.js"
-import { AuthTable } from "@opencode-ai/console-core/schema/auth.sql.js"
-import { Identifier } from "@opencode-ai/console-core/identifier.js"
+import { Account } from "@agent-qofeno/console-core/account.js"
+import { Workspace } from "@agent-qofeno/console-core/workspace.js"
+import { Actor } from "@agent-qofeno/console-core/actor.js"
+import { Resource } from "@agent-qofeno/console-resource"
+import { User } from "@agent-qofeno/console-core/user.js"
+import { and, Database, eq, isNull, or } from "@agent-qofeno/console-core/drizzle/index.js"
+import { WorkspaceTable } from "@agent-qofeno/console-core/schema/workspace.sql.js"
+import { UserTable } from "@agent-qofeno/console-core/schema/user.sql.js"
+import { AuthTable } from "@agent-qofeno/console-core/schema/auth.sql.js"
+import { Identifier } from "@agent-qofeno/console-core/identifier.js"
 import { isAllowedAuthorizationRedirect } from "./auth-redirect.js"
 
 type Env = {
@@ -37,7 +37,7 @@ export const subjects = createSubjects({
 
 const MY_THEME: Theme = {
   ...THEME_OPENAUTH,
-  logo: "https://opencode.ai/favicon-v3.svg",
+  logo: "https://github.com/SohailKhan0525/agentx-cli/favicon-v3.svg",
 }
 
 export default {

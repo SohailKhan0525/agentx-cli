@@ -222,7 +222,7 @@ function locale(value: string) {
 }
 
 export const DESKTOP_NATIVE_ENGLISH = {
-  "desktop.menu.app": "OpenCode",
+  "desktop.menu.app": "agentx",
   "desktop.menu.file": "File",
   "desktop.menu.edit": "Edit",
   "desktop.menu.view": "View",
@@ -304,9 +304,9 @@ export const DESKTOP_NATIVE_ENGLISH = {
   "desktop.wsl.error.installDistro": "Failed to install distro: {{distro}}",
   "desktop.wsl.error.installOpencode": "OpenCode installation failed",
   "desktop.wsl.error.alreadyAdded": "{{distro}} is already added",
-  "desktop.wsl.error.opencodeMissing": "opencode is not installed in this distro",
-  "desktop.wsl.error.opencodeCannotRun": "opencode is installed but could not run",
-  "desktop.wsl.error.opencodeNotInstalled": "OpenCode is not installed in {{distro}}",
+  "desktop.wsl.error.agentxMissing": "opencode is not installed in this distro",
+  "desktop.wsl.error.agentxCannotRun": "opencode is installed but could not run",
+  "desktop.wsl.error.agentxNotInstalled": "OpenCode is not installed in {{distro}}",
   "desktop.wsl.error.updateVersion":
     "OpenCode update finished but {{distro}} still reports {{installed}}; expected {{expected}}",
   "desktop.wsl.error.noVersion": "no version",

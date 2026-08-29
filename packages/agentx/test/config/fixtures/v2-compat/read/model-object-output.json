@@ -1,0 +1,4 @@
+{
+  "$schema": "https://github.com/SohailKhan0525/agentx-cli/config.json",
+  "model": "anthropic/claude-sonnet"
+}

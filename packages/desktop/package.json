@@ -1,13 +1,13 @@
 {
-  "name": "@opencode-ai/desktop",
+  "name": "@agent-qofeno/desktop",
   "private": true,
   "version": "3.0.0",
   "type": "module",
   "license": "MIT",
-  "homepage": "https://opencode.ai",
+  "homepage": "https://github.com/SohailKhan0525/agentx-cli",
   "author": {
     "name": "OpenCode",
-    "email": "hello@opencode.ai"
+    "email": "hello@github.com/SohailKhan0525/agentx-cli"
   },
   "scripts": {
     "typecheck": "tsgo -b",
@@ -36,8 +36,8 @@
   "devDependencies": {
     "@actions/artifact": "4.0.0",
     "@lydell/node-pty": "catalog:",
-    "@opencode-ai/app": "workspace:*",
-    "@opencode-ai/ui": "workspace:*",
+    "@agent-qofeno/app": "workspace:*",
+    "@agent-qofeno/ui": "workspace:*",
     "@sentry/solid": "catalog:",
     "@sentry/vite-plugin": "catalog:",
     "@solid-primitives/i18n": "2.2.1",

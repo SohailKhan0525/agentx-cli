@@ -27,7 +27,7 @@ Want to take on an issue? Leave a comment and a maintainer may assign it to you 
 ## Adding New Providers
 
 New providers shouldn't require many if ANY code changes, but if you want to add support for a new provider first make a PR to:
-https://github.com/anomalyco/models.dev
+https://github.com/SohailKhan0525/agentx-cli
 
 ## Developing OpenCode
 
@@ -74,7 +74,7 @@ Replace `<platform>` with your platform (e.g., `darwin-arm64`, `linux-x64`).
   - `packages/opencode/src/cli/cmd/tui/`: The TUI code, written in SolidJS with [opentui](https://github.com/sst/opentui)
   - `packages/app`: The shared web UI components, written in SolidJS
   - `packages/desktop`: The native desktop app, built with Electron (wraps `packages/app`)
-  - `packages/plugin`: Source for `@opencode-ai/plugin`
+  - `packages/plugin`: Source for `@agent-qofeno/plugin`
 
 ### Understanding bun dev vs opencode
 

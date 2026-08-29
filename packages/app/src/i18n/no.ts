@@ -2,7 +2,7 @@ import { dict as en } from "./en"
 type Keys = keyof typeof en
 
 export const dict = {
-  "desktop.menu.app": "OpenCode",
+  "desktop.menu.app": "agentx",
   "desktop.menu.file": "Arkiv",
   "desktop.menu.edit": "Rediger",
   "desktop.menu.view": "Vis",
@@ -84,9 +84,9 @@ export const dict = {
   "desktop.wsl.error.installDistro": "Kunne ikke installere distribusjonen: {{distro}}",
   "desktop.wsl.error.installOpencode": "Installasjonen av OpenCode mislyktes",
   "desktop.wsl.error.alreadyAdded": "{{distro}} er allerede lagt til",
-  "desktop.wsl.error.opencodeMissing": "opencode er ikke installert i denne distribusjonen",
-  "desktop.wsl.error.opencodeCannotRun": "opencode er installert, men kunne ikke kjøres",
-  "desktop.wsl.error.opencodeNotInstalled": "OpenCode er ikke installert i {{distro}}",
+  "desktop.wsl.error.agentxMissing": "opencode er ikke installert i denne distribusjonen",
+  "desktop.wsl.error.agentxCannotRun": "opencode er installert, men kunne ikke kjøres",
+  "desktop.wsl.error.agentxNotInstalled": "OpenCode er ikke installert i {{distro}}",
   "desktop.wsl.error.updateVersion":
     "Oppdateringen av OpenCode er fullført, men {{distro}} rapporterer fortsatt {{installed}}; forventet {{expected}}",
   "desktop.wsl.error.noVersion": "ingen versjon",
@@ -206,9 +206,9 @@ export const dict = {
   "dialog.provider.group.other": "Andre",
   "dialog.provider.custom.label": "Egendefinert OpenAI-kompatibel leverandør",
   "dialog.provider.tag.recommended": "Anbefalt",
-  "dialog.provider.opencode.note": "Utvalgte modeller inkludert Claude, GPT, Gemini og mer",
-  "dialog.provider.opencode.tagline": "Pålitelige, optimaliserte modeller",
-  "dialog.provider.opencodeGo.tagline": "Rimelig abonnement for alle",
+  "dialog.provider.agentx.note": "Utvalgte modeller inkludert Claude, GPT, Gemini og mer",
+  "dialog.provider.agentx.tagline": "Pålitelige, optimaliserte modeller",
+  "dialog.provider.agentxGo.tagline": "Rimelig abonnement for alle",
   "dialog.provider.anthropic.note": "Direkte tilgang til Claude-modeller, inkludert Pro og Max",
   "dialog.provider.copilot.note": "AI-modeller for kodeassistanse via GitHub Copilot",
   "dialog.provider.openai.note": "GPT-modeller for raske, dyktige generelle AI-oppgaver",
@@ -243,13 +243,13 @@ export const dict = {
   "provider.connect.apiKey.label": "{{provider}}-API-nøkkel",
   "provider.connect.apiKey.placeholder": "API-nøkkel",
   "provider.connect.apiKey.required": "API-nøkkel er påkrevd",
-  "provider.connect.opencodeZen.line1":
+  "provider.connect.agentxZen.line1":
     "OpenCode Zen gir deg tilgang til et utvalg av pålitelige optimaliserte modeller for kodeagenter.",
-  "provider.connect.opencodeZen.line2":
+  "provider.connect.agentxZen.line2":
     "Med én enkelt API-nøkkel får du tilgang til modeller som Claude, GPT, Gemini, GLM og flere.",
-  "provider.connect.opencodeZen.visit.prefix": "Besøk ",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
-  "provider.connect.opencodeZen.visit.suffix": " for å hente API-nøkkelen din.",
+  "provider.connect.agentxZen.visit.prefix": "Besøk ",
+  "provider.connect.agentxZen.visit.link": "github.com/SohailKhan0525/agentx-cli/zen",
+  "provider.connect.agentxZen.visit.suffix": " for å hente API-nøkkelen din.",
   "provider.connect.oauth.code.visit.prefix": "Besøk ",
   "provider.connect.oauth.code.visit.link": "denne lenken",
   "provider.connect.oauth.code.visit.suffix":
@@ -1105,7 +1105,7 @@ export const dict = {
   "wsl.server.retryStart": "Prøv å starte på nytt",
   "wsl.server.updating": "Oppdaterer...",
   "wsl.onboarding.step.distro": "Velg distribusjon",
-  "wsl.onboarding.step.opencode": "OpenCode",
+  "wsl.onboarding.step.agentx": "agentx",
   "wsl.onboarding.checkingRuntime": "Sjekker WSL...",
   "wsl.onboarding.restartRequired": "Windows må startes på nytt for å fullføre installasjonen av WSL.",
   "wsl.onboarding.ready": "WSL er klart.",
@@ -1125,8 +1125,8 @@ export const dict = {
   "wsl.onboarding.updatingOpencodeIn": "Oppdaterer OpenCode i {{distro}}...",
   "wsl.onboarding.updateOpencodeIn": "Oppdater OpenCode i {{distro}}.",
   "wsl.onboarding.updateOpencode": "Oppdater OpenCode",
-  "wsl.onboarding.opencodeReadyIn": "OpenCode er klar i {{distro}}.",
-  "wsl.onboarding.opencodeReady": "OpenCode er klar.",
+  "wsl.onboarding.agentxReadyIn": "OpenCode er klar i {{distro}}.",
+  "wsl.onboarding.agentxReady": "OpenCode er klar.",
   "wsl.onboarding.installOpencodeIn": "Installer OpenCode i {{distro}}.",
   "wsl.onboarding.installOpencode": "Installer OpenCode",
   "wsl.onboarding.chooseDistroFirst": "Velg en distribusjon først.",
@@ -1136,7 +1136,7 @@ export const dict = {
   "wsl.onboarding.checkAgain": "Sjekk på nytt",
   "wsl.onboarding.distroStatus.ready": "Klar",
   "wsl.onboarding.distroStatus.checking": "Sjekker...",
-  "wsl.onboarding.distroStatus.opencodeMissing": "OpenCode er ikke installert",
+  "wsl.onboarding.distroStatus.agentxMissing": "OpenCode er ikke installert",
   "wsl.onboarding.distroStatus.missingTools": "Mangler bash, curl",
   "wsl.onboarding.distroStatus.unsupported": "Ikke støttet · Bruk WSL 2",
   "wsl.onboarding.needAnotherDistro": "Trenger du en annen distribusjon?",

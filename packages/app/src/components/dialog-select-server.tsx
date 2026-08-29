@@ -1,11 +1,11 @@
-import { Button } from "@opencode-ai/ui/button"
-import { useDialog } from "@opencode-ai/ui/context/dialog"
-import { Dialog } from "@opencode-ai/ui/dialog"
-import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
-import { Icon } from "@opencode-ai/ui/icon"
-import { IconButton } from "@opencode-ai/ui/icon-button"
-import { List } from "@opencode-ai/ui/list"
-import { TextField } from "@opencode-ai/ui/text-field"
+import { Button } from "@agent-qofeno/ui/button"
+import { useDialog } from "@agent-qofeno/ui/context/dialog"
+import { Dialog } from "@agent-qofeno/ui/dialog"
+import { DropdownMenu } from "@agent-qofeno/ui/dropdown-menu"
+import { Icon } from "@agent-qofeno/ui/icon"
+import { IconButton } from "@agent-qofeno/ui/icon-button"
+import { List } from "@agent-qofeno/ui/list"
+import { TextField } from "@agent-qofeno/ui/text-field"
 import { useMutation } from "@tanstack/solid-query"
 import { showToast } from "@/utils/toast"
 import { useNavigate } from "@solidjs/router"
@@ -21,7 +21,7 @@ import { type ServerHealth, useCheckServerHealth } from "@/utils/server-health"
 import { useSettings } from "@/context/settings"
 import { useTabs } from "@/context/tabs"
 
-const DEFAULT_USERNAME = "opencode"
+const DEFAULT_USERNAME = "agentx"
 
 interface ServerFormProps {
   value: string

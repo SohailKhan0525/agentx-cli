@@ -1,35 +1,35 @@
 import { expect, test } from "bun:test"
 import { Schema } from "effect"
-import { AgentV2 } from "@opencode-ai/core/agent"
-import { ModelV2 } from "@opencode-ai/core/model"
-import { SessionV2 } from "@opencode-ai/core/session"
-import { Agent } from "@opencode-ai/schema/agent"
-import { Location } from "@opencode-ai/schema/location"
-import { Model } from "@opencode-ai/schema/model"
-import { AgentAttachment, FileAttachment, Prompt, Source } from "@opencode-ai/schema/prompt"
-import { Provider } from "@opencode-ai/schema/provider"
-import { Project } from "@opencode-ai/schema/project"
-import { ProjectDirectories } from "@opencode-ai/schema/project-directories"
-import { PermissionV1 } from "@opencode-ai/schema/permission-v1"
-import { Session } from "@opencode-ai/schema/session"
-import { SessionInput } from "@opencode-ai/schema/session-input"
-import { SessionMessage } from "@opencode-ai/schema/session-message"
-import { Workspace } from "@opencode-ai/schema/workspace"
-import { Command } from "@opencode-ai/schema/command"
-import { Connection } from "@opencode-ai/schema/connection"
-import { Credential } from "@opencode-ai/schema/credential"
-import { FileSystem } from "@opencode-ai/schema/filesystem"
-import { Integration } from "@opencode-ai/schema/integration"
-import { LLM } from "@opencode-ai/schema/llm"
-import { Permission } from "@opencode-ai/schema/permission"
-import { Plugin } from "@opencode-ai/schema/plugin"
-import { Pty } from "@opencode-ai/schema/pty"
-import { Reference } from "@opencode-ai/schema/reference"
-import { SessionTodo } from "@opencode-ai/schema/session-todo"
-import { Skill } from "@opencode-ai/schema/skill"
-import { AbsolutePath, DateTimeUtcFromMillis, optional, statics } from "@opencode-ai/schema/schema"
-import { ProviderV2 } from "@opencode-ai/core/provider"
-import { PluginV2 } from "@opencode-ai/core/plugin"
+import { AgentV2 } from "@agent-qofeno/core/agent"
+import { ModelV2 } from "@agent-qofeno/core/model"
+import { SessionV2 } from "@agent-qofeno/core/session"
+import { Agent } from "@agent-qofeno/schema/agent"
+import { Location } from "@agent-qofeno/schema/location"
+import { Model } from "@agent-qofeno/schema/model"
+import { AgentAttachment, FileAttachment, Prompt, Source } from "@agent-qofeno/schema/prompt"
+import { Provider } from "@agent-qofeno/schema/provider"
+import { Project } from "@agent-qofeno/schema/project"
+import { ProjectDirectories } from "@agent-qofeno/schema/project-directories"
+import { PermissionV1 } from "@agent-qofeno/schema/permission-v1"
+import { Session } from "@agent-qofeno/schema/session"
+import { SessionInput } from "@agent-qofeno/schema/session-input"
+import { SessionMessage } from "@agent-qofeno/schema/session-message"
+import { Workspace } from "@agent-qofeno/schema/workspace"
+import { Command } from "@agent-qofeno/schema/command"
+import { Connection } from "@agent-qofeno/schema/connection"
+import { Credential } from "@agent-qofeno/schema/credential"
+import { FileSystem } from "@agent-qofeno/schema/filesystem"
+import { Integration } from "@agent-qofeno/schema/integration"
+import { LLM } from "@agent-qofeno/schema/llm"
+import { Permission } from "@agent-qofeno/schema/permission"
+import { Plugin } from "@agent-qofeno/schema/plugin"
+import { Pty } from "@agent-qofeno/schema/pty"
+import { Reference } from "@agent-qofeno/schema/reference"
+import { SessionTodo } from "@agent-qofeno/schema/session-todo"
+import { Skill } from "@agent-qofeno/schema/skill"
+import { AbsolutePath, DateTimeUtcFromMillis, optional, statics } from "@agent-qofeno/schema/schema"
+import { ProviderV2 } from "@agent-qofeno/core/provider"
+import { PluginV2 } from "@agent-qofeno/core/plugin"
 
 test("Core reuses the canonical shared schemas", async () => {
   const [
@@ -55,27 +55,27 @@ test("Core reuses the canonical shared schemas", async () => {
     coreSchema,
     coreWorkspace,
   ] = await Promise.all([
-    import("@opencode-ai/core/command"),
-    import("@opencode-ai/core/integration/connection"),
-    import("@opencode-ai/core/credential"),
-    import("@opencode-ai/core/filesystem"),
-    import("@opencode-ai/core/integration"),
-    import("@opencode-ai/core/location"),
-    import("@opencode-ai/llm"),
-    import("@opencode-ai/core/permission"),
-    import("@opencode-ai/core/v1/permission"),
-    import("@opencode-ai/core/project/copy"),
-    import("@opencode-ai/core/pty"),
-    import("@opencode-ai/core/project/schema"),
-    import("@opencode-ai/core/reference"),
-    import("@opencode-ai/core/session/input"),
-    import("@opencode-ai/core/session/message"),
-    import("@opencode-ai/core/session/todo"),
-    import("@opencode-ai/core/session/prompt"),
-    import("@opencode-ai/core/skill"),
-    import("@opencode-ai/core/v2-schema"),
-    import("@opencode-ai/core/schema"),
-    import("@opencode-ai/core/workspace"),
+    import("@agent-qofeno/core/command"),
+    import("@agent-qofeno/core/integration/connection"),
+    import("@agent-qofeno/core/credential"),
+    import("@agent-qofeno/core/filesystem"),
+    import("@agent-qofeno/core/integration"),
+    import("@agent-qofeno/core/location"),
+    import("@agent-qofeno/llm"),
+    import("@agent-qofeno/core/permission"),
+    import("@agent-qofeno/core/v1/permission"),
+    import("@agent-qofeno/core/project/copy"),
+    import("@agent-qofeno/core/pty"),
+    import("@agent-qofeno/core/project/schema"),
+    import("@agent-qofeno/core/reference"),
+    import("@agent-qofeno/core/session/input"),
+    import("@agent-qofeno/core/session/message"),
+    import("@agent-qofeno/core/session/todo"),
+    import("@agent-qofeno/core/session/prompt"),
+    import("@agent-qofeno/core/skill"),
+    import("@agent-qofeno/core/v2-schema"),
+    import("@agent-qofeno/core/schema"),
+    import("@agent-qofeno/core/workspace"),
   ])
 
   const schemas = [

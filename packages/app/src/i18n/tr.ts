@@ -3,7 +3,7 @@ import { dict as en } from "./en"
 type Keys = keyof typeof en
 
 export const dict = {
-  "desktop.menu.app": "OpenCode",
+  "desktop.menu.app": "agentx",
   "desktop.menu.file": "Dosya",
   "desktop.menu.edit": "Düzen",
   "desktop.menu.view": "Görünüm",
@@ -86,9 +86,9 @@ export const dict = {
   "desktop.wsl.error.installDistro": "Dağıtım kurulamadı: {{distro}}",
   "desktop.wsl.error.installOpencode": "OpenCode kurulamadı",
   "desktop.wsl.error.alreadyAdded": "{{distro}} zaten eklendi",
-  "desktop.wsl.error.opencodeMissing": "opencode bu dağıtımda kurulu değil",
-  "desktop.wsl.error.opencodeCannotRun": "opencode kurulu ancak çalıştırılamadı",
-  "desktop.wsl.error.opencodeNotInstalled": "OpenCode, {{distro}} içinde kurulu değil",
+  "desktop.wsl.error.agentxMissing": "opencode bu dağıtımda kurulu değil",
+  "desktop.wsl.error.agentxCannotRun": "opencode kurulu ancak çalıştırılamadı",
+  "desktop.wsl.error.agentxNotInstalled": "OpenCode, {{distro}} içinde kurulu değil",
   "desktop.wsl.error.updateVersion":
     "OpenCode güncellemesi tamamlandı ancak {{distro}} hâlâ {{installed}} sürümünü bildiriyor; beklenen sürüm: {{expected}}",
   "desktop.wsl.error.noVersion": "sürüm yok",
@@ -212,9 +212,9 @@ export const dict = {
   "dialog.provider.group.other": "Diğer",
   "dialog.provider.custom.label": "Özel OpenAI uyumlu sağlayıcı",
   "dialog.provider.tag.recommended": "Önerilen",
-  "dialog.provider.opencode.note": "Claude, GPT, Gemini ve daha fazlasını içeren seçilmiş modeller",
-  "dialog.provider.opencode.tagline": "Güvenilir, optimize edilmiş modeller",
-  "dialog.provider.opencodeGo.tagline": "Herkes için düşük maliyetli abonelik",
+  "dialog.provider.agentx.note": "Claude, GPT, Gemini ve daha fazlasını içeren seçilmiş modeller",
+  "dialog.provider.agentx.tagline": "Güvenilir, optimize edilmiş modeller",
+  "dialog.provider.agentxGo.tagline": "Herkes için düşük maliyetli abonelik",
   "dialog.provider.anthropic.note": "Pro ve Max dahil Claude modellerine doğrudan erişim",
   "dialog.provider.copilot.note": "GitHub Copilot üzerinden kodlama yardımı için yapay zekâ modelleri",
   "dialog.provider.openai.note": "Hızlı ve yetenekli genel yapay zekâ görevleri için GPT modelleri",
@@ -249,13 +249,13 @@ export const dict = {
   "provider.connect.apiKey.label": "{{provider}} API anahtarı",
   "provider.connect.apiKey.placeholder": "API anahtarı",
   "provider.connect.apiKey.required": "API anahtarı gerekli",
-  "provider.connect.opencodeZen.line1":
+  "provider.connect.agentxZen.line1":
     "OpenCode Zen, kodlama ajanları için seçilmiş güvenilir optimize edilmiş modellere erişim sağlar.",
-  "provider.connect.opencodeZen.line2":
+  "provider.connect.agentxZen.line2":
     "Tek bir API anahtarıyla Claude, GPT, Gemini, GLM ve daha fazlası gibi modellere erişebilirsiniz.",
-  "provider.connect.opencodeZen.visit.prefix": "",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
-  "provider.connect.opencodeZen.visit.suffix": " adresini ziyaret ederek API anahtarınızı alın.",
+  "provider.connect.agentxZen.visit.prefix": "",
+  "provider.connect.agentxZen.visit.link": "github.com/SohailKhan0525/agentx-cli/zen",
+  "provider.connect.agentxZen.visit.suffix": " adresini ziyaret ederek API anahtarınızı alın.",
   "provider.connect.oauth.code.visit.prefix": "Yetkilendirme kodunuzu almak için ",
   "provider.connect.oauth.code.visit.link": "bu bağlantıya",
   "provider.connect.oauth.code.visit.suffix":
@@ -481,7 +481,7 @@ export const dict = {
   "wsl.server.retryStart": "Başlatmayı yeniden dene",
   "wsl.server.updating": "Güncelleniyor...",
   "wsl.onboarding.step.distro": "Dağıtım seç",
-  "wsl.onboarding.step.opencode": "OpenCode",
+  "wsl.onboarding.step.agentx": "agentx",
   "wsl.onboarding.checkingRuntime": "WSL kontrol ediliyor...",
   "wsl.onboarding.restartRequired": "WSL kurulumunu tamamlamak için Windows'un yeniden başlatılması gerekiyor.",
   "wsl.onboarding.ready": "WSL hazır.",
@@ -501,8 +501,8 @@ export const dict = {
   "wsl.onboarding.updatingOpencodeIn": "{{distro}} içinde OpenCode güncelleniyor...",
   "wsl.onboarding.updateOpencodeIn": "{{distro}} içindeki OpenCode'u güncelleyin.",
   "wsl.onboarding.updateOpencode": "OpenCode'u güncelle",
-  "wsl.onboarding.opencodeReadyIn": "{{distro}} içinde OpenCode hazır.",
-  "wsl.onboarding.opencodeReady": "OpenCode hazır.",
+  "wsl.onboarding.agentxReadyIn": "{{distro}} içinde OpenCode hazır.",
+  "wsl.onboarding.agentxReady": "OpenCode hazır.",
   "wsl.onboarding.installOpencodeIn": "OpenCode'u {{distro}} içine kurun.",
   "wsl.onboarding.installOpencode": "OpenCode'u kur",
   "wsl.onboarding.chooseDistroFirst": "Önce bir dağıtım seçin.",
@@ -512,7 +512,7 @@ export const dict = {
   "wsl.onboarding.checkAgain": "Tekrar kontrol et",
   "wsl.onboarding.distroStatus.ready": "Hazır",
   "wsl.onboarding.distroStatus.checking": "Kontrol ediliyor...",
-  "wsl.onboarding.distroStatus.opencodeMissing": "OpenCode kurulu değil",
+  "wsl.onboarding.distroStatus.agentxMissing": "OpenCode kurulu değil",
   "wsl.onboarding.distroStatus.missingTools": "bash ve curl eksik",
   "wsl.onboarding.distroStatus.unsupported": "Desteklenmiyor · WSL 2 kullanın",
   "wsl.onboarding.needAnotherDistro": "Başka bir dağıtım mı gerekiyor?",

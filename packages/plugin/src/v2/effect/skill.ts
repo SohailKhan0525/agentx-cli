@@ -1,4 +1,4 @@
-import type { SkillV2Source } from "@opencode-ai/sdk/v2/types"
+import type { SkillV2Source } from "@agent-qofeno/sdk/v2/types"
 import type { Hooks } from "./registration.js"
 
 export interface SkillDraft {

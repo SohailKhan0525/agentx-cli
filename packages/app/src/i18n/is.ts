@@ -1,7 +1,7 @@
 import { DESKTOP_NATIVE_KEYS } from "./desktop-native"
 
 const desktop = [
-  "OpenCode",
+  "agentx",
   "Skrá",
   "Breyta",
   "Skoða",
@@ -195,9 +195,9 @@ export const dict = {
   "dialog.provider.group.other": "Annað",
   "dialog.provider.custom.label": "Sérsniðin OpenAI-samhæfður veitandi",
   "dialog.provider.tag.recommended": "Mælt er með",
-  "dialog.provider.opencode.note": "Sýndar gerðir þar á meðal Claude, GPT, Gemini og fleira",
-  "dialog.provider.opencode.tagline": "Áreiðanleg bjartsýni módel",
-  "dialog.provider.opencodeGo.tagline": "Lággjaldaáskrift fyrir alla",
+  "dialog.provider.agentx.note": "Sýndar gerðir þar á meðal Claude, GPT, Gemini og fleira",
+  "dialog.provider.agentx.tagline": "Áreiðanleg bjartsýni módel",
+  "dialog.provider.agentxGo.tagline": "Lággjaldaáskrift fyrir alla",
   "dialog.provider.anthropic.note": "Beinn aðgangur að Claude gerðum, þar á meðal Pro og Max",
   "dialog.provider.copilot.note": "AI módel fyrir kóðaaðstoð í gegnum GitHub Copilot",
   "dialog.provider.openai.note": "GPT gerðir fyrir hröð, fær almenn gervigreind verkefni",
@@ -228,13 +228,13 @@ export const dict = {
   "provider.connect.apiKey.label": "{{provider}} API lykill",
   "provider.connect.apiKey.placeholder": "API lykill",
   "provider.connect.apiKey.required": "API lykill er nauðsynlegur",
-  "provider.connect.opencodeZen.line1":
+  "provider.connect.agentxZen.line1":
     "OpenCode Zen veitir þér aðgang að safni af áreiðanlegum og fínstilltum gerðum fyrir kóðunarmiðla.",
-  "provider.connect.opencodeZen.line2":
+  "provider.connect.agentxZen.line2":
     "Með einum API lykli færðu aðgang að gerðum eins og Claude, GPT, Gemini, GLM og fleira.",
-  "provider.connect.opencodeZen.visit.prefix": "Heimsókn",
-  "provider.connect.opencodeZen.visit.link": "opencode.ai/zen",
-  "provider.connect.opencodeZen.visit.suffix": "til að safna API lykilnum þínum.",
+  "provider.connect.agentxZen.visit.prefix": "Heimsókn",
+  "provider.connect.agentxZen.visit.link": "github.com/SohailKhan0525/agentx-cli/zen",
+  "provider.connect.agentxZen.visit.suffix": "til að safna API lykilnum þínum.",
   "provider.connect.oauth.code.visit.prefix": "Heimsókn",
   "provider.connect.oauth.code.visit.link": "þennan hlekk",
   "provider.connect.oauth.code.visit.suffix":
@@ -451,7 +451,7 @@ export const dict = {
   "wsl.server.retryStart": "Reyndu að byrja aftur",
   "wsl.server.updating": "Uppfærir...",
   "wsl.onboarding.step.distro": "Veldu distro",
-  "wsl.onboarding.step.opencode": "OpenCode",
+  "wsl.onboarding.step.agentx": "agentx",
   "wsl.onboarding.checkingRuntime": "Athugar WSL...",
   "wsl.onboarding.restartRequired": "Windows þarf endurræsingu til að klára uppsetningu WSL.",
   "wsl.onboarding.ready": "WSL er tilbúinn.",
@@ -471,8 +471,8 @@ export const dict = {
   "wsl.onboarding.updatingOpencodeIn": "Uppfærir OpenCode í {{distro}}...",
   "wsl.onboarding.updateOpencodeIn": "Uppfærðu OpenCode í {{distro}}.",
   "wsl.onboarding.updateOpencode": "Uppfærðu OpenCode",
-  "wsl.onboarding.opencodeReadyIn": "OpenCode er tilbúið í {{distro}}.",
-  "wsl.onboarding.opencodeReady": "OpenCode er tilbúinn.",
+  "wsl.onboarding.agentxReadyIn": "OpenCode er tilbúið í {{distro}}.",
+  "wsl.onboarding.agentxReady": "OpenCode er tilbúinn.",
   "wsl.onboarding.installOpencodeIn": "Settu upp OpenCode í {{distro}}.",
   "wsl.onboarding.installOpencode": "Settu upp OpenCode",
   "wsl.onboarding.chooseDistroFirst": "Veldu dreifingu fyrst.",
@@ -482,7 +482,7 @@ export const dict = {
   "wsl.onboarding.checkAgain": "Athugaðu aftur",
   "wsl.onboarding.distroStatus.ready": "Tilbúið",
   "wsl.onboarding.distroStatus.checking": "Athugar...",
-  "wsl.onboarding.distroStatus.opencodeMissing": "OpenCode ekki uppsett",
+  "wsl.onboarding.distroStatus.agentxMissing": "OpenCode ekki uppsett",
   "wsl.onboarding.distroStatus.missingTools": "Vantar bash, krullu",
   "wsl.onboarding.distroStatus.unsupported": "Óstudd · Notaðu WSL 2",
   "wsl.onboarding.needAnotherDistro": "Þarftu aðra dreifingu?",

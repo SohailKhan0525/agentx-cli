@@ -45,7 +45,7 @@ function providerIconsPlugin() {
 }
 
 async function fetchProviderIcons() {
-  const url = process.env.OPENCODE_MODELS_URL || "https://models.opencode.ai"
+  const url = process.env.agentx_MODELS_URL || "https://models.github.com/SohailKhan0525/agentx-cli"
   const providers = await fetch(`${url}/api.json`)
     .then((res) => res.json())
     .then((json) => Object.keys(json))
