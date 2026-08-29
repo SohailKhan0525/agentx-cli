@@ -926,6 +926,9 @@
     "packages/storybook": {
       "name": "@agent-qofeno/storybook",
       "version": "3.0.0",
+      "dependencies": {
+        "solid-js": "catalog:",
+      },
       "devDependencies": {
         "@agent-qofeno/session-ui": "workspace:*",
         "@agent-qofeno/ui": "workspace:*",
