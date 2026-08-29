@@ -32,3 +32,8 @@ UPCOMING_CHANGELOG.md
 logs/
 *.bun-build
 tsconfig.tsbuildinfo
+agentx-code.md
+AGENTX-CODE-TRANSFORM-PROMPT.md
+.agents/
+.claude/
+

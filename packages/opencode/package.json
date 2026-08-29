@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "version": "1.18.25",
+  "version": "3.0.0",
   "name": "opencode",
   "type": "module",
   "license": "MIT",
@@ -16,6 +16,8 @@
     "dev:temporary": "bun run --conditions=browser ./src/temporary.ts"
   },
   "bin": {
+    "agentx": "./bin/agentx",
+    "agentx-code": "./bin/agentx",
     "opencode": "./bin/opencode"
   },
   "exports": {

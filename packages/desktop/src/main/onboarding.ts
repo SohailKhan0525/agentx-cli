@@ -25,9 +25,7 @@ export function isOldLayoutEligible() {
 }
 
 export function isFirstLaunchOnboardingPending() {
-  const pending = getStore().get(FIRST_LAUNCH_ONBOARDING_COMPLETE_KEY) !== true
-  writeLog("onboarding", "first launch onboarding pending checked", { pending })
-  return pending
+  return false
 }
 
 export async function finishFirstLaunchOnboarding(createDefaultProject: boolean) {

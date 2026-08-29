@@ -46,6 +46,7 @@ export function hints(template: string) {
 export const Default = {
   INIT: "init",
   REVIEW: "review",
+  LOCAL_MODEL: "local-model",
 } as const
 
 export interface Interface {
@@ -85,6 +86,21 @@ const layer = Layer.effect(
         },
         subtask: true,
         hints: hints(PROMPT_REVIEW),
+      }
+      commands[Default.LOCAL_MODEL] = {
+        name: Default.LOCAL_MODEL,
+        description: "discover, inspect hardware fit, and install local AI models (Ollama, llama.cpp, LM Studio)",
+        source: "command",
+        get template() {
+          return bridge.promise(
+            Effect.promise(async () => {
+              const mod = await import("../local-model")
+              const res = await mod.runLocalModelDiscovery()
+              return mod.formatLocalModelSummary(res)
+            }),
+          )
+        },
+        hints: ["$ARGUMENTS"],
       }
 
       for (const [name, command] of Object.entries(cfg.command ?? {})) {

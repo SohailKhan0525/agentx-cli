@@ -563,6 +563,8 @@
       "name": "opencode",
       "version": "1.18.25",
       "bin": {
+        "agentx": "./bin/agentx",
+        "agentx-code": "./bin/agentx",
         "opencode": "./bin/opencode",
       },
       "dependencies": {

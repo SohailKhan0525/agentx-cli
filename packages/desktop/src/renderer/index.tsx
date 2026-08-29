@@ -24,7 +24,6 @@ import { render } from "solid-js/web"
 import pkg from "../../package.json"
 import { t } from "./i18n"
 import { initializationData } from "./initialization"
-import { DesktopFirstLaunchOnboarding } from "./onboarding"
 import { resetZoom, setPinchZoomEnabled, webviewZoom, zoomIn, zoomOut } from "./webview-zoom"
 import { windowFullscreen } from "./window-fullscreen"
 import { availableStartupServer, readyWslConnections } from "./wsl/connections"
@@ -353,7 +352,6 @@ function DesktopRoot(props: { windowState: DesktopWindowState }) {
   const router = (props: BaseRouterProps) => (
     <DesktopMemoryRouter {...props} windowID={platform.windowID ?? "browser"} />
   )
-  const onboarding = Promise.withResolvers<void>()
 
   function Inner() {
     const cmd = useCommand()
@@ -408,13 +406,6 @@ function DesktopRoot(props: { windowState: DesktopWindowState }) {
               defaultServer={key}
               servers={servers()}
               router={router}
-              startup={onboarding.promise}
-              serverScoped={
-                <DesktopFirstLaunchOnboarding
-                  initialUrl={getLastActiveUrl(platform.windowID ?? "browser")}
-                  onLoaded={onboarding.resolve}
-                />
-              }
             >
               <Inner />
             </AppInterface>

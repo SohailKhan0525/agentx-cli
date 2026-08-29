@@ -54,9 +54,12 @@ await Bun.file(`./dist/${pkg.name}/bin/${pkg.name}.exe`).write(
 await Bun.file(`./dist/${pkg.name}/package.json`).write(
   JSON.stringify(
     {
-      name: pkg.name + "-ai",
+      name: "@agent-qofeno/agentx-cli",
+      description: "AGENTX CODE — The AI coding agent built for the terminal.",
       bin: {
-        [pkg.name]: `./bin/${pkg.name}.exe`,
+        agentx: `./bin/agentx.exe`,
+        "agentx-code": `./bin/agentx.exe`,
+        opencode: `./bin/agentx.exe`,
       },
       scripts: {
         postinstall: "node ./postinstall.mjs",
@@ -76,7 +79,7 @@ const tasks = Object.entries(binaries).map(async ([name]) => {
   await publish(`./dist/${name}`, name, binaries[name])
 })
 await Promise.all(tasks)
-await publish(`./dist/${pkg.name}`, `${pkg.name}-ai`, version)
+await publish(`./dist/${pkg.name}`, "@agent-qofeno/agentx-cli", version)
 
 const image = "ghcr.io/anomalyco/opencode"
 const platforms = "linux/amd64,linux/arm64"

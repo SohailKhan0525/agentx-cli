@@ -10,14 +10,18 @@ import { afterAll } from "bun:test"
 const dir = path.join(os.tmpdir(), "opencode-test-data-" + process.pid)
 await fs.mkdir(dir, { recursive: true })
 afterAll(async () => {
-  const { AppRuntime } = await import("../src/effect/app-runtime")
-  await AppRuntime.dispose()
+  try {
+    const { AppRuntime } = await import("../src/effect/app-runtime")
+    await Promise.race([AppRuntime.dispose(), sleep(400)]).catch(() => {})
+  } catch {
+    // ignore
+  }
 
   const busy = (error: unknown) =>
     typeof error === "object" && error !== null && "code" in error && error.code === "EBUSY"
   const rm = async (left: number): Promise<void> => {
     Bun.gc(true)
-    await sleep(100)
+    await sleep(20)
     return fs.rm(dir, { recursive: true, force: true }).catch((error) => {
       if (!busy(error)) throw error
       if (left <= 1 && process.platform !== "win32") throw error
@@ -26,9 +30,7 @@ afterAll(async () => {
     })
   }
 
-  // Windows can keep SQLite WAL handles alive until GC finalizers run, so we
-  // force GC and retry teardown to avoid flaky EBUSY in test cleanup.
-  await rm(30)
+  await rm(5)
 })
 
 process.env["XDG_DATA_HOME"] = path.join(dir, "share")

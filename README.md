@@ -1,129 +1,128 @@
+# AgentX Code
+
 <p align="center">
-  <a href="https://opencode.ai">
-    <picture>
-      <source srcset="packages/console/app/src/asset/logo-ornate-dark.svg" media="(prefers-color-scheme: dark)">
-      <source srcset="packages/console/app/src/asset/logo-ornate-light.svg" media="(prefers-color-scheme: light)">
-      <img src="packages/console/app/src/asset/logo-ornate-light.svg" alt="OpenCode logo">
-    </picture>
-  </a>
-</p>
-<p align="center">The open source AI coding agent.</p>
-<p align="center">
-  <a href="https://opencode.ai/discord"><img alt="Discord" src="https://img.shields.io/discord/1391832426048651334?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/opencode-ai"><img alt="npm" src="https://img.shields.io/npm/v/opencode-ai?style=flat-square" /></a>
-  <a href="https://github.com/anomalyco/opencode/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/anomalyco/opencode/publish.yml?style=flat-square&branch=dev" /></a>
+  <b>The powerful AI coding agent built for the terminal and local model execution.</b>
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> |
-  <a href="README.zh.md">简体中文</a> |
-  <a href="README.zht.md">繁體中文</a> |
-  <a href="README.ko.md">한국어</a> |
-  <a href="README.de.md">Deutsch</a> |
-  <a href="README.es.md">Español</a> |
-  <a href="README.fr.md">Français</a> |
-  <a href="README.it.md">Italiano</a> |
-  <a href="README.da.md">Dansk</a> |
-  <a href="README.ja.md">日本語</a> |
-  <a href="README.pl.md">Polski</a> |
-  <a href="README.ru.md">Русский</a> |
-  <a href="README.bs.md">Bosanski</a> |
-  <a href="README.ar.md">العربية</a> |
-  <a href="README.no.md">Norsk</a> |
-  <a href="README.br.md">Português (Brasil)</a> |
-  <a href="README.th.md">ไทย</a> |
-  <a href="README.tr.md">Türkçe</a> |
-  <a href="README.uk.md">Українська</a> |
-  <a href="README.bn.md">বাংলা</a> |
-  <a href="README.gr.md">Ελληνικά</a> |
-  <a href="README.vi.md">Tiếng Việt</a>
+  <a href="https://www.npmjs.com/package/@agent-qofeno/agentx-cli"><img alt="npm version" src="https://img.shields.io/npm/v/@agent-qofeno/agentx-cli?style=flat-square&color=00e5ff" /></a>
+  <a href="https://github.com/SohailKhan0525/agentx-cli/actions/workflows/publish.yml"><img alt="Build status" src="https://img.shields.io/github/actions/workflow/status/SohailKhan0525/agentx-cli/publish.yml?style=flat-square&branch=main" /></a>
+  <a href="https://github.com/SohailKhan0525/agentx-cli"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" /></a>
 </p>
 
-[![OpenCode Terminal UI](packages/web/src/assets/lander/screenshot.png)](https://opencode.ai)
+```text
+     _    ____ _____ _   _ _______  __    ____ ___  ____  _____ 
+    / \  / ___| ____| \ | |_   _\ \/ /   / ___/ _ \|  _ \| ____|
+   / _ \| |  _|  _| |  \| | | |  \  /   | |  | | | | | | |  _|  
+  / ___ \ |_| | |___| |\  | | |  /  \   | |__| |_| | |_| | |___ 
+ /_/   \_\____|_____|_| \_| |_| /_/\_\   \____\___/|____/|_____|
+```
 
 ---
 
-### Installation
+## ⚡ Installation
+
+Install **AgentX Code** globally using your preferred package manager:
 
 ```bash
-# YOLO
-curl -fsSL https://opencode.ai/install | bash
+# npm (Recommended)
+npm install -g @agent-qofeno/agentx-cli@latest
 
-# Package managers
-npm i -g opencode-ai@latest        # or bun/pnpm/yarn
-scoop install opencode             # Windows
-choco install opencode             # Windows
-brew install anomalyco/tap/opencode # macOS and Linux (recommended, always up to date)
-brew install opencode              # macOS and Linux (official brew formula, updated less)
-sudo pacman -S opencode            # Arch Linux (Stable)
-paru -S opencode-bin               # Arch Linux (Latest from AUR)
-mise use -g opencode               # Any OS
-nix run nixpkgs#opencode           # or github:anomalyco/opencode for latest dev branch
+# bun
+bun install -g @agent-qofeno/agentx-cli@latest
+
+# pnpm
+pnpm add -g @agent-qofeno/agentx-cli@latest
+
+# yarn
+yarn global add @agent-qofeno/agentx-cli@latest
 ```
-
-> [!TIP]
-> Remove versions older than 0.1.x before installing.
-
-### Desktop App (BETA)
-
-OpenCode is also available as a desktop application. Download directly from the [releases page](https://github.com/anomalyco/opencode/releases) or [opencode.ai/download](https://opencode.ai/download).
-
-| Platform              | Download                           |
-| --------------------- | ---------------------------------- |
-| macOS (Apple Silicon) | `opencode-desktop-mac-arm64.dmg`   |
-| macOS (Intel)         | `opencode-desktop-mac-x64.dmg`     |
-| Windows               | `opencode-desktop-windows-x64.exe` |
-| Linux                 | `.deb`, `.rpm`, or `.AppImage`     |
-
-```bash
-# macOS (Homebrew)
-brew install --cask opencode-desktop
-# Windows (Scoop)
-scoop bucket add extras; scoop install extras/opencode-desktop
-```
-
-#### Installation Directory
-
-The install script respects the following priority order for the installation path:
-
-1. `$OPENCODE_INSTALL_DIR` - Custom installation directory
-2. `$XDG_BIN_DIR` - XDG Base Directory Specification compliant path
-3. `$HOME/bin` - Standard user binary directory (if it exists or can be created)
-4. `$HOME/.opencode/bin` - Default fallback
-
-```bash
-# Examples
-OPENCODE_INSTALL_DIR=/usr/local/bin curl -fsSL https://opencode.ai/install | bash
-XDG_BIN_DIR=$HOME/.local/bin curl -fsSL https://opencode.ai/install | bash
-```
-
-### Agents
-
-OpenCode includes two built-in agents you can switch between with the `Tab` key.
-
-- **build** - Default, full-access agent for development work
-- **plan** - Read-only agent for analysis and code exploration
-  - Denies file edits by default
-  - Asks permission before running bash commands
-  - Ideal for exploring unfamiliar codebases or planning changes
-
-Also included is a **general** subagent for complex searches and multistep tasks.
-This is used internally and can be invoked using `@general` in messages.
-
-Learn more about [agents](https://opencode.ai/docs/agents).
-
-### Documentation
-
-For more info on how to configure OpenCode, [**head over to our docs**](https://opencode.ai/docs).
-
-### Contributing
-
-If you're interested in contributing to OpenCode, please read our [contributing docs](./CONTRIBUTING.md) before submitting a pull request.
-
-### Building on OpenCode
-
-If you are working on a project that's related to OpenCode and is using "opencode" as part of its name, for example "opencode-dashboard" or "opencode-mobile", please add a note to your README to clarify that it is not built by the OpenCode team and is not affiliated with us in any way.
 
 ---
 
-**Join our community** [Discord](https://discord.gg/opencode) | [X.com](https://x.com/opencode)
+## 🚀 Quick Start
+
+Launch AgentX Code inside any repository or workspace:
+
+```bash
+# Launch interactive TUI session
+agentx
+
+# Continue the previous session
+agentx -c
+
+# Resume a specific session
+agentx -s <sessionID>
+
+# Run a one-off autonomous coding task
+agentx run "Fix the failing typecheck errors in src/"
+```
+
+---
+
+## 🧠 Local Model Subsystem & Zero-Cloud Privacy
+
+AgentX Code includes a first-class **Local AI Engine** with zero setup friction. Run state-of-the-art coding and reasoning models directly on your hardware without internet or API keys.
+
+- **Automatic Hardware Probe**: Detects CPU cores, RAM, GPU vendors (NVIDIA, Apple Silicon unified memory, AMD, Intel), VRAM, and disk headroom.
+- **Deterministic Fit Scoring**: Calculates exact compatibility scores (0–100) and warns against memory exhaustion before downloading.
+- **Runtime Discovery**: Automatically probes and integrates with:
+  - **Ollama** (`http://127.0.0.1:11434`)
+  - **LM Studio** (`http://127.0.0.1:1234`)
+  - **llama.cpp server** (`http://127.0.0.1:8080`)
+  - **vLLM** (`http://127.0.0.1:8000`)
+- **Interactive Slash Command**:
+  ```bash
+  # Check hardware profile & recommended models
+  agentx local-model
+
+  # Install and verify a model with streaming progress & healthcheck
+  agentx local-model install qwen2.5-coder:7b
+  ```
+  Within the interactive chat session, type:
+  ```text
+  /local-model
+  ```
+
+---
+
+## ☁️ Supported Cloud AI Providers (BYOK)
+
+AgentX Code supports industry-standard Bring-Your-Own-Key (BYOK) cloud providers:
+
+- **Anthropic** (Claude 3.7 Sonnet, Claude 3.5 Sonnet, Claude 3.5 Haiku)
+- **OpenAI** (GPT-4.5, GPT-4o, o1, o3-mini)
+- **Google Gemini** (Gemini 2.0 Flash, Gemini 2.0 Pro, Gemini 1.5 Pro)
+- **DeepSeek** (DeepSeek V3, DeepSeek R1)
+- **GitHub Copilot**
+- **Amazon Bedrock**
+- **Azure OpenAI**
+- **Groq**
+- **Mistral AI**
+- **Perplexity**
+- **Cerebras**
+- **Together AI**
+- **OpenRouter**
+
+Configure any provider with:
+```bash
+agentx providers
+```
+
+---
+
+## 🛠️ Features
+
+- 🖥️ **Ultra-Fast Terminal UI**: Responsive SolidJS-powered TUI with smooth diff viewer, full keyboard navigation, and theme customization.
+- ⚡ **Autonomous Tool Execution**: Read/write files, grep search, execute test commands, and manage workspace subagents safely.
+- 🔒 **Granular Permissions**: Configurable auto-approval rules and security boundaries.
+- 🔌 **Model Context Protocol (MCP)**: Native integration with MCP servers and skills.
+- 📦 **Multi-Session History**: Fast instant resumption and full transcript persistence.
+
+---
+
+## 📄 License & Attribution
+
+AgentX Code is licensed under the [MIT License](LICENSE).
+
+*Attribution*: AgentX Code is built upon the open-source foundation of OpenCode. AgentX Code is an independent product maintained by [Sohail Khan](https://github.com/SohailKhan0525/agentx-cli) and is not affiliated with the upstream OpenCode project.
