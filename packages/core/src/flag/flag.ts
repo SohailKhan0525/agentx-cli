@@ -78,11 +78,27 @@ export const Flag = {
   get AGENTX_FAKE_VCS() {
     return env("AGENTX_FAKE_VCS")
   },
-  get AGENTX_SERVER_PASSWORD() {
+  get AGENTX_SERVER_PASSWORD(): string | undefined {
     return env("AGENTX_SERVER_PASSWORD")
   },
-  get AGENTX_SERVER_USERNAME() {
+  set AGENTX_SERVER_PASSWORD(val: string | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_SERVER_PASSWORD
+      delete process.env.OPENCODE_SERVER_PASSWORD
+    } else {
+      process.env.AGENTX_SERVER_PASSWORD = val
+    }
+  },
+  get AGENTX_SERVER_USERNAME(): string | undefined {
     return env("AGENTX_SERVER_USERNAME")
+  },
+  set AGENTX_SERVER_USERNAME(val: string | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_SERVER_USERNAME
+      delete process.env.OPENCODE_SERVER_USERNAME
+    } else {
+      process.env.AGENTX_SERVER_USERNAME = val
+    }
   },
   get AGENTX_DISABLE_FFF() {
     const fff = env("AGENTX_DISABLE_FFF")
@@ -116,21 +132,53 @@ export const Flag = {
       process.env.AGENTX_MODELS_PATH = val
     }
   },
-  get AGENTX_DB() {
+  get AGENTX_DB(): string | undefined {
     return env("AGENTX_DB")
   },
+  set AGENTX_DB(val: string | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_DB
+      delete process.env.OPENCODE_DB
+    } else {
+      process.env.AGENTX_DB = val
+    }
+  },
 
-  get AGENTX_WORKSPACE_ID() {
+  get AGENTX_WORKSPACE_ID(): string | undefined {
     return env("AGENTX_WORKSPACE_ID")
   },
-  get AGENTX_EXPERIMENTAL_WORKSPACES() {
+  set AGENTX_WORKSPACE_ID(val: string | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_WORKSPACE_ID
+      delete process.env.OPENCODE_WORKSPACE_ID
+    } else {
+      process.env.AGENTX_WORKSPACE_ID = val
+    }
+  },
+  get AGENTX_EXPERIMENTAL_WORKSPACES(): boolean {
     return enabledByExperimental("AGENTX_EXPERIMENTAL_WORKSPACES")
+  },
+  set AGENTX_EXPERIMENTAL_WORKSPACES(val: boolean | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_EXPERIMENTAL_WORKSPACES
+      delete process.env.OPENCODE_EXPERIMENTAL_WORKSPACES
+    } else {
+      process.env.AGENTX_EXPERIMENTAL_WORKSPACES = String(val)
+    }
   },
 
   // Evaluated at access time (not module load) because tests, the CLI, and
   // external tooling set these env vars at runtime.
-  get AGENTX_DISABLE_PROJECT_CONFIG() {
+  get AGENTX_DISABLE_PROJECT_CONFIG(): boolean {
     return truthy("AGENTX_DISABLE_PROJECT_CONFIG")
+  },
+  set AGENTX_DISABLE_PROJECT_CONFIG(val: boolean | undefined) {
+    if (val === undefined) {
+      delete process.env.AGENTX_DISABLE_PROJECT_CONFIG
+      delete process.env.OPENCODE_DISABLE_PROJECT_CONFIG
+    } else {
+      process.env.AGENTX_DISABLE_PROJECT_CONFIG = String(val)
+    }
   },
   get AGENTX_EXPERIMENTAL_REFERENCES() {
     return enabledByExperimental("AGENTX_EXPERIMENTAL_REFERENCES")
