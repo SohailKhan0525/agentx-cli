@@ -18,14 +18,10 @@ if (!semver.satisfies(process.versions.bun, expectedBunVersionRange)) {
 }
 
 const env = {
-  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"] || process.env["AGENTX_CHANNEL"],
-  AGENTX_BUMP: process.env["AGENTX_BUMP"] || process.env["AGENTX_BUMP"],
-  AGENTX_VERSION: process.env["AGENTX_VERSION"] || process.env["AGENTX_VERSION"],
-  AGENTX_RELEASE: process.env["AGENTX_RELEASE"] || process.env["AGENTX_RELEASE"],
-  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"],
-  AGENTX_BUMP: process.env["AGENTX_BUMP"],
-  AGENTX_VERSION: process.env["AGENTX_VERSION"],
-  AGENTX_RELEASE: process.env["AGENTX_RELEASE"],
+  AGENTX_CHANNEL: process.env["AGENTX_CHANNEL"] || process.env["OPENCODE_CHANNEL"],
+  AGENTX_BUMP: process.env["AGENTX_BUMP"] || process.env["OPENCODE_BUMP"],
+  AGENTX_VERSION: process.env["AGENTX_VERSION"] || process.env["OPENCODE_VERSION"],
+  AGENTX_RELEASE: process.env["AGENTX_RELEASE"] || process.env["OPENCODE_RELEASE"],
 }
 const CHANNEL = await (async () => {
   if (env.AGENTX_CHANNEL) return env.AGENTX_CHANNEL

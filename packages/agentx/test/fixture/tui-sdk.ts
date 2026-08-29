@@ -2,7 +2,7 @@ import type { GlobalEvent } from "@agent-qofeno/sdk/v2"
 import type { EventSource } from "@agent-qofeno/tui/context/sdk"
 
 export const worktree = "/tmp/opencode"
-export const directory = `${worktree}/packages/opencode`
+export const directory = `${worktree}/packages/agentx`
 
 export function json(data: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(data), {
