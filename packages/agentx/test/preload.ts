@@ -23,9 +23,9 @@ afterAll(async () => {
     Bun.gc(true)
     await sleep(20)
     return fs.rm(dir, { recursive: true, force: true }).catch((error) => {
+      if (process.platform === "win32") return
       if (!busy(error)) throw error
-      if (left <= 1 && process.platform !== "win32") throw error
-      if (left <= 1) return
+      if (left <= 1) throw error
       return rm(left - 1)
     })
   }
