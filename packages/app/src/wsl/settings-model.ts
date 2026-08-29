@@ -244,13 +244,6 @@ function addServerSelectedDistroSettled(state: WslServersState | undefined, sele
   return !(state.agentxChecks ?? state.opencodeChecks)?.[selectedDistro]
 }
 
-function wslDistroReady(state: WslServersState | undefined, distro: string) {
-  const installed = state?.installed.find((item) => item.name === distro)
-  if (installed?.version === 1) return false
-  const probe = state?.distroProbes[distro]
-  return !probe?.canExecute && !probe?.hasBash && !probe?.hasCurl
-}
-
 function addServerInstallableDistros(installedDistros: WslInstalledDistro[], onlineDistros: WslOnlineDistro[]) {
   const installed = new Set(installedDistros.map((item) => item.name))
   const hasVersionedUbuntu = onlineDistros.some((item) => /^Ubuntu-\d/.test(item.name))
@@ -281,7 +274,7 @@ export function addableProbePlan(input: {
   if (!state?.runtime?.available || state.pendingRestart || input.view !== "main" || input.adding) return
   if (state.job) return
   const ordered = input.selectedDistro
-    ? [
+  ? [
         ...input.addableInstalledDistros.filter((item) => item.name === input.selectedDistro),
         ...input.addableInstalledDistros.filter((item) => item.name !== input.selectedDistro),
       ]
@@ -289,7 +282,8 @@ export function addableProbePlan(input: {
   const pending = ordered.flatMap((item) => {
     if (item.version === 1) return []
     if (!state.distroProbes[item.name]) return [`distro:${item.name}`]
-    if (wslDistroReady(state, item.name) && !state.agentxChecks[item.name]) return [`opencode:${item.name}`]
+    const checks = state.agentxChecks ?? state.opencodeChecks
+    if (wslDistroReady(state, item.name) && !checks?.[item.name]) return [`opencode:${item.name}`]
     return []
   })
   if (!pending.length) return

@@ -157,11 +157,11 @@ export function createWslServersController(
     const opencodeChecks = await Promise.all(
       unique
         .filter((distro) => distroProbeReady(state.distroProbes[distro]))
-        .filter((distro) => !state.agentxChecks[distro])
+        .filter((distro) => !state.opencodeChecks[distro])
         .map(async (distro) => [distro, await checkOpencode(distro, opts)] as const),
     )
     if (opencodeChecks.length) {
-      setState({ opencodeChecks: { ...state.agentxChecks, ...Object.fromEntries(opencodeChecks) } })
+      setState({ opencodeChecks: { ...state.opencodeChecks, ...Object.fromEntries(opencodeChecks) } })
     }
   }
 
@@ -367,7 +367,7 @@ export function createWslServersController(
           throw new Error(summarize(result.stderr || result.stdout) || nativeT("desktop.wsl.error.installOpencode"))
         }
         await refreshOpencodeCheck(name, { signal: abort.signal })
-        expectOpencodeVersion(state.agentxChecks[name]?.version ?? null, appVersion, name)
+        expectOpencodeVersion(state.opencodeChecks[name]?.version ?? null, appVersion, name)
         const id = wslServerIdToRestart(state.servers, name)
         if (id) await startServer(id)
       })
@@ -402,7 +402,7 @@ export function createWslServersController(
       persistServers(remaining)
       setState({
         servers: state.servers.filter((item) => item.config.id !== id),
-        ...(distro ? clearWslDistroState(state.distroProbes, state.agentxChecks, distro) : {}),
+        ...(distro ? clearWslDistroState(state.distroProbes, state.opencodeChecks, distro) : {}),
       })
     },
 
