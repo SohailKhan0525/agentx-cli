@@ -128,11 +128,11 @@ describe("ModelsDevPlugin", () => {
     Effect.acquireUseRelease(
       Effect.sync(() => {
         const previous = {
-          path: Flag.agentx_MODELS_PATH,
-          disabled: Flag.agentx_DISABLE_MODELS_FETCH,
+          path: Flag.AGENTX_MODELS_PATH,
+          disabled: Flag.AGENTX_DISABLE_MODELS_FETCH,
         }
-        Flag.agentx_MODELS_PATH = path.join(import.meta.dir, "fixtures", "models-dev.json")
-        Flag.agentx_DISABLE_MODELS_FETCH = true
+        Flag.AGENTX_MODELS_PATH = path.join(import.meta.dir, "fixtures", "models-dev.json")
+        Flag.AGENTX_DISABLE_MODELS_FETCH = true
         return previous
       }),
       () =>
@@ -162,8 +162,8 @@ describe("ModelsDevPlugin", () => {
         }).pipe(Effect.provide(AppNodeBuilder.build(ModelsDev.node))),
       (previous) =>
         Effect.sync(() => {
-          Flag.agentx_MODELS_PATH = previous.path
-          Flag.agentx_DISABLE_MODELS_FETCH = previous.disabled
+          Flag.AGENTX_MODELS_PATH = previous.path
+          Flag.AGENTX_DISABLE_MODELS_FETCH = previous.disabled
         }),
     ),
   )

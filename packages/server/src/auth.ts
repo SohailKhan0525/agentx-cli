@@ -50,10 +50,10 @@ export function authorized(credentials: DecodedCredentials, config: Info) {
 }
 
 export function header(credentials?: Credentials) {
-  const password = credentials?.password ?? process.env.agentx_SERVER_PASSWORD
+  const password = credentials?.password ?? process.env.AGENTX_SERVER_PASSWORD
   if (!password) return undefined
 
-  return `Basic ${Buffer.from(`${credentials?.username ?? process.env.agentx_SERVER_USERNAME ?? "agentx"}:${password}`).toString("base64")}`
+  return `Basic ${Buffer.from(`${credentials?.username ?? process.env.AGENTX_SERVER_USERNAME ?? "agentx"}:${password}`).toString("base64")}`
 }
 
 export function headers(credentials?: Credentials) {

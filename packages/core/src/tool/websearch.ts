@@ -73,8 +73,8 @@ export class ConfigService extends Context.Service<ConfigService, Config>()("@op
 export const defaultConfigLayer = Layer.sync(ConfigService, () =>
   ConfigService.of({
     provider:
-      process.env.agentx_WEBSEARCH_PROVIDER === "exa" || process.env.agentx_WEBSEARCH_PROVIDER === "parallel"
-        ? process.env.agentx_WEBSEARCH_PROVIDER
+      process.env.AGENTX_WEBSEARCH_PROVIDER === "exa" || process.env.AGENTX_WEBSEARCH_PROVIDER === "parallel"
+        ? process.env.AGENTX_WEBSEARCH_PROVIDER
         : undefined,
     enableExa: truthy("AGENTX_EXPERIMENTAL") || truthy("AGENTX_ENABLE_EXA") || truthy("AGENTX_EXPERIMENTAL_EXA"),
     enableParallel: truthy("AGENTX_ENABLE_PARALLEL") || truthy("AGENTX_EXPERIMENTAL_PARALLEL"),

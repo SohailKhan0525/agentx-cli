@@ -1,4 +1,4 @@
-const modelsUrl = process.env.agentx_MODELS_URL || "https://models.github.com/SohailKhan0525/agentx-cli"
+const modelsUrl = process.env.AGENTX_MODELS_URL || "https://models.github.com/SohailKhan0525/agentx-cli"
 
 export const modelsData = process.env.MODELS_DEV_API_JSON
   ? await Bun.file(process.env.MODELS_DEV_API_JSON).text()

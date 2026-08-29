@@ -171,9 +171,9 @@ export const OpencodePlugin = define<HttpClient.HttpClient | EventV2.Service | S
         }
       }
 
-      const item = catalog.provider.get(ProviderV2.ID.agentx)
+      const item = catalog.provider.get(ProviderV2.ID.opencode)
       if (!item) return
-      const hasKey = Boolean(process.env.agentx_API_KEY || connected || item.provider.request.body.apiKey)
+      const hasKey = Boolean(process.env.AGENTX_API_KEY || connected || item.provider.request.body.apiKey)
       catalog.provider.update(item.provider.id, (provider) => {
         if (!hasKey) provider.request.body.apiKey = "public"
       })

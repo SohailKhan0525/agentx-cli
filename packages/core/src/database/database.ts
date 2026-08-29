@@ -41,14 +41,14 @@ export function layerFromPath(filename: string) {
 }
 
 export function path() {
-  if (Flag.agentx_DB) {
-    if (Flag.agentx_DB === ":memory:" || isAbsolute(Flag.agentx_DB)) return Flag.agentx_DB
-    return join(Global.Path.data, Flag.agentx_DB)
+  if (Flag.AGENTX_DB) {
+    if (Flag.AGENTX_DB === ":memory:" || isAbsolute(Flag.AGENTX_DB)) return Flag.AGENTX_DB
+    return join(Global.Path.data, Flag.AGENTX_DB)
   }
   if (
     ["latest", "beta", "prod"].includes(InstallationChannel) ||
-    process.env.agentx_DISABLE_CHANNEL_DB === "1" ||
-    process.env.agentx_DISABLE_CHANNEL_DB === "true"
+    process.env.AGENTX_DISABLE_CHANNEL_DB === "1" ||
+    process.env.AGENTX_DISABLE_CHANNEL_DB === "true"
   )
     return join(Global.Path.data, "opencode.db")
   return join(Global.Path.data, `opencode-${InstallationChannel.replace(/[^a-zA-Z0-9._-]/g, "-")}.db`)

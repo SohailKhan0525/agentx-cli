@@ -57,7 +57,7 @@ export class Service extends Context.Service<Service, Interface>()("@opencode/v2
 const layer = Layer.effect(
   Service,
   Effect.gen(function* () {
-    if (yield* Flag.agentx_EXPERIMENTAL_DISABLE_FILEWATCHER) return Service.of({})
+    if (yield* Flag.AGENTX_EXPERIMENTAL_DISABLE_FILEWATCHER) return Service.of({})
 
     const backend = getBackend()
     const location = yield* Location.Service
@@ -106,7 +106,7 @@ const layer = Layer.effect(
     const config = (yield* (yield* Config.Service).entries())
       .filter((entry): entry is Config.Document => entry.type === "document")
       .flatMap((item) => item.info.watcher?.ignore ?? [])
-    if (location.vcs && (yield* Flag.agentx_EXPERIMENTAL_FILEWATCHER)) {
+    if (location.vcs && (yield* Flag.AGENTX_EXPERIMENTAL_FILEWATCHER)) {
       yield* Effect.forkScoped(
         subscribe(location.directory, [...Ignore.PATTERNS, ...config, ...protecteds(location.directory)]),
       )

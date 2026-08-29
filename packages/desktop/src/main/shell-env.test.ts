@@ -31,7 +31,7 @@ describe("shell env", () => {
 
     expect(env.PATH).toBe("/desktop/path")
     expect(env.HOME).toBe("/tmp/home")
-    expect(env.agentx_CLIENT).toBe("desktop")
+    expect(env.AGENTX_CLIENT).toBe("desktop")
   })
 
   test("resolveUserShell falls back to the login shell before /bin/sh", () => {

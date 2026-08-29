@@ -60,8 +60,8 @@ const APP_IDS: Record<string, string> = {
   beta: "ai.agentx.desktop.beta",
   prod: "ai.agentx.desktop",
 }
-const TEST_ONBOARDING = process.env.agentx_TEST_ONBOARDING === "1"
-const SIDECAR_VERSION = process.env.agentx_SIDECAR_V2 === "1" ? "v2" : "v1"
+const TEST_ONBOARDING = process.env.AGENTX_TEST_ONBOARDING === "1"
+const SIDECAR_VERSION = process.env.AGENTX_SIDECAR_V2 === "1" ? "v2" : "v1"
 const jsCallStackFeature = "DocumentPolicyIncludeJSCallStacksInCrashReports"
 
 let logger: ReturnType<typeof initLogging>
@@ -120,7 +120,7 @@ const main = Effect.gen(function* () {
     process.chdir(homedir())
   } catch {}
 
-  process.env.agentx_DISABLE_EMBEDDED_WEB_UI = "true"
+  process.env.AGENTX_DISABLE_EMBEDDED_WEB_UI = "true"
 
   const appId = app.isPackaged ? APP_IDS[CHANNEL] : "ai.agentx.desktop.dev"
   const onboardingTestRoot = ((): string | undefined => {
@@ -131,7 +131,7 @@ const main = Effect.gen(function* () {
     ;["data", "config", "cache", "state", "desktop", "session"].forEach((dir) =>
       mkdirSync(join(root, dir), { recursive: true }),
     )
-    process.env.agentx_DB = ":memory:"
+    process.env.AGENTX_DB = ":memory:"
     process.env.XDG_DATA_HOME = join(root, "data")
     process.env.XDG_CONFIG_HOME = join(root, "config")
     process.env.XDG_CACHE_HOME = join(root, "cache")
@@ -348,7 +348,7 @@ const main = Effect.gen(function* () {
     }
 
     const port = yield* Effect.gen(function* () {
-      const fromEnv = process.env.agentx_PORT
+      const fromEnv = process.env.AGENTX_PORT
       if (fromEnv) {
         const parsed = Number.parseInt(fromEnv, 10)
         if (!Number.isNaN(parsed)) return parsed
