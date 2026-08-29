@@ -20,7 +20,7 @@ import { Global } from "@agent-qofeno/core/global"
 import path from "path"
 import { Plugin } from "@/plugin"
 import { Skill } from "../skill"
-import { Effect, Context, Layer, Schema } from "effect"
+import { Effect, Context, Layer, Schema, Duration } from "effect"
 import { InstanceState } from "@/effect/instance-state"
 import * as Option from "effect/Option"
 import * as OtelTracer from "@effect/opentelemetry/Tracer"
@@ -99,12 +99,17 @@ const layer = Layer.effect(
       Effect.fn("Agent.state")(function* (ctx) {
         const cfg = yield* config.get()
         const skillDirs = yield* skill.dirs()
-        const referenceDirs = Object.keys(cfg.references ?? cfg.reference ?? {}).length
-          ? yield* Effect.gen(function* () {
-              yield* (yield* PluginV2.Service).wait(PluginV2.ID.make("core/config-reference"))
-              return (yield* (yield* Reference.Service).list()).map((reference) => reference.path)
-            }).pipe(Effect.provide(locations.get(Location.Ref.make({ directory: AbsolutePath.make(ctx.directory) }))))
-          : []
+        const referenceDirs = Object.entries(cfg.references ?? cfg.reference ?? {})
+          .map(([_, entry]) => {
+            if (typeof entry === "string") {
+              return path.isAbsolute(entry) ? entry : path.resolve(ctx.directory, entry)
+            }
+            if (entry && typeof entry === "object" && "path" in entry && typeof entry.path === "string") {
+              return path.isAbsolute(entry.path) ? entry.path : path.resolve(ctx.directory, entry.path)
+            }
+            return undefined
+          })
+          .filter((dir): dir is string => dir !== undefined)
         const whitelistedDirs = [
           Truncate.GLOB,
           path.join(Global.Path.tmp, "*"),

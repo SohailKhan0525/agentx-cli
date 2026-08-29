@@ -1,4 +1,4 @@
-﻿import { LayerNode } from "@agent-qofeno/core/effect/layer-node"
+import { LayerNode } from "@agent-qofeno/core/effect/layer-node"
 import { AppNodeBuilder } from "@agent-qofeno/core/effect/app-node-builder"
 import { httpClient } from "@agent-qofeno/core/effect/app-node-platform"
 import { Effect, Layer, Schema, Context, Stream } from "effect"
@@ -124,9 +124,9 @@ const layer: Layer.Layer<Service, never, HttpClient.HttpClient | AppProcess.Serv
 
     const getBrewFormula = Effect.fnUntraced(function* () {
       const tapFormula = yield* text(["brew", "list", "--formula", "SohailKhan0525/tap/opencode"])
-      if (tapFormula.includes("agentx")) return "SohailKhan0525/tap/opencode"
+      if (tapFormula.includes("agentx") || tapFormula.includes("opencode")) return "SohailKhan0525/tap/opencode"
       const coreFormula = yield* text(["brew", "list", "--formula", "agentx"])
-      if (coreFormula.includes("agentx")) return "agentx"
+      if (coreFormula.includes("agentx") || coreFormula.includes("opencode")) return "agentx"
       return "agentx"
     })
 

@@ -1,4 +1,4 @@
 {
-  "$schema": "https://github.com/SohailKhan0525/agentx-cli/config.json",
+  "$schema": "https://opencode.ai/config.json",
   "model": "anthropic/claude-sonnet"
 }

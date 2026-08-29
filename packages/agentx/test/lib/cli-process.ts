@@ -61,18 +61,26 @@ function forkStderrDrain(stream: ReadableStream<Uint8Array>, into: string[]) {
 
 function isolatedEnv(home: string, configJson: string): Record<string, string> {
   return {
+    AGENTX_TEST_HOME: home,
     OPENCODE_TEST_HOME: home,
     HOME: home,
     XDG_CONFIG_HOME: path.join(home, ".config"),
     XDG_DATA_HOME: path.join(home, ".local/share"),
     XDG_STATE_HOME: path.join(home, ".local/state"),
     XDG_CACHE_HOME: path.join(home, ".cache"),
+    AGENTX_CONFIG_CONTENT: configJson,
     OPENCODE_CONFIG_CONTENT: configJson,
+    AGENTX_DISABLE_PROJECT_CONFIG: "1",
     OPENCODE_DISABLE_PROJECT_CONFIG: "1",
+    AGENTX_PURE: "1",
     OPENCODE_PURE: "1",
+    AGENTX_DISABLE_AUTOUPDATE: "1",
     OPENCODE_DISABLE_AUTOUPDATE: "1",
+    AGENTX_DISABLE_AUTOCOMPACT: "1",
     OPENCODE_DISABLE_AUTOCOMPACT: "1",
+    AGENTX_DISABLE_MODELS_FETCH: "1",
     OPENCODE_DISABLE_MODELS_FETCH: "1",
+    AGENTX_AUTH_CONTENT: "{}",
     OPENCODE_AUTH_CONTENT: "{}",
   }
 }

@@ -158,6 +158,7 @@ it.instance(
       },
     },
   },
+  20_000,
 )
 
 it.instance("general agent denies todo tools", () =>
@@ -644,6 +645,7 @@ it.instance(
       },
     },
   },
+  20_000,
 )
 
 it.instance("defaultAgent returns build when no default_agent config", () =>

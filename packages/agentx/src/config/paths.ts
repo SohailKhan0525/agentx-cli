@@ -13,8 +13,12 @@ export const files = Effect.fn("ConfigPaths.projectFiles")(function* (
   worktree?: string,
 ) {
   const afs = yield* FSUtil.Service
+  const targets =
+    name === "agentx" || name === "opencode"
+      ? ["agentx.jsonc", "agentx.json", "opencode.jsonc", "opencode.json"]
+      : [`${name}.jsonc`, `${name}.json`]
   return (yield* afs.up({
-    targets: [`${name}.jsonc`, `${name}.json`, "agentx.jsonc", "agentx.json", "opencode.jsonc", "opencode.json"],
+    targets,
     start: directory,
     stop: worktree,
   })).toReversed()
@@ -41,5 +45,13 @@ export const directories = Effect.fn("ConfigPaths.directories")(function* (direc
 })
 
 export function fileInDirectory(dir: string, name: string) {
+  if (name === "agentx" || name === "opencode") {
+    return [
+      path.join(dir, "agentx.json"),
+      path.join(dir, "agentx.jsonc"),
+      path.join(dir, "opencode.json"),
+      path.join(dir, "opencode.jsonc"),
+    ]
+  }
   return [path.join(dir, `${name}.json`), path.join(dir, `${name}.jsonc`)]
 }
