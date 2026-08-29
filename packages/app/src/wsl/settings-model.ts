@@ -274,7 +274,7 @@ export function addableProbePlan(input: {
   if (!state?.runtime?.available || state.pendingRestart || input.view !== "main" || input.adding) return
   if (state.job) return
   const ordered = input.selectedDistro
-  ? [
+    ? [
         ...input.addableInstalledDistros.filter((item) => item.name === input.selectedDistro),
         ...input.addableInstalledDistros.filter((item) => item.name !== input.selectedDistro),
       ]
