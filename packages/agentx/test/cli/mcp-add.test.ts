@@ -23,7 +23,8 @@ describe("opencode mcp add (non-interactive subprocess)", () => {
 
         const agentxConfigFile = path.join(home, ".config", "agentx", "agentx.json")
         const opencodeConfigFile = path.join(home, ".config", "opencode", "opencode.json")
-        const configFile = (await Bun.file(agentxConfigFile).exists()) ? agentxConfigFile : opencodeConfigFile
+        const exists = yield* Effect.promise(() => Bun.file(agentxConfigFile).exists())
+        const configFile = exists ? agentxConfigFile : opencodeConfigFile
         const config = yield* Effect.promise(() => Bun.file(configFile).json())
         expect(config.mcp.github).toEqual({
           type: "remote",
@@ -60,7 +61,8 @@ describe("opencode mcp add (non-interactive subprocess)", () => {
 
         const agentxConfigFile = path.join(home, ".config", "agentx", "agentx.json")
         const opencodeConfigFile = path.join(home, ".config", "opencode", "opencode.json")
-        const configFile = (await Bun.file(agentxConfigFile).exists()) ? agentxConfigFile : opencodeConfigFile
+        const exists = yield* Effect.promise(() => Bun.file(agentxConfigFile).exists())
+        const configFile = exists ? agentxConfigFile : opencodeConfigFile
         const config = yield* Effect.promise(() => Bun.file(configFile).json())
         expect(config.mcp.local).toEqual({
           type: "local",
